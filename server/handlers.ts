@@ -26,6 +26,7 @@ type BlogRequestKey =
   | 'listButtonImages'
   | 'whoAmI'
   | 'adminListArticles'
+  | 'adminGetArticle'
   | 'saveArticle'
   | 'deleteArticle'
   | 'createRandomThought'
@@ -161,6 +162,12 @@ export function makeHandlers(
         sort: { updated: -1 },
       });
       return { articles };
+    },
+
+    adminGetArticle: async (userId, { id }) => {
+      await requireAdmin(db, userId);
+      const article = await db.getDoc<Article>(collections.article, id);
+      return { article: article ?? null };
     },
 
     saveArticle: async (userId, input) => {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type ReactElement } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import { Link } from '../../router';
@@ -10,23 +10,21 @@ function toMs(d: number | Date): number {
 }
 
 function ModerationInner(): ReactElement {
-  const { socket } = useApp();
   const [comments, setComments] = useState<Comment[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   const refresh = useCallback(async () => {
-    const res = await socket.request('adminListComments', { status: 'pending' });
-    const { comments: cs } = res as { comments: Comment[] };
+    const { comments: cs } = await apiPost<{ comments: Comment[] }>('adminListComments', { status: 'pending' });
     setComments(cs);
     setLoaded(true);
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
     void refresh();
   }, [refresh]);
 
   async function moderate(id: string, action: 'approve' | 'reject'): Promise<void> {
-    await socket.request('moderateComment', { id, action });
+    await apiPost('moderateComment', { id, action });
     await refresh();
   }
 

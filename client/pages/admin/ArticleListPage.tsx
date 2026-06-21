@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type ReactElement } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import { Link, useRouter } from '../../router';
@@ -10,17 +10,15 @@ function cornerLabel(key: string): string {
 }
 
 function ArticleListInner(): ReactElement {
-  const { socket } = useApp();
   const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   const refresh = useCallback(async () => {
-    const res = await socket.request('adminListArticles', {});
-    const { articles: all } = res as { articles: Article[] };
+    const { articles: all } = await apiPost<{ articles: Article[] }>('adminListArticles', {});
     setArticles(all);
     setLoaded(true);
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
     void refresh();
@@ -28,7 +26,7 @@ function ArticleListInner(): ReactElement {
 
   async function handleDelete(id: string): Promise<void> {
     if (!window.confirm('Delete this article? This cannot be undone.')) return;
-    await socket.request('deleteArticle', { id });
+    await apiPost('deleteArticle', { id });
     await refresh();
   }
 

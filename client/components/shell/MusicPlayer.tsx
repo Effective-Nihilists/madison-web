@@ -5,7 +5,7 @@ import {
   type ReactElement,
   type RefObject,
 } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../../api';
 import type { MusicTrack } from '../../../shared/blog';
 import type { MilkdropHandle } from './MilkdropBackground';
 import { useShell } from './shellContext';
@@ -26,7 +26,6 @@ export default function MusicPlayer({
 }: {
   milkdrop: RefObject<MilkdropHandle | null>;
 }): ReactElement {
-  const { socket } = useApp();
   const { setNowPlaying, toast } = useShell();
 
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
@@ -41,12 +40,11 @@ export default function MusicPlayer({
   // Load real tracks once.
   useEffect(() => {
     let alive = true;
-    void socket.request('listMusicTracks', {}).then((res) => {
-      const { tracks: loaded } = res as { tracks: MusicTrack[] };
-      if (alive) setTracks(loaded.slice().sort((a, b) => a.order - b.order));
+    void apiPost<{ tracks: MusicTrack[] }>('listMusicTracks', {}).then((res) => {
+      if (alive) setTracks(res.tracks.slice().sort((a, b) => a.order - b.order));
     }).catch(() => { /* no tracks / offline — ambient synth fallback */ });
     return () => { alive = false; };
-  }, [socket]);
+  }, []);
 
   const current = tracks[idx];
   const hasTracks = tracks.length > 0;

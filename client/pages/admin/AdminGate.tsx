@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
 import { Link } from '../../router';
 
@@ -10,16 +10,14 @@ import { Link } from '../../router';
 // user is authenticated — we only need to check that they are the allow-listed
 // admin (whoAmI().admin) and otherwise show a "not authorized" notice.
 export default function AdminGate({ children }: { children: ReactNode }): ReactElement {
-  const { socket } = useApp();
   const [admin, setAdmin] = useState<boolean | null>(null);
 
   useEffect(() => {
     let active = true;
     void (async () => {
       try {
-        const res = await socket.request('whoAmI', {});
+        const { admin: isAdmin } = await apiPost<{ admin: boolean }>('whoAmI', {});
         if (!active) return;
-        const { admin: isAdmin } = res as { admin: boolean };
         setAdmin(isAdmin);
       } catch {
         if (active) setAdmin(false);
@@ -28,7 +26,7 @@ export default function AdminGate({ children }: { children: ReactNode }): ReactE
     return () => {
       active = false;
     };
-  }, [socket]);
+  }, []);
 
   if (admin === null) {
     return (

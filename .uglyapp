@@ -3,5 +3,25 @@
   "auth": {
     "mode": "self",
     "magicLinkExpiresMin": 15
+  },
+  "deployTarget": {
+    "provider": "cloudflare-workers",
+    "workerName": "madison-web",
+    "workerUrl": "https://madison-web.justin-mann.workers.dev",
+    "cloudflareSubdomain": "justin-mann",
+    "neonProjectId": "billowing-forest-65231801",
+    "cloudflareAccountId": "9edc7fbe4a55b0b6489df8e7a120526c",
+    "r2BucketName": "madison-web",
+    "appDomain": "317010.xyz",
+    "appDomainZoneId": "9fbb1eb6d260bc7b1f16ba892affde42",
+    "customDomainUrl": "https://317010.xyz",
+    "sendingDomain": "317010.xyz",
+    "proxyTokenIds": {
+      "ai": "",
+      "email": "",
+      "push": "",
+      "search": ""
+    },
+    "lastDeployedAt": "2026-06-21T23:17:16.639Z"
   }
 }

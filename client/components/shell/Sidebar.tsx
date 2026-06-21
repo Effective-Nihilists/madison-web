@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactElement } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../../api';
 import { CORNERS, type ButtonImage } from '../../../shared/blog';
 import { Link } from '../../router';
 
@@ -21,20 +21,18 @@ export default function Sidebar({
   open: boolean;
   onClose: () => void;
 }): ReactElement {
-  const { socket } = useApp();
   const [images, setImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     let alive = true;
-    void socket.request('listButtonImages', {}).then((res) => {
+    void apiPost<{ images: ButtonImage[] }>('listButtonImages', {}).then((res) => {
       if (!alive) return;
-      const { images: loaded } = res as { images: ButtonImage[] };
       const map: Record<string, string> = {};
-      for (const img of loaded) map[img.key] = img.url;
+      for (const img of res.images) map[img.key] = img.url;
       setImages(map);
     }).catch(() => { /* fall back to picsum */ });
     return () => { alive = false; };
-  }, [socket]);
+  }, []);
 
   return (
     <aside className={`sidebar win${open ? ' open' : ''}`}>

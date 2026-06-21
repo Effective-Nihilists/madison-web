@@ -165,6 +165,13 @@ export const requests = defineRequests({
     input: z.object({}),
     output: z.object({ articles: z.array(ArticleDoc) }),
   }),
+  // Load a single article by _id for the admin editor (drafts included). There
+  // is no public getDoc HTTP route, so the editor fetches via this admin
+  // endpoint over same-origin HTTP (auth cookie) instead of socket.getDoc.
+  adminGetArticle: authReq({
+    input: z.object({ id: z.string().min(1) }),
+    output: z.object({ article: ArticleDoc.nullable() }),
+  }),
   saveArticle: authReq({
     input: ArticleInputSchema.extend({ id: z.string().optional() }),
     output: z.object({ id: z.string() }),

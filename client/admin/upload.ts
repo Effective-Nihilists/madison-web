@@ -3,9 +3,7 @@
 // `uploadMedia` request, returning the public URL. The server stores the bytes
 // and records a mediaAsset. `uploadMedia` input fields are { kind, name,
 // dataBase64 } (matching shared/api.ts).
-import type { useApp } from 'ugly-app/client';
-
-type Socket = ReturnType<typeof useApp>['socket'];
+import { apiPost } from '../api';
 
 export type UploadKind = 'image' | 'audio' | 'video';
 
@@ -28,16 +26,14 @@ function readFileAsBase64(file: File): Promise<string> {
 }
 
 export async function uploadMedia(
-  socket: Socket,
   kind: UploadKind,
   file: File,
 ): Promise<string> {
   const dataBase64 = await readFileAsBase64(file);
-  const res = await socket.request('uploadMedia', {
+  const { url } = await apiPost<{ url: string }>('uploadMedia', {
     kind,
     name: file.name,
     dataBase64,
   });
-  const { url } = res as { url: string };
   return url;
 }

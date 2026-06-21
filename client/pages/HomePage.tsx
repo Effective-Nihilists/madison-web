@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactElement } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import { Link } from '../router';
 import { CORNERS, type Article, type RandomThought } from '../../shared/blog';
@@ -18,7 +18,6 @@ function toMs(d: number | Date): number {
 }
 
 export default function HomePage(): ReactElement {
-  const { socket } = useApp();
   const [thought, setThought] = useState<RandomThought | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -28,12 +27,12 @@ export default function HomePage(): ReactElement {
     void (async () => {
       try {
         const [tRes, aRes] = await Promise.all([
-          socket.request('listRandomThoughts', { limit: 1 }),
-          socket.request('listArticles', {}),
+          apiPost<{ thoughts: RandomThought[] }>('listRandomThoughts', { limit: 1 }),
+          apiPost<{ articles: Article[] }>('listArticles', {}),
         ]);
         if (!active) return;
-        const { thoughts } = tRes as { thoughts: RandomThought[] };
-        const { articles: all } = aRes as { articles: Article[] };
+        const { thoughts } = tRes;
+        const { articles: all } = aRes;
         setThought(thoughts[0] ?? null);
         const recent = [...all]
           .filter((a) => a.status === 'published')
@@ -46,13 +45,26 @@ export default function HomePage(): ReactElement {
     return () => {
       active = false;
     };
-  }, [socket]);
+  }, []);
+
+  const isEmpty = loaded && !thought && articles.length === 0;
 
   return (
     <>
       <div className="announce">
         <span>✦ welcome to 317010.xyz ✦ best viewed in Netscape Navigator @ 1024×768 ✦ now with 100% more chaos ✦ Cosmoo the loaf-knight approves ✦ sign the guestbook ✦ mind the scanlines ✦ tea is brewing ✦</span>
       </div>
+
+      {isEmpty && (
+        <Win9xWindow title="welcome.txt — Notepad" className="featured stagger" bodyClassName="doc-body">
+          <span className="stamp">FRESH INSTALL</span>
+          <h2>no posts yet</h2>
+          <p className="note">
+            this little corner of the internet is still warming up — no random thoughts and no
+            published articles just yet. brew some tea and check back soon ✦
+          </p>
+        </Win9xWindow>
+      )}
 
       <Win9xWindow title="★ random_thoughts.txt — Notepad" className="featured stagger">
         <span className="stamp">FEATURED · RANDOM THOUGHTS</span>

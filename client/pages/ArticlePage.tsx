@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent, type ReactElement } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import Markdown from '../components/Markdown';
 import { Link } from '../router';
@@ -16,7 +16,6 @@ function toMs(d: number | Date): number {
 // ArticlePage — reader: cover, title/byline, markdown body in a readable
 // document window, approved comments, and a moderated comment form (Task 11).
 export default function ArticlePage({ slug }: { slug: string }): ReactElement {
-  const { socket } = useApp();
   const [article, setArticle] = useState<Article | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -35,14 +34,12 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
     setSubmitted(false);
     void (async () => {
       try {
-        const res = await socket.request('getArticle', { slug });
+        const { article: a } = await apiPost<{ article: Article | null }>('getArticle', { slug });
         if (!active) return;
-        const { article: a } = res as { article: Article | null };
         setArticle(a);
         if (a) {
-          const cRes = await socket.request('listApprovedComments', { articleId: a._id });
+          const { comments: cs } = await apiPost<{ comments: Comment[] }>('listApprovedComments', { articleId: a._id });
           if (!active) return;
-          const { comments: cs } = cRes as { comments: Comment[] };
           setComments(cs);
         }
       } finally {
@@ -52,7 +49,7 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
     return () => {
       active = false;
     };
-  }, [socket, slug]);
+  }, [slug]);
 
   async function handleSubmit(e: FormEvent): Promise<void> {
     e.preventDefault();
@@ -63,7 +60,7 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
     setSubmitting(true);
     setError(null);
     try {
-      await socket.request('submitComment', {
+      await apiPost('submitComment', {
         articleId: article._id,
         name: trimmedName,
         body: trimmedBody,

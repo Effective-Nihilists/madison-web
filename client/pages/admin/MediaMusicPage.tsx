@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type ChangeEvent, type ReactElement } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import { Link } from '../../router';
@@ -9,7 +9,6 @@ import { CORNERS, type ButtonImage, type MusicTrack } from '../../../shared/blog
 type TrackKind = 'wav' | 'mp4';
 
 function MusicManager(): ReactElement {
-  const { socket } = useApp();
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
   const [title, setTitle] = useState('');
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
@@ -18,10 +17,9 @@ function MusicManager(): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const res = await socket.request('listMusicTracks', {});
-    const { tracks: ts } = res as { tracks: MusicTrack[] };
+    const { tracks: ts } = await apiPost<{ tracks: MusicTrack[] }>('listMusicTracks', {});
     setTracks(ts);
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
     void refresh();
@@ -36,7 +34,7 @@ function MusicManager(): ReactElement {
     setUploading(true);
     setError(null);
     try {
-      const url = await uploadMedia(socket, isMp4 ? 'video' : 'audio', file);
+      const url = await uploadMedia(isMp4 ? 'video' : 'audio', file);
       setPendingUrl(url);
       setPendingKind(kind);
       if (!title.trim()) setTitle(file.name.replace(/\.(wav|mp4)$/i, ''));
@@ -52,14 +50,14 @@ function MusicManager(): ReactElement {
       setError('upload a file and enter a title first');
       return;
     }
-    await socket.request('addMusicTrack', { title: title.trim(), url: pendingUrl, kind: pendingKind });
+    await apiPost('addMusicTrack', { title: title.trim(), url: pendingUrl, kind: pendingKind });
     setTitle('');
     setPendingUrl(null);
     await refresh();
   }
 
   async function handleDelete(id: string): Promise<void> {
-    await socket.request('deleteMusicTrack', { id });
+    await apiPost('deleteMusicTrack', { id });
     await refresh();
   }
 
@@ -101,18 +99,16 @@ function MusicManager(): ReactElement {
 }
 
 function ButtonImageManager(): ReactElement {
-  const { socket } = useApp();
   const [images, setImages] = useState<Record<string, string>>({});
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const res = await socket.request('listButtonImages', {});
-    const { images: imgs } = res as { images: ButtonImage[] };
+    const { images: imgs } = await apiPost<{ images: ButtonImage[] }>('listButtonImages', {});
     const map: Record<string, string> = {};
     for (const img of imgs) map[img.key] = img.url;
     setImages(map);
-  }, [socket]);
+  }, []);
 
   useEffect(() => {
     void refresh();
@@ -125,8 +121,8 @@ function ButtonImageManager(): ReactElement {
     setBusyKey(key);
     setError(null);
     try {
-      const url = await uploadMedia(socket, 'image', file);
-      await socket.request('setButtonImage', { key, url });
+      const url = await uploadMedia('image', file);
+      await apiPost('setButtonImage', { key, url });
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'upload failed');

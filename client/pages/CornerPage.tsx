@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactElement } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import { Link } from '../router';
 import { CORNERS, type Article } from '../../shared/blog';
@@ -10,7 +10,6 @@ function toMs(d: number | Date): number {
 
 // CornerPage — lists published articles for one corner.
 export default function CornerPage({ corner }: { corner: string }): ReactElement {
-  const { socket } = useApp();
   const label = CORNERS.find((c) => c.key === corner)?.label ?? corner;
   const [articles, setArticles] = useState<Article[]>([]);
   const [loaded, setLoaded] = useState(false);
@@ -20,9 +19,8 @@ export default function CornerPage({ corner }: { corner: string }): ReactElement
     setLoaded(false);
     void (async () => {
       try {
-        const res = await socket.request('listArticles', { corner });
+        const { articles: all } = await apiPost<{ articles: Article[] }>('listArticles', { corner });
         if (!active) return;
-        const { articles: all } = res as { articles: Article[] };
         const published = all
           .filter((a) => a.status === 'published')
           .sort((x, y) => toMs(y.created) - toMs(x.created));
@@ -34,7 +32,7 @@ export default function CornerPage({ corner }: { corner: string }): ReactElement
     return () => {
       active = false;
     };
-  }, [socket, corner]);
+  }, [corner]);
 
   return (
     <Win9xWindow title={`${corner}.dir — Explorer`} className="article-win" bodyClassName="doc-body">

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent, type ReactElement } from 'react';
-import { useApp } from 'ugly-app/client';
+import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import Markdown from '../../components/Markdown';
@@ -19,7 +19,6 @@ function slugify(input: string): string {
 type Status = 'draft' | 'published';
 
 function EditorInner({ id }: { id?: string }): ReactElement {
-  const { socket } = useApp();
   const router = useRouter();
 
   const [title, setTitle] = useState('');
@@ -42,7 +41,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
     if (!id) return;
     let active = true;
     void (async () => {
-      const doc = await socket.getDoc<Article>('article', id);
+      const { article: doc } = await apiPost<{ article: Article | null }>('adminGetArticle', { id });
       if (!active || !doc) {
         if (active) setLoaded(true);
         return;
@@ -60,7 +59,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
     return () => {
       active = false;
     };
-  }, [socket, id]);
+  }, [id]);
 
   function handleTitleChange(value: string): void {
     setTitle(value);
@@ -74,7 +73,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
     setUploadingCover(true);
     setError(null);
     try {
-      const url = await uploadMedia(socket, 'image', file);
+      const url = await uploadMedia('image', file);
       setCoverImageUrl(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'cover upload failed');
@@ -90,7 +89,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
     setUploadingInline(true);
     setError(null);
     try {
-      const url = await uploadMedia(socket, 'image', file);
+      const url = await uploadMedia('image', file);
       const snippet = `\n![](${url})\n`;
       const el = bodyRef.current;
       if (el) {
@@ -115,7 +114,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
     setSaving(true);
     setError(null);
     try {
-      const res = await socket.request('saveArticle', {
+      const { id: savedId } = await apiPost<{ id: string }>('saveArticle', {
         ...(id ? { id } : {}),
         title: title.trim(),
         slug: slug.trim(),
@@ -125,7 +124,6 @@ function EditorInner({ id }: { id?: string }): ReactElement {
         coverImageUrl,
         status,
       });
-      const { id: savedId } = res as { id: string };
       if (!id) router.replace('admin/articles/:id', { id: savedId });
       else router.push('admin/articles', {});
     } catch (err) {
