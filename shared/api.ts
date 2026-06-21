@@ -1,4 +1,40 @@
-import { authReq, defineMessages, defineRequests, frameworkMessages, frameworkRequests, z } from 'ugly-app/shared';
+import { authReq, defineMessages, defineRequests, frameworkMessages, frameworkRequests, req, z } from 'ugly-app/shared';
+import {
+  ArticleSchema,
+  CommentSchema,
+  MusicTrackSchema,
+  ButtonImageSchema,
+  RandomThoughtSchema,
+} from './blog';
+
+// Article fields editable by the admin (everything except server-managed
+// authorId / publishedAt). Reused by saveArticle's input.
+const ArticleInputSchema = ArticleSchema.pick({
+  title: true,
+  slug: true,
+  corner: true,
+  excerpt: true,
+  bodyMarkdown: true,
+  coverImageUrl: true,
+  status: true,
+});
+
+// Framework DBObject metadata appended to every stored doc. `created`/`updated`
+// are typed as `Date` on `DBObject` but serialize to millisecond numbers over
+// the wire, so the output schema accepts either to stay type- and runtime-safe.
+const dbFields = {
+  _id: z.string(),
+  version: z.number(),
+  created: z.union([z.number(), z.date()]),
+  updated: z.union([z.number(), z.date()]),
+};
+
+// DB-doc shapes (schema + framework DBObject fields) for outputs.
+const ArticleDoc = ArticleSchema.extend(dbFields);
+const CommentDoc = CommentSchema.extend(dbFields);
+const RandomThoughtDoc = RandomThoughtSchema.extend(dbFields);
+const MusicTrackDoc = MusicTrackSchema.extend(dbFields);
+const ButtonImageDoc = ButtonImageSchema.extend(dbFields);
 
 export const requests = defineRequests({
   // Todo demo — CRUD requests
@@ -82,6 +118,100 @@ export const requests = defineRequests({
       type: z.enum(['bug', 'design', 'feature']),
       description: z.string().min(1).max(2000),
     }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+
+  // ── Blog — public reads ────────────────────────────────────────────────────
+  listArticles: req({
+    input: z.object({ corner: z.string().optional() }),
+    output: z.object({ articles: z.array(ArticleDoc) }),
+  }),
+  getArticle: req({
+    input: z.object({ slug: z.string().min(1) }),
+    output: z.object({ article: ArticleDoc.nullable() }),
+  }),
+  listRandomThoughts: req({
+    input: z.object({ limit: z.number().int().min(1).max(100).optional() }),
+    output: z.object({ thoughts: z.array(RandomThoughtDoc) }),
+  }),
+  listApprovedComments: req({
+    input: z.object({ articleId: z.string().min(1) }),
+    output: z.object({ comments: z.array(CommentDoc) }),
+  }),
+  submitComment: req({
+    input: z.object({
+      articleId: z.string().min(1),
+      name: z.string().min(1).max(60),
+      body: z.string().min(1).max(2000),
+    }),
+    output: z.object({ ok: z.boolean() }),
+    rateLimit: { max: 5, window: 60 },
+  }),
+  listMusicTracks: req({
+    input: z.object({}),
+    output: z.object({ tracks: z.array(MusicTrackDoc) }),
+  }),
+  listButtonImages: req({
+    input: z.object({}),
+    output: z.object({ images: z.array(ButtonImageDoc) }),
+  }),
+
+  // ── Blog / CMS — admin (authenticated + admin-gated) ───────────────────────
+  whoAmI: authReq({
+    input: z.object({}),
+    output: z.object({ admin: z.boolean() }),
+  }),
+  adminListArticles: authReq({
+    input: z.object({}),
+    output: z.object({ articles: z.array(ArticleDoc) }),
+  }),
+  saveArticle: authReq({
+    input: ArticleInputSchema.extend({ id: z.string().optional() }),
+    output: z.object({ id: z.string() }),
+  }),
+  deleteArticle: authReq({
+    input: z.object({ id: z.string().min(1) }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+  createRandomThought: authReq({
+    input: z.object({ body: z.string().min(1).max(4000) }),
+    output: z.object({ id: z.string() }),
+  }),
+  deleteRandomThought: authReq({
+    input: z.object({ id: z.string().min(1) }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+  adminListComments: authReq({
+    input: z.object({ status: z.enum(['pending', 'approved', 'rejected']).optional() }),
+    output: z.object({ comments: z.array(CommentDoc) }),
+  }),
+  moderateComment: authReq({
+    input: z.object({ id: z.string().min(1), action: z.enum(['approve', 'reject']) }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+  uploadMedia: authReq({
+    input: z.object({
+      kind: z.enum(['image', 'audio', 'video']),
+      name: z.string().min(1).max(200),
+      dataBase64: z.string().min(1),
+    }),
+    output: z.object({ url: z.string() }),
+    rateLimit: { max: 30, window: 60 },
+  }),
+  addMusicTrack: authReq({
+    input: z.object({
+      title: z.string().min(1),
+      url: z.string().min(1),
+      kind: z.enum(['wav', 'mp4']),
+    }),
+    output: z.object({ id: z.string() }),
+  }),
+  deleteMusicTrack: authReq({
+    input: z.object({ id: z.string().min(1) }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+  setButtonImage: authReq({
+    input: z.object({ key: z.string().min(1), url: z.string().min(1) }),
     output: z.object({ ok: z.boolean() }),
   }),
 
