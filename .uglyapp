@@ -1,3 +1,7 @@
 {
-  "projectId": "9m32yzoywa"
+  "projectId": "9m32yzoywa",
+  "auth": {
+    "mode": "self",
+    "magicLinkExpiresMin": 15
+  }
 }
