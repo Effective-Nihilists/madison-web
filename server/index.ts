@@ -14,11 +14,13 @@ import {
 import { nanoid } from 'nanoid';
 import { enableConversations } from 'ugly-app/conversation/server';
 import { enableCollab } from 'ugly-app/collab/server';
-import type { WorkerHandlers } from 'ugly-app/shared';
+import type { TypedDB, WorkerHandlers } from 'ugly-app/shared';
 import { dbDefaults } from 'ugly-app/shared';
 import { messages, requests } from '../shared/api';
 import type { Todo } from '../shared/collections';
 import { collections } from '../shared/collections';
+import { makeHandlers } from './handlers';
+import { seedAdminOnCreate } from './admin';
 import { cronTasks } from '../shared/cron';
 import { experiments } from '../shared/experiments';
 import en from '../shared/lang/en';
@@ -114,6 +116,11 @@ const app = createApp(
       await emailSend({ userId, subject, html, id });
       return { ok: true };
     },
+
+    // Blog / CMS handlers — shared with server/workers.ts via makeHandlers.
+    // `app.db` isn't assigned yet during createApp, so pass a lazy getter.
+    // The explicit return annotation breaks the app↔handlers inference cycle.
+    ...makeHandlers((): TypedDB => app.db),
   } satisfies RequestHandlers<typeof requests>,
   collections,
   (configurator: AppConfigurator) => {
@@ -133,6 +140,12 @@ const app = createApp(
     configurator.setOnEmail(async (inbound: InboundEmail) => {
       await Promise.resolve();
       console.log('[Email] Received:', { from: inbound.from, id: inbound.id, subject: inbound.subject });
+    });
+
+    // Self-hosted magic-link: seed the admin allowlist on first login when the
+    // verified email matches ADMIN_EMAIL. The hook is invoked as (userId, info, db).
+    configurator.setOnUserCreate(async (userId, info, db) => {
+      await seedAdminOnCreate(db, userId, info.email);
     });
 
     // ── Conversations (AI chat) ────────────────────────────────────────────
