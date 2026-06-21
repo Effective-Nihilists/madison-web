@@ -68,16 +68,16 @@ function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const existing = document.querySelector<HTMLScriptElement>(`script[src="${src}"]`);
     if (existing) {
-      if (existing.dataset['loaded'] === 'true') { resolve(); return; }
-      existing.addEventListener('load', () => resolve(), { once: true });
-      existing.addEventListener('error', () => reject(new Error(`failed: ${src}`)), { once: true });
+      if (existing.dataset.loaded === 'true') { resolve(); return; }
+      existing.addEventListener('load', () => { resolve(); }, { once: true });
+      existing.addEventListener('error', () => { reject(new Error(`failed: ${src}`)); }, { once: true });
       return;
     }
     const s = document.createElement('script');
     s.src = src;
     s.async = true;
-    s.addEventListener('load', () => { s.dataset['loaded'] = 'true'; resolve(); }, { once: true });
-    s.addEventListener('error', () => reject(new Error(`failed: ${src}`)), { once: true });
+    s.addEventListener('load', () => { s.dataset.loaded = 'true'; resolve(); }, { once: true });
+    s.addEventListener('error', () => { reject(new Error(`failed: ${src}`)); }, { once: true });
     document.head.appendChild(s);
   });
 }
@@ -128,7 +128,7 @@ const MilkdropBackground = forwardRef<MilkdropHandle>(function MilkdropBackgroun
     getSynthFilter: () => filterRef.current,
     resume: () => {
       const ctx = audioCtxRef.current;
-      if (ctx && ctx.state === 'suspended') void ctx.resume();
+      if (ctx?.state === 'suspended') void ctx.resume();
     },
     loadRandomPreset,
     setOpacity: (v: number) => {
@@ -144,9 +144,14 @@ const MilkdropBackground = forwardRef<MilkdropHandle>(function MilkdropBackgroun
     // ── Build the silent ambient synth graph ────────────────────────────────
     function ensureAudio(): void {
       if (audioCtxRef.current) return;
-      const Ctor = window.AudioContext ?? w.webkitAudioContext;
-      if (!Ctor) return;
-      const ctx = new Ctor();
+      // Standard constructor, with a webkit-prefixed fallback for old Safari.
+      // The DOM lib types `window.AudioContext` as always-present, so the
+      // runtime feature-detect reads as "unnecessary" to the linter — but it
+      // genuinely matters on legacy WebKit, hence the targeted disable.
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      const AudioCtor = window.AudioContext as typeof AudioContext | undefined ?? w.webkitAudioContext;
+      if (!AudioCtor) return;
+      const ctx = new AudioCtor();
       audioCtxRef.current = ctx;
 
       const master = ctx.createGain();

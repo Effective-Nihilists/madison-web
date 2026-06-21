@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>317010.xyz ~*~ Madison's Chaos Blog ~*~</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik+Mono+One&family=VT323&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cyan:#00f0ff; --magenta:#ff00c8; --lime:#aaff00; --yellow:#ffe600;
+    --purple:#9d00ff; --orange:#ff7a00; --chrome:#c9d6ff; --ink:#10001f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Comic Neue', 'Comic Sans MS', cursive, sans-serif;
+    color:#15002b;
+    background-color:#1a0033;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,0,200,.25) 0 6px, transparent 7px),
+      radial-gradient(circle at 60% 70%, rgba(0,240,255,.25) 0 4px, transparent 5px),
+      radial-gradient(circle at 80% 30%, rgba(170,255,0,.22) 0 5px, transparent 6px),
+      repeating-linear-gradient(45deg, #2a004d 0 22px, #210040 22px 44px);
+    background-size:90px 90px, 70px 70px, 110px 110px, auto;
+    animation:bgdrift 14s linear infinite;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 L19 12 L30 13 L21 19 L24 30 L16 23 L8 30 L11 19 L2 13 L13 12 Z' fill='%23ffe600' stroke='%23ff00c8' stroke-width='2'/%3E%3C/svg%3E") 16 16, auto;
+    overflow-x:hidden;
+  }
+  @keyframes bgdrift{from{background-position:0 0,0 0,0 0,0 0;}to{background-position:90px 90px,-70px 70px,110px -110px,0 0;}}
+  a{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cpath d='M6 2 L6 26 L12 20 L17 31 L21 29 L16 18 L25 18 Z' fill='%2300f0ff' stroke='%23ff00c8' stroke-width='2'/%3E%3C/svg%3E") 6 2, pointer;}
+
+  /* ===== TOP TOGGLE ===== */
+  #toggle{
+    position:fixed;top:0;left:0;right:0;z-index:1000;
+    display:flex;gap:0;justify-content:center;
+    background:linear-gradient(90deg,var(--magenta),var(--purple),var(--cyan));
+    border-bottom:4px ridge var(--chrome);
+    box-shadow:0 4px 18px rgba(0,0,0,.6);
+    padding:6px;
+  }
+  #toggle button{
+    font-family:'Bungee',cursive;font-size:15px;letter-spacing:1px;
+    padding:9px 26px;margin:0 6px;border:3px outset #fff;border-radius:4px;
+    color:#10001f;text-shadow:0 1px 0 #fff;
+    background:linear-gradient(#fff,var(--chrome) 50%,#9fb0ff);
+    cursor:pointer;transition:transform .12s;
+  }
+  #toggle button:hover{transform:translateY(-2px) scale(1.05);}
+  #toggle button.active{
+    background:linear-gradient(var(--yellow),var(--orange));
+    border-style:inset;animation:wobble 1s infinite;
+  }
+  @keyframes wobble{0%,100%{transform:rotate(-1.5deg);}50%{transform:rotate(1.5deg);}}
+
+  .wrap{max-width:1080px;margin:64px auto 0;padding:0 12px 60px;}
+
+  /* ===== shared frame ===== */
+  .frame{
+    background:repeating-linear-gradient(135deg,#fff 0 12px,#f3f0ff 12px 24px);
+    border:5px double var(--magenta);
+    box-shadow:0 0 0 3px var(--cyan), 0 8px 30px rgba(0,0,0,.5);
+    border-radius:6px;margin:18px 0;padding:18px;
+    position:relative;
+  }
+
+  /* ===== WordArt headings ===== */
+  .wordart{
+    font-family:'Rubik Mono One',sans-serif;text-align:center;line-height:1.05;
+    background:linear-gradient(90deg,var(--magenta),var(--yellow),var(--lime),var(--cyan),var(--magenta));
+    background-size:300% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    -webkit-text-stroke:2px #10001f;
+    text-shadow:4px 4px 0 rgba(0,0,0,.25);
+    animation:shimmer 5s linear infinite;
+    margin:0;
+  }
+  @keyframes shimmer{to{background-position:300% 0;}}
+
+  .brand{font-size:clamp(38px,8vw,86px);}
+  .tagline{font-family:'VT323',monospace;font-size:26px;text-align:center;color:#10001f;margin:4px 0 8px;}
+  .tagline .blink{color:var(--magenta);}
+
+  /* glitter sparkle layer */
+  .glitter{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:6px;}
+  .glitter i{position:absolute;width:8px;height:8px;background:var(--yellow);
+    clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);
+    animation:tw 1.6s infinite;}
+  @keyframes tw{0%,100%{opacity:0;transform:scale(.3);}50%{opacity:1;transform:scale(1.1);}}
+
+  .rainbowhr{height:8px;border:0;border-radius:8px;margin:14px 0;
+    background:linear-gradient(90deg,red,orange,var(--yellow),green,var(--cyan),blue,violet);
+    box-shadow:0 0 8px #fff;}
+
+  /* marquee */
+  .mq{overflow:hidden;white-space:nowrap;background:#10001f;color:var(--lime);
+    font-family:'VT323',monospace;font-size:22px;border:3px ridge var(--cyan);
+    border-radius:4px;padding:5px 0;}
+  .mq span{display:inline-block;padding-left:100%;animation:scroll 18s linear infinite;}
+  @keyframes scroll{to{transform:translateX(-100%);}}
+
+  .badge{display:inline-block;background:red;color:#fff;font-family:'Bungee',cursive;
+    font-size:11px;padding:2px 7px;border-radius:3px;transform:rotate(-8deg);
+    border:2px solid #fff;animation:blink 1s steps(1) infinite;margin-left:6px;}
+  @keyframes blink{50%{opacity:.15;}}
+
+  /* corner nav links */
+  .cornernav{text-align:center;line-height:2.2;margin:8px 0;}
+  .cornernav a{font-family:'VT323',monospace;font-size:20px;text-decoration:none;
+    color:var(--purple);background:#fff;padding:2px 8px;margin:3px;border:2px outset var(--cyan);
+    border-radius:4px;display:inline-block;}
+  .cornernav a:hover{background:var(--yellow);transform:rotate(-2deg) scale(1.08);color:var(--magenta);}
+  .cornernav a::before{content:"★ ";color:var(--magenta);}
+
+  /* featured post */
+  .featured{background:linear-gradient(135deg,#fff3fb,#e9fbff);border:4px dashed var(--magenta);
+    border-radius:8px;padding:14px 18px;position:relative;}
+  .featured h3{font-family:'Bungee',cursive;color:var(--purple);margin:6px 0;font-size:22px;}
+  .stamp{position:absolute;top:-14px;right:14px;background:var(--lime);color:#10001f;
+    font-family:'Bungee',cursive;font-size:12px;padding:4px 10px;border:2px dashed #10001f;
+    border-radius:20px;transform:rotate(6deg);}
+  .ts{font-family:'VT323',monospace;font-size:18px;color:var(--magenta);}
+
+  /* corner grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;margin-top:10px;}
+  .card{background:linear-gradient(#fff,var(--chrome));border:3px outset #fff;border-radius:8px;
+    padding:14px 8px;text-align:center;text-decoration:none;color:#10001f;
+    box-shadow:3px 3px 0 var(--magenta);transition:transform .15s, box-shadow .15s;}
+  .card:hover{transform:translate(-3px,-3px) rotate(-1.5deg);box-shadow:6px 6px 0 var(--cyan);background:linear-gradient(var(--yellow),#fff);}
+  .card .ico{font-size:32px;display:block;filter:drop-shadow(2px 2px 0 var(--magenta));}
+  .card .nm{font-family:'Bungee',cursive;font-size:13px;display:block;margin-top:6px;}
+
+  .twocol{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;}
+  @media(max-width:760px){.twocol{grid-template-columns:1fr;}}
+
+  /* music player */
+  .player{background:#0a0017;border:4px ridge var(--cyan);border-radius:8px;color:var(--cyan);
+    font-family:'VT323',monospace;padding:14px;box-shadow:inset 0 0 24px rgba(0,240,255,.3);}
+  .player .lcd{background:#001b1f;border:2px inset var(--cyan);padding:8px;border-radius:4px;margin-bottom:8px;}
+  .player .now{color:var(--lime);font-size:22px;}
+  .player .bars{display:flex;gap:3px;height:26px;align-items:flex-end;margin:6px 0;}
+  .player .bars i{flex:1;background:linear-gradient(var(--magenta),var(--cyan));animation:eq .8s ease-in-out infinite;}
+  .player .bars i:nth-child(2n){animation-duration:.6s;}
+  .player .bars i:nth-child(3n){animation-duration:1s;}
+  @keyframes eq{0%,100%{height:20%;}50%{height:100%;}}
+  .player ul{list-style:none;padding:0;margin:0;font-size:18px;}
+  .player li{padding:3px 4px;border-bottom:1px dotted #155;}
+  .player li:hover{background:#102;color:var(--yellow);}
+  .player .ctrls{margin-top:8px;text-align:center;font-size:22px;}
+  .player .ctrls button{font-family:'VT323',monospace;background:linear-gradient(#fff,#9fb0ff);
+    border:3px outset #fff;border-radius:4px;font-size:18px;padding:2px 10px;cursor:pointer;}
+
+  /* wheel */
+  .wheelbox{text-align:center;}
+  .wheel{width:200px;height:200px;border-radius:50%;margin:6px auto;position:relative;
+    border:8px ridge var(--yellow);box-shadow:0 0 22px var(--magenta);
+    background:conic-gradient(var(--magenta) 0 45deg,var(--cyan) 45deg 90deg,var(--lime) 90deg 135deg,
+      var(--yellow) 135deg 180deg,var(--purple) 180deg 225deg,var(--orange) 225deg 270deg,
+      #ff3bac 270deg 315deg,#3bffdf 315deg 360deg);
+    transition:transform 3.5s cubic-bezier(.17,.67,.2,1);}
+  .wheel::after{content:"";position:absolute;inset:0;margin:auto;width:34px;height:34px;border-radius:50%;
+    background:radial-gradient(#fff,var(--magenta));border:3px solid #10001f;top:0;bottom:0;left:0;right:0;}
+  .wheelbox .ptr{font-size:30px;color:var(--yellow);line-height:0;}
+  .spinbtn{font-family:'Bungee',cursive;background:linear-gradient(var(--lime),var(--cyan));
+    border:4px outset #fff;border-radius:6px;padding:8px 20px;cursor:pointer;font-size:15px;margin-top:8px;}
+  .spinbtn:active{border-style:inset;}
+  .wheelres{font-family:'VT323',monospace;font-size:22px;color:var(--purple);min-height:26px;}
+
+  /* counter */
+  .counter{text-align:center;}
+  .odometer{display:inline-flex;gap:3px;}
+  .odometer b{font-family:'VT323',monospace;background:#10001f;color:var(--lime);
+    font-size:30px;padding:2px 8px;border:2px inset var(--cyan);border-radius:3px;}
+  .visitor{font-family:'Bungee',cursive;color:var(--magenta);font-size:16px;}
+
+  /* under construction */
+  .construction{display:flex;align-items:center;gap:12px;justify-content:center;
+    background:repeating-linear-gradient(45deg,#10001f 0 18px,var(--yellow) 18px 36px);
+    padding:10px;border-radius:6px;border:3px solid #10001f;}
+  .construction .sign{background:#fff;padding:6px 14px;border:3px ridge var(--orange);border-radius:4px;
+    font-family:'Bungee',cursive;font-size:15px;color:#b30000;}
+  .worker{font-size:34px;display:inline-block;animation:dig .7s ease-in-out infinite;}
+  @keyframes dig{0%,100%{transform:rotate(-12deg);}50%{transform:rotate(12deg);}}
+
+  /* footer */
+  footer{text-align:center;font-family:'VT323',monospace;color:var(--chrome);font-size:20px;margin-top:18px;}
+  footer a{color:var(--lime);}
+  .webring{font-size:26px;color:var(--cyan);}
+  .netscape{color:var(--yellow);}
+
+  /* ===== ARTICLE VIEW ===== */
+  .breadcrumb{font-family:'VT323',monospace;font-size:20px;color:var(--magenta);}
+  .breadcrumb a{color:var(--cyan);text-decoration:none;}
+  .arttitle{font-family:'Bungee',cursive;font-size:clamp(26px,5vw,46px);
+    background:linear-gradient(90deg,var(--magenta),var(--purple),var(--cyan));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    -webkit-text-stroke:1.5px #10001f;text-shadow:3px 3px 0 rgba(255,230,0,.5);margin:6px 0;}
+  .byline{font-family:'VT323',monospace;font-size:20px;color:var(--purple);}
+  .hero{width:100%;height:300px;object-fit:cover;border:5px ridge var(--yellow);border-radius:8px;
+    box-shadow:0 0 18px var(--magenta);}
+  .article{font-size:18px;line-height:1.65;color:#1c0030;}
+  .article h2{font-family:'Bungee',cursive;color:var(--magenta);font-size:26px;margin-top:26px;
+    border-bottom:4px dotted var(--cyan);padding-bottom:4px;}
+  .article h3{font-family:'Bungee',cursive;color:var(--purple);font-size:19px;margin-top:18px;}
+  .article blockquote{border-left:8px solid var(--magenta);background:#fff3fb;margin:18px 0;
+    padding:10px 18px;font-style:italic;font-size:20px;border-radius:0 8px 8px 0;}
+  .article ul.need{list-style:none;padding-left:0;}
+  .article ul.need li{padding:4px 0 4px 30px;position:relative;}
+  .article ul.need li::before{content:"✦";position:absolute;left:4px;color:var(--magenta);font-size:20px;}
+  .pull{font-family:'Rubik Mono One',sans-serif;text-align:center;font-size:clamp(20px,3.4vw,30px);
+    background:linear-gradient(90deg,var(--cyan),var(--lime),var(--yellow));
+    -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:1.5px #10001f;
+    margin:26px 0;line-height:1.2;}
+  figure{margin:18px 0;text-align:center;}
+  figure img{max-width:100%;border:4px ridge var(--cyan);border-radius:8px;}
+  figcaption{font-family:'VT323',monospace;font-size:18px;color:var(--purple);margin-top:6px;}
+  .arcana{list-style:none;padding-left:0;counter-reset:arc;}
+  .arcana li{background:linear-gradient(#fff,#f0ecff);border:3px outset var(--chrome);border-radius:8px;
+    padding:10px 14px;margin:10px 0;box-shadow:3px 3px 0 var(--magenta);}
+  .arcana li b{font-family:'Bungee',cursive;color:var(--magenta);}
+  .callout{background:linear-gradient(135deg,#eaffd6,#d6f7ff);border:4px dashed var(--lime);
+    border-radius:10px;padding:14px 18px;margin:22px 0;}
+  .callout .ct{font-family:'Bungee',cursive;color:#3a8a00;display:block;margin-bottom:4px;}
+
+  /* comments */
+  .comments h2{font-family:'Bungee',cursive;color:var(--purple);text-align:center;}
+  .modnote{font-family:'VT323',monospace;text-align:center;color:var(--orange);font-size:20px;}
+  .cmt{background:#fff;border:3px solid var(--cyan);border-radius:8px;padding:10px 14px;margin:12px 0;
+    box-shadow:3px 3px 0 var(--magenta);}
+  .cmt .who{font-family:'Bungee',cursive;color:var(--magenta);font-size:15px;}
+  .cmt .ok{background:var(--lime);color:#10001f;font-family:'Bungee',cursive;font-size:10px;
+    padding:1px 6px;border-radius:10px;margin-left:6px;}
+  .cform label{font-family:'Bungee',cursive;font-size:13px;color:var(--purple);display:block;margin-top:8px;}
+  .cform input,.cform textarea{width:100%;font-family:'Comic Neue',cursive;font-size:16px;padding:8px;
+    border:3px inset var(--cyan);border-radius:5px;}
+  .cform button{font-family:'Bungee',cursive;background:linear-gradient(var(--yellow),var(--orange));
+    border:4px outset #fff;border-radius:6px;padding:8px 22px;cursor:pointer;margin-top:12px;font-size:14px;}
+
+  /* page-load stagger */
+  .reveal{opacity:0;transform:translateY(24px) scale(.97);}
+  .reveal.in{opacity:1;transform:none;transition:all .55s cubic-bezier(.2,.8,.2,1);}
+
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<nav id="toggle">
+  <button id="btnHome" class="active" onclick="showView('home')">★ HOME</button>
+  <button id="btnArticle" onclick="showView('article')">✦ READ ARTICLE</button>
+</nav>
+
+<!-- ===================== HOME ===================== -->
+<main id="home" class="wrap">
+
+  <header class="frame reveal">
+    <div class="glitter" data-glitter></div>
+    <h1 class="wordart brand">317010.xyz</h1>
+    <p class="tagline">~*~ a little corner of the internet <span class="blink">_</span> ~*~</p>
+    <hr class="rainbowhr">
+    <div class="mq"><span>★彡 WELCOME 2 MADISON'S CHAOS-BLOG ☆ sign the guestbook!! ☆ new tarot post is UP ☆ Cosmoo says hi 🐾 ☆ best viewed @ 1024x768 ☆ thx 4 visiting ♥彡</span></div>
+    <nav class="cornernav">
+      <a>Witchcraft Corner</a><a>Sci Corner</a><a>Health Corner</a><a>Random Thoughts</a>
+      <a>Wheel of Fortune</a><a>Art Blog</a><a>Music Player</a><a>Book Tracker</a>
+      <a>Fav Movies</a><a>Recipes</a><a>Fav Restaurants</a><a>Travel Map</a>
+      <a>Vision Board</a><a>Meme Gallery</a><a>Animal Gallery (Cosmoo &amp; kitties)</a>
+    </nav>
+  </header>
+
+  <section class="frame reveal">
+    <div class="featured">
+      <span class="stamp">FRESH!</span>
+      <h3>✎ Random Thoughts <span class="badge">NEW!</span></h3>
+      <p class="ts">today, 2:14am</p>
+      <p>can't sleep again so naturally i reorganized my entire tarot collection by color instead of suit. very productive. Cosmoo is sprawled across my keyboard like a furry paperweight and one of the kitties knocked a candle off the shelf (it's fine, nothing's on fire, relax). been thinking how the internet used to feel like a clubhouse you built yourself. so here's mine. messy, glittery, mine. anyway. going to bed. probably. ♥</p>
+    </div>
+  </section>
+
+  <section class="frame reveal">
+    <h2 class="wordart" style="font-size:30px;">~ EXPLORE THE CORNERS ~</h2>
+    <hr class="rainbowhr">
+    <div class="grid" id="cornerGrid"></div>
+  </section>
+
+  <div class="twocol">
+    <section class="frame reveal">
+      <h2 class="wordart" style="font-size:26px;">♫ MUSIC PLAYER ♫</h2>
+      <div class="player">
+        <div class="lcd">
+          <div>♪ NOW PLAYING:</div>
+          <div class="now" id="nowPlaying">Boards of Canada — Roygbiv</div>
+          <div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div>
+        <ul id="playlist">
+          <li>♬ Boards of Canada — Roygbiv</li>
+          <li>♬ Aphex Twin — Avril 14th</li>
+          <li>♬ Cocteau Twins — Cherry-coloured Funk</li>
+          <li>♬ Stereolab — Lo Boob Oscillator</li>
+          <li>♬ Broadcast — Come On Let's Go</li>
+        </ul>
+        <div class="ctrls">
+          <button onclick="track(-1)">⏮</button>
+          <button onclick="track(0)">⏯</button>
+          <button onclick="track(1)">⏭</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="frame reveal wheelbox">
+      <h2 class="wordart" style="font-size:26px;">WHEEL OF FORTUNE</h2>
+      <div class="ptr">▼</div>
+      <div class="wheel" id="wheel"></div>
+      <button class="spinbtn" onclick="spin()">✦ SPIN ME ✦</button>
+      <p class="wheelres" id="wheelRes">click to decide your fate...</p>
+    </section>
+  </div>
+
+  <section class="frame reveal counter">
+    <div class="construction" style="margin-bottom:14px;">
+      <span class="worker">👷</span>
+      <span class="sign">⚠ UNDER CONSTRUCTION ⚠</span>
+      <span class="worker" style="animation-delay:.35s;">🚧</span>
+    </div>
+    <p class="visitor">YOU ARE VISITOR #</p>
+    <div class="odometer" id="odo"></div>
+    <p class="visitor" style="font-size:13px;margin-top:8px;">© 1999&ndash;2026 ♥ hits since the dawn of time ♥</p>
+  </section>
+
+  <footer class="frame reveal" style="background:#10001f;">
+    <p><span class="webring">◄◄</span> &nbsp; <a href="#">[ guestbook ]</a> &nbsp; • &nbsp; <a href="#">[ email me ]</a> &nbsp; • &nbsp; <a href="#">[ webring ]</a> &nbsp; <span class="webring">►►</span></p>
+    <p class="netscape">✦ best viewed in Netscape Navigator 4.0 @ 1024x768 ✦</p>
+    <p>made with ♥, too much caffeine, and a fox named Cosmoo</p>
+  </footer>
+</main>
+
+<!-- ===================== ARTICLE ===================== -->
+<main id="article" class="wrap hidden">
+  <article class="frame reveal">
+    <div class="glitter" data-glitter></div>
+    <p class="breadcrumb"><a href="#">Witchcraft Corner</a> › <a href="#">Tarot</a></p>
+    <h1 class="arttitle">Reading the Major Arcana: A Beginner's Field Guide</h1>
+    <p class="byline">by Madison · 12 min read · ☾ filed under spooky things</p>
+    <hr class="rainbowhr">
+    <img class="hero" src="https://picsum.photos/seed/tarot/1000/300" alt="tarot cards spread">
+
+    <div class="article">
+      <p>So you bought a tarot deck (probably impulsively, at 1am, like me) and now it's sitting on your shelf radiating mysterious energy and mild guilt. Good news: you don't need to be a thousand-year-old witch to start reading it. You just need a quiet hour and a willingness to be a little woo-woo about it.</p>
+
+      <p>This guide covers the <b>Major Arcana</b> — the 22 big, dramatic, capital-L Life cards. They're the headliners of the deck, and learning them is the fastest way to feel like you actually know what's going on.</p>
+
+      <h2>What is the Major Arcana, anyway?</h2>
+      <p>The Major Arcana is the deck's main storyline — a journey from the wide-eyed Fool (card 0) all the way to the World (card XXI). When one of these shows up in a reading, it's the universe tapping the table and saying <i>pay attention, this one matters.</i></p>
+
+      <blockquote>"The cards don't predict the future. They hand you a flashlight and point it at the part of yourself you've been avoiding." — something I wrote on a sticky note and now believe completely</blockquote>
+
+      <h3>What you'll need</h3>
+      <ul class="need">
+        <li>a candle (vibes are non-negotiable)</li>
+        <li>a journal to scribble what each card stirs up</li>
+        <li>your deck — yes, the one still in shrink-wrap</li>
+        <li>one quiet hour with your phone face-down</li>
+      </ul>
+
+      <figure>
+        <img src="https://picsum.photos/seed/moon/640/360" alt="moon over water">
+        <figcaption>↑ I do most of my readings under the moon because I'm dramatic and it works for me.</figcaption>
+      </figure>
+
+      <p class="pull">"start with the first three cards — they teach you the whole grammar of the deck."</p>
+
+      <h2>The first three arcana</h2>
+      <p>Don't try to memorize all 22 at once. Learn these three deeply and the rest will start to make sense by relation.</p>
+
+      <ol class="arcana">
+        <li><b>0 — The Fool.</b> Fresh starts, leaps of faith, that thrilling/terrifying feeling of stepping off the cliff with no plan and a backpack full of hope.</li>
+        <li><b>I — The Magician.</b> You already have every tool you need; this card is the nudge to actually use them and turn intention into something real.</li>
+        <li><b>II — The High Priestess.</b> Intuition, secrets, the quiet inner voice you keep talking over. She says: stop forcing it and listen.</li>
+      </ol>
+
+      <h3>A note on reversals</h3>
+      <p>When a card shows up upside-down, don't panic. A reversal usually just turns the energy inward, or signals it's blocked or budding — not that doom is imminent. (You're allowed to ignore reversals entirely while learning. I did.)</p>
+
+      <div class="callout">
+        <span class="ct">🌿 Herb pairing</span>
+        Burn a little <b>mugwort</b> before a reading. It's the classic "open up your intuition" herb — earthy, dreamy, and it makes the whole ritual feel intentional. (Crack a window. Cosmoo hates the smell.)
+      </div>
+
+      <p>That's it. Light the candle, shuffle until it feels right, pull three cards, and write down whatever your gut says before you Google a single meaning. Your intuition is the actual point. The little booklet is just training wheels. ♥</p>
+    </div>
+  </article>
+
+  <section class="frame reveal comments">
+    <h2>✉ Guestbook / Comments ✉</h2>
+    <p class="modnote">⚠ comments are reviewed before they appear ⚠</p>
+    <hr class="rainbowhr">
+
+    <div class="cmt">
+      <p class="who">starlight_jenny <span class="ok">✓ APPROVED</span></p>
+      <p>okay the "training wheels" line unlocked something in me. i've had my deck for TWO YEARS too scared to read it. doing it tonight!!</p>
+    </div>
+    <div class="cmt">
+      <p class="who">moth_to_a_flame <span class="ok">✓ APPROVED</span></p>
+      <p>mugwort tip is real. also tell Cosmoo he's doing a great job (saw him in the random thoughts post lol)</p>
+    </div>
+
+    <form class="cform" onsubmit="fakeSubmit(event)">
+      <label>your name</label>
+      <input type="text" placeholder="e.g. crystal_gremlin" required>
+      <label>your message</label>
+      <textarea rows="4" placeholder="be nice, the moderator is sleepy..." required></textarea>
+      <button type="submit">✦ SIGN GUESTBOOK ✦</button>
+      <p class="modnote" id="cmtMsg" style="display:none;">★ thanks! your comment is in the moderation queue ★</p>
+    </form>
+  </section>
+
+  <footer class="frame reveal" style="background:#10001f;">
+    <p><span class="webring">◄◄</span> &nbsp; <a href="#" onclick="showView('home');return false;">[ back to home ]</a> &nbsp; <span class="webring">►►</span></p>
+    <p class="netscape">✦ best viewed in Netscape Navigator 4.0 ✦</p>
+  </footer>
+</main>
+
+<script>
+  // ---- corner grid data ----
+  var corners = [
+    ["🔮","Witchcraft"],["🛰","Sci Corner"],["🩺","Health"],["✎","Random Thoughts"],
+    ["🎡","Wheel of Fortune"],["🎨","Art Blog"],["🎧","Music Player"],["📚","Book Tracker"],
+    ["🎬","Fav Movies"],["🍜","Recipes"],["🍕","Fav Restaurants"],["🗺","Travel Map"],
+    ["📌","Vision Board"],["😹","Meme Gallery"],["🦊","Animal Gallery"]
+  ];
+  var g = document.getElementById('cornerGrid');
+  corners.forEach(function(c){
+    var a=document.createElement('a');a.href="#";a.className="card";
+    a.innerHTML='<span class="ico">'+c[0]+'</span><span class="nm">'+c[1]+'</span>';
+    g.appendChild(a);
+  });
+
+  // ---- glitter ----
+  document.querySelectorAll('[data-glitter]').forEach(function(box){
+    for(var i=0;i<22;i++){
+      var s=document.createElement('i');
+      s.style.left=Math.random()*100+'%';
+      s.style.top=Math.random()*100+'%';
+      s.style.animationDelay=(Math.random()*1.6)+'s';
+      var sz=(5+Math.random()*9);s.style.width=sz+'px';s.style.height=sz+'px';
+      var cols=['#ffe600','#ff00c8','#00f0ff','#aaff00','#fff'];
+      s.style.background=cols[i%cols.length];
+      box.appendChild(s);
+    }
+  });
+
+  // ---- view toggle ----
+  function showView(v){
+    document.getElementById('home').classList.toggle('hidden', v!=='home');
+    document.getElementById('article').classList.toggle('hidden', v!=='article');
+    document.getElementById('btnHome').classList.toggle('active', v==='home');
+    document.getElementById('btnArticle').classList.toggle('active', v==='article');
+    window.scrollTo(0,0);
+    runReveal();
+  }
+
+  // ---- staggered reveal ----
+  function runReveal(){
+    var visible = document.querySelectorAll('main:not(.hidden) .reveal');
+    visible.forEach(function(el,i){
+      el.classList.remove('in');
+      setTimeout(function(){el.classList.add('in');}, 90*i);
+    });
+  }
+
+  // ---- music player ----
+  var songs=[
+    "Boards of Canada — Roygbiv","Aphex Twin — Avril 14th",
+    "Cocteau Twins — Cherry-coloured Funk","Stereolab — Lo Boob Oscillator",
+    "Broadcast — Come On Let's Go"
+  ];
+  var cur=0;
+  function track(d){
+    if(d!==0){cur=(cur+d+songs.length)%songs.length;}
+    document.getElementById('nowPlaying').textContent=songs[cur];
+  }
+
+  // ---- wheel ----
+  var fates=["✨ good fortune!","🌧 stay in bed","☕ go make tea","🦊 pet Cosmoo","🔮 trust the cards",
+    "📚 read a book","🎲 take the chance","🌙 nap immediately"];
+  var rot=0;
+  function spin(){
+    var extra=1440+Math.floor(Math.random()*360);
+    rot+=extra;
+    document.getElementById('wheel').style.transform='rotate('+rot+'deg)';
+    document.getElementById('wheelRes').textContent='spinning...';
+    setTimeout(function(){
+      document.getElementById('wheelRes').textContent=fates[Math.floor(Math.random()*fates.length)];
+    },3500);
+  }
+
+  // ---- visitor counter (animated odometer) ----
+  var target=17010, odo=document.getElementById('odo');
+  function renderOdo(n){
+    var s=String(n).padStart(6,'0');
+    odo.innerHTML='';
+    for(var i=0;i<s.length;i++){var b=document.createElement('b');b.textContent=s[i];odo.appendChild(b);}
+  }
+  var oc=16980;
+  var ot=setInterval(function(){
+    oc+=Math.ceil((target-oc)/6);
+    if(oc>=target){oc=target;clearInterval(ot);}
+    renderOdo(oc);
+  },70);
+  renderOdo(oc);
+
+  // ---- comment form ----
+  function fakeSubmit(e){
+    e.preventDefault();
+    document.getElementById('cmtMsg').style.display='block';
+    e.target.querySelector('input').value='';
+    e.target.querySelector('textarea').value='';
+  }
+
+  // initial
+  runReveal();
+</script>
+</body>
+</html>

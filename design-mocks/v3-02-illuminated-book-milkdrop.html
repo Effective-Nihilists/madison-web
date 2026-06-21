@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>317010.xyz — a little corner of the internet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=UnifrakturMaguntia&family=Pirata+One&family=DotGothic16&family=Jersey+20&family=Righteous&family=Press+Start+2P&display=swap" rel="stylesheet" />
+<style>
+/* ============ THEME TOKENS ============ */
+:root{
+  --moss:#5a6b3b; --moss-deep:#3c4827; --terra:#b6552f; --terra-deep:#8a3c1f;
+  --ochre:#c79a3a; --ochre-deep:#9c7320; --plum:#5b3a52; --plum-deep:#3d2438;
+  --cream:#f4ead2; --parch:#e9dcb8; --ink:#2e2415; --gold:#b89233;
+  --gold-bright:#d9b758;
+  /* ===== MUTED RAINBOW (dusty, full spectrum, NO neon) ===== */
+  --mr-red:#b06a5e; --mr-orange:#c08a52; --mr-yellow:#c2b15c; --mr-lime:#8a9a5b;
+  --mr-green:#5f8a6a; --mr-teal:#5e9590; --mr-cyan:#6f9aa8; --mr-blue:#6e80ac;
+  --mr-indigo:#7d6fa3; --mr-purple:#9a6fa0; --mr-magenta:#a96a8e; --mr-pink:#bd8fa6;
+  --mr-lilac:#b3a6cf;
+  /* neutrals for win9x chrome */
+  --vellum:#efe6d4; --win-silver:#c9c5bc; --near-black:#14121a; --gold-leaf:#b9913f;
+  /* pixel/display chrome fonts */
+  --pix:"DotGothic16","Jersey 20",monospace;
+  --pix-tiny:"Press Start 2P","DotGothic16",monospace;
+  --chunk:"Righteous","Jersey 20",sans-serif;
+}
+html[data-theme="light"]{
+  --bg:#e7d8b1; --bg2:#ddca9c;
+  --surface:rgba(247,239,217,.86); --surface2:rgba(240,228,196,.92);
+  --text:#322512; --text-soft:#5b4a2c; --rubric:#a83218; --rubric2:#8a2b14;
+  --accent:var(--gold-deep,#9c7320); --frame:#9c7320; --frame2:#cda94e;
+  --line:rgba(120,90,40,.35); --shadow:rgba(70,50,15,.28);
+  --viz-filter:saturate(.78) sepia(.34) hue-rotate(-12deg) contrast(.96) brightness(1.02);
+  --viz-op:.46; --scrim:radial-gradient(120% 90% at 50% 0%, rgba(247,239,217,.34), rgba(231,216,177,.62) 60%, rgba(221,202,156,.8));
+  --display:"UnifrakturMaguntia", "Pirata One", serif;
+  --drawer-overlay:rgba(60,40,15,.42);
+}
+html[data-theme="dark"]{
+  --bg:#0a0b12; --bg2:#10101c;
+  --surface:rgba(20,21,34,.78); --surface2:rgba(28,28,46,.86);
+  --text:#e6dcc0; --text-soft:#b9ac86; --rubric:#d9824a; --rubric2:#c46a36;
+  --accent:#d9b758; --frame:#7c6326; --frame2:#caa64e;
+  --line:rgba(200,170,90,.22); --shadow:rgba(0,0,0,.6);
+  --viz-filter:saturate(.85) sepia(.2) hue-rotate(-6deg) contrast(1.02) brightness(.92);
+  --viz-op:.55; --scrim:radial-gradient(120% 90% at 50% 0%, rgba(20,16,32,.34), rgba(8,8,16,.66) 55%, rgba(4,4,9,.86));
+  --display:"Pirata One", "UnifrakturMaguntia", serif;
+  --drawer-overlay:rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+/* MAX-CHAOS global grade: muted, dusty, slightly retro-print. NOT neon. */
+html{filter:saturate(.85) sepia(.12); image-rendering:pixelated;
+  -webkit-font-smoothing:none; -moz-osx-font-smoothing:unset; font-smooth:never;}
+::selection{background:navy;color:#fff;}
+::-moz-selection{background:navy;color:#fff;}
+
+/* ===== WIN9x PIXEL SCROLLBARS (silver beveled, reigen-flavored) ===== */
+::-webkit-scrollbar{width:16px;}
+::-webkit-scrollbar:horizontal{height:17px;}
+::-webkit-scrollbar-corner{background:#dfdfdf;}
+::-webkit-scrollbar-track{background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg width='2' height='2' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M1 0H0v1h1v1h1V1H1V0z' fill='silver'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M2 0H1v1H0v1h1V1h1V0z' fill='%23fff'/%3E%3C/svg%3E");}
+::-webkit-scrollbar-thumb{background-color:silver;box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px gray,inset 2px 2px #dfdfdf;}
+::-webkit-scrollbar-button:vertical:start{height:17px;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='17' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15 0H0v16h1V1h14V0z' fill='%23DFDFDF'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M2 1H1v14h1V2h12V1H2z' fill='%23fff'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M16 17H0v-1h15V0h1v17z' fill='%23000'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15 1h-1v14H1v1h14V1z' fill='gray'/%3E%3Cpath fill='silver' d='M2 2h12v13H2z'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M8 6H7v1H6v1H5v1H4v1h7V9h-1V8H9V7H8V6z' fill='%23000'/%3E%3C/svg%3E");}
+::-webkit-scrollbar-button:vertical:end{height:17px;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg width='16' height='17' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15 0H0v16h1V1h14V0z' fill='%23DFDFDF'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M2 1H1v14h1V2h12V1H2z' fill='%23fff'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M16 17H0v-1h15V0h1v17z' fill='%23000'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15 1h-1v14H1v1h14V1z' fill='gray'/%3E%3Cpath fill='silver' d='M2 2h12v13H2z'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M11 6H4v1h1v1h1v1h1v1h1V9h1V8h1V7h1V6z' fill='%23000'/%3E%3C/svg%3E");}
+body{
+  font-family:"EB Garamond", serif; color:var(--text);
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(180,140,60,.12), transparent 40%),
+    radial-gradient(circle at 82% 78%, rgba(90,60,90,.1), transparent 45%),
+    repeating-linear-gradient(45deg, rgba(120,90,40,.015) 0 12px, transparent 12px 24px);
+  min-height:100vh; overflow-x:hidden; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+html[data-theme="dark"] body{
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(120,90,40,.14), transparent 42%),
+    radial-gradient(circle at 80% 80%, rgba(80,50,90,.16), transparent 48%);
+}
+
+/* ============ VIZ BACKGROUND ============ */
+#vizWrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+#viz{position:absolute; inset:0; width:100%; height:100%;
+  filter:var(--viz-filter); opacity:var(--viz-op); transition:opacity .8s ease, filter .8s ease;}
+#scrim{position:fixed; inset:0; z-index:1; pointer-events:none; background:var(--scrim);}
+#fallbackStars{position:fixed; inset:0; z-index:0; display:none; pointer-events:none;
+  background:radial-gradient(ellipse at 50% 30%, #1a1226, #060409 70%);}
+#fallbackStars.on{display:block;}
+.fbstar{position:absolute; width:2px;height:2px;border-radius:50%;background:#d9b758;animation:tw 3s ease-in-out infinite;}
+@keyframes tw{0%,100%{opacity:.2}50%{opacity:1}}
+
+/* ============ GRAIN / VELLUM TEXTURE ============ */
+body::after{content:"";position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");}
+html[data-theme="dark"] body::after{mix-blend-mode:screen;opacity:.25;}
+
+/* ============ CUSTOM CURSORS (grimoire/codex) ============ */
+/* DEFAULT — an ornate quill nib in earthy ink/gold. hotspot at the nib tip (3,3). */
+html,body{
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 5 L9 4 L26 21 Q28 23 27 26 Q24 27 22 25 L5 8 Z' fill='%23c79a3a' stroke='%233c4827' stroke-width='1.3' stroke-linejoin='round'/%3E%3Cpath d='M5 5 L11 11 L8 14 Z' fill='%232e2415'/%3E%3Cline x1='5' y1='5' x2='9' y2='9' stroke='%23f4ead2' stroke-width='1'/%3E%3Cpath d='M22 25 Q26 26 28 30' stroke='%238a3c1f' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") 4 4, auto;
+}
+/* POINTER — a gilded six-point sigil star for anything interactive. hotspot centered (12,12). */
+a,button,[role="button"],.clickable,.corner,.plate,.viewbtn,.icobtn,.tbtn,.tinybtn,.hamburger,
+.wheel,.upload,.pl-close,#spinBtn,#reopenTab,#stampSigil,.brand,.brand-secret,
+.frontispiece .flourish,.diary,.playlist li,.secret-card .close,label.upload{
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cg transform='translate(15 15)'%3E%3Cpath d='M0 -12 L2.4 -2.4 L12 0 L2.4 2.4 L0 12 L-2.4 2.4 L-12 0 L-2.4 -2.4 Z' fill='%23d9b758' stroke='%238a3c1f' stroke-width='1.1' stroke-linejoin='round'/%3E%3Cpath d='M0 -7 L1.2 -1.2 L7 0 L1.2 1.2 L0 7 L-1.2 1.2 L-7 0 L-1.2 -1.2 Z' fill='%23b6552f'/%3E%3Ccircle r='1.7' fill='%23f4ead2'/%3E%3C/g%3E%3C/svg%3E") 15 15, pointer;
+}
+/* TEXT — themed amber caret for inputs/textarea. hotspot centered horizontally (4,9). */
+input,textarea{
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='22' viewBox='0 0 10 22'%3E%3Crect x='4' y='2' width='2' height='18' fill='%239c7320'/%3E%3Cpath d='M1 2 H9 M1 20 H9' stroke='%23b89233' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") 5 11, text;
+}
+/* dark codex: cooler ember tint for the pointer sigil */
+html[data-theme="dark"] a,html[data-theme="dark"] button,html[data-theme="dark"] [role="button"],
+html[data-theme="dark"] .clickable,html[data-theme="dark"] .corner,html[data-theme="dark"] .plate,
+html[data-theme="dark"] .viewbtn,html[data-theme="dark"] .icobtn,html[data-theme="dark"] .tbtn,
+html[data-theme="dark"] .tinybtn,html[data-theme="dark"] .hamburger,html[data-theme="dark"] .wheel,
+html[data-theme="dark"] .upload,html[data-theme="dark"] .pl-close,html[data-theme="dark"] #spinBtn,
+html[data-theme="dark"] #reopenTab,html[data-theme="dark"] #stampSigil,html[data-theme="dark"] .brand,
+html[data-theme="dark"] .brand-secret,html[data-theme="dark"] .frontispiece .flourish,
+html[data-theme="dark"] .diary,html[data-theme="dark"] .playlist li,html[data-theme="dark"] .secret-card .close,
+html[data-theme="dark"] label.upload{
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cg transform='translate(15 15)'%3E%3Cpath d='M0 -12 L2.4 -2.4 L12 0 L2.4 2.4 L0 12 L-2.4 2.4 L-12 0 L-2.4 -2.4 Z' fill='%23caa64e' stroke='%235b3a52' stroke-width='1.1' stroke-linejoin='round'/%3E%3Cpath d='M0 -7 L1.2 -1.2 L7 0 L1.2 1.2 L0 7 L-1.2 1.2 L-7 0 L-1.2 -1.2 Z' fill='%23d9824a'/%3E%3Ccircle r='1.7' fill='%23e6dcc0'/%3E%3C/g%3E%3C/svg%3E") 15 15, pointer;
+}
+/* cursor trail overlay — above viz + content, never blocks clicks */
+#cursorFx{position:fixed;inset:0;z-index:85;pointer-events:none;}
+@media (pointer:coarse){
+  html,body{cursor:auto;}
+  #cursorFx{display:none;}
+}
+
+/* ============ LAYOUT ============ */
+#app{position:relative; z-index:3;}
+.topbar{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; gap:14px;
+  padding:10px 18px; backdrop-filter:blur(6px);
+  background:linear-gradient(var(--surface2), var(--surface));
+  border-bottom:1px solid var(--frame);
+  box-shadow:0 2px 18px var(--shadow);
+}
+.hamburger{display:none; background:none;border:1px solid var(--frame);border-radius:8px;
+  color:var(--text);padding:7px;cursor:pointer;}
+.hamburger:hover{background:rgba(180,140,60,.16);}
+.brand{font-family:var(--display); font-size:30px; line-height:1; color:var(--rubric);
+  text-shadow:0 1px 0 var(--frame2); cursor:pointer; user-select:none; position:relative; letter-spacing:.5px;}
+.brand .dot{color:var(--moss);}
+.brand-secret{position:absolute; inset:0; cursor:pointer;}
+.tagline{font-style:italic; color:var(--text-soft); font-size:15px; margin-left:2px;}
+.topnav{margin-left:auto; display:flex; align-items:center; gap:8px;}
+.viewbtn{font-family:"Cormorant Garamond",serif; font-weight:600; letter-spacing:.14em; font-size:13px;
+  background:none; border:1px solid var(--frame); color:var(--text); padding:8px 14px; cursor:pointer;
+  border-radius:4px; text-transform:uppercase;}
+.viewbtn.active{background:var(--rubric); color:var(--cream); border-color:var(--rubric2);}
+.viewbtn:hover{background:rgba(168,50,24,.14);}
+.icobtn{background:none;border:1px solid var(--frame);border-radius:8px;color:var(--text);
+  width:38px;height:38px;display:grid;place-items:center;cursor:pointer;}
+.icobtn:hover{background:rgba(180,140,60,.16);}
+
+.shell{display:grid; grid-template-columns:266px 1fr; gap:0; align-items:start;}
+
+/* ============ SIDEBAR ============ */
+.sidebar{
+  position:sticky; top:60px; align-self:start;
+  max-height:calc(100vh - 60px); overflow-y:auto;
+  padding:18px 14px 60px; margin:14px 0 14px 14px;
+  background:var(--surface); border:1px solid var(--frame); border-radius:10px;
+  box-shadow:0 6px 26px var(--shadow);
+}
+.sidebar h3{font-family:"Cormorant Garamond",serif;color:var(--rubric);text-transform:uppercase;
+  letter-spacing:.16em;font-size:12px;margin:4px 0 12px;text-align:center;}
+.sidebar h3::before,.sidebar h3::after{content:"❦";color:var(--gold);margin:0 6px;font-size:11px;}
+.corner{
+  display:flex; align-items:center; gap:10px; padding:6px; margin-bottom:6px;
+  border:1px solid transparent; border-radius:8px; cursor:pointer; position:relative;
+  transition:.18s;
+}
+.corner:hover{border-color:var(--frame); background:rgba(180,140,60,.1);}
+.corner .thumb{width:42px;height:42px;border-radius:6px;flex:0 0 auto;
+  background-size:cover;background-position:center;
+  border:1px solid var(--frame2); box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);}
+.corner .cname{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:15.5px;color:var(--text);line-height:1.15;}
+.corner .pencil{margin-left:auto;opacity:0;transition:.18s;color:var(--text-soft);}
+.corner:hover .pencil{opacity:.85;}
+
+/* drawer overlay (mobile) */
+#drawerOverlay{display:none; position:fixed; inset:0; z-index:45; background:var(--drawer-overlay);
+  backdrop-filter:blur(2px);}
+#drawerOverlay.on{display:block;}
+
+/* ============ MAIN ============ */
+.main{padding:14px 22px 80px; min-width:0;}
+.view{display:none;} .view.active{display:block;}
+
+/* frontispiece */
+.frontispiece{
+  text-align:center; padding:34px 20px 30px; margin-bottom:22px;
+  background:var(--surface); border:2px solid var(--frame); border-radius:14px;
+  position:relative; box-shadow:0 8px 30px var(--shadow);
+}
+.ornframe{position:absolute; inset:7px; border:1px solid var(--frame2); border-radius:9px; pointer-events:none;}
+.ornframe::before,.ornframe::after{content:"❧";position:absolute;color:var(--gold);font-size:22px;}
+.ornframe::before{top:-2px;left:8px;} .ornframe::after{bottom:-8px;right:8px;transform:scaleX(-1);}
+.front-title{font-family:var(--display);font-size:clamp(40px,8vw,82px);line-height:.9;color:var(--rubric);
+  margin:0; text-shadow:1px 2px 0 var(--frame2), 0 0 20px rgba(184,146,51,.25);}
+.front-title .dot{color:var(--moss);}
+.front-sub{font-style:italic;color:var(--text-soft);font-size:clamp(15px,2.4vw,21px);margin-top:8px;}
+.flourish{display:flex;align-items:center;justify-content:center;gap:10px;color:var(--gold);margin:14px 0 0;}
+.flourish .ln{height:1px;width:min(160px,30vw);background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+
+.grid2{display:grid;grid-template-columns:1.4fr .9fr;gap:18px;margin-bottom:22px;}
+.panel{background:var(--surface);border:1px solid var(--frame);border-radius:12px;padding:18px;box-shadow:0 6px 24px var(--shadow);}
+.panel-title{font-family:"Cormorant Garamond",serif;color:var(--rubric);font-weight:700;font-size:20px;
+  letter-spacing:.04em;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+.panel-title .sigil{color:var(--gold);}
+
+/* featured diary note */
+.diary{font-family:"EB Garamond",serif;font-size:16.5px;position:relative;padding-left:14px;}
+.diary::before{content:"";position:absolute;left:0;top:4px;bottom:4px;width:3px;
+  background:linear-gradient(var(--terra),var(--ochre));border-radius:3px;}
+.diary .stamp{display:inline-block;font-style:italic;color:var(--terra-deep);font-size:13.5px;letter-spacing:.04em;margin-bottom:6px;}
+.dropcap-sm::first-letter{font-family:var(--display);font-size:46px;line-height:.8;float:left;color:var(--rubric);
+  margin:4px 8px 0 0;text-shadow:1px 1px 0 var(--frame2);}
+
+/* corner plates */
+.plates{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.plate{position:relative;border:1px solid var(--frame);border-radius:10px;overflow:hidden;cursor:pointer;
+  aspect-ratio:1/.78;box-shadow:0 4px 16px var(--shadow);}
+.plate .img{position:absolute;inset:0;background-size:cover;background-position:center;transition:.4s transform;}
+.plate:hover .img{transform:scale(1.07);}
+.plate .veil{position:absolute;inset:0;background:linear-gradient(transparent 40%,rgba(40,28,12,.82));}
+.plate .lbl{position:absolute;bottom:7px;left:9px;right:9px;color:var(--cream);font-family:"Cormorant Garamond",serif;
+  font-weight:700;font-size:15px;text-shadow:0 1px 3px #000;}
+.plate .border{position:absolute;inset:4px;border:1px solid rgba(217,183,88,.6);border-radius:7px;pointer-events:none;}
+.plate .pencil{position:absolute;top:6px;right:6px;color:#fff;opacity:0;transition:.2s;}
+.plate:hover .pencil{opacity:.9;}
+
+/* wheel of fortune */
+.wheel-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.wheel{width:170px;height:170px;border-radius:50%;position:relative;cursor:pointer;
+  background:conic-gradient(var(--moss) 0 30deg,var(--terra) 30deg 60deg,var(--ochre) 60deg 90deg,
+  var(--plum) 90deg 120deg,var(--moss-deep) 120deg 150deg,var(--terra-deep) 150deg 180deg,
+  var(--ochre-deep) 180deg 210deg,var(--plum-deep) 210deg 240deg,var(--moss) 240deg 270deg,
+  var(--terra) 270deg 300deg,var(--ochre) 300deg 330deg,var(--plum) 330deg 360deg);
+  border:6px solid var(--gold);box-shadow:0 0 0 3px var(--frame),0 8px 24px var(--shadow);
+  transition:transform 2.6s cubic-bezier(.13,.86,.2,1);}
+.wheel::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:repeating-conic-gradient(rgba(255,255,255,.05) 0 14deg, transparent 14deg 30deg);}
+.wheel .hub{position:absolute;inset:38%;border-radius:50%;background:radial-gradient(var(--ochre),var(--ochre-deep));
+  border:2px solid var(--gold);display:grid;place-items:center;color:var(--cream);font-family:var(--display);font-size:20px;}
+.wheel-ptr{width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:16px solid var(--rubric);
+  filter:drop-shadow(0 1px 1px #000);margin-bottom:-4px;}
+.wheel-msg{font-style:italic;color:var(--terra-deep);min-height:20px;text-align:center;font-size:14.5px;}
+.tinybtn{font-family:"Cormorant Garamond",serif;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  font-size:11px;background:var(--moss);color:var(--cream);border:1px solid var(--moss-deep);border-radius:5px;padding:6px 12px;cursor:pointer;}
+.tinybtn:hover{filter:brightness(1.1);}
+
+/* visitor stamp */
+.visitor-row{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-top:4px;}
+.stampmark{font-family:"Cormorant Garamond",serif;color:var(--terra-deep);border:3px double var(--terra);
+  border-radius:8px;padding:8px 16px;transform:rotate(-4deg);text-align:center;letter-spacing:.08em;
+  text-transform:uppercase;font-weight:700;font-size:13px;background:rgba(182,85,47,.06);position:relative;}
+.stampmark b{display:block;font-size:24px;letter-spacing:.12em;}
+.stampmark .sigil{position:absolute;top:2px;right:5px;color:var(--gold);cursor:pointer;font-size:12px;}
+
+/* ============ ARTICLE ============ */
+.breadcrumb{font-family:"Cormorant Garamond",serif;letter-spacing:.06em;color:var(--text-soft);font-size:14px;margin-bottom:6px;}
+.breadcrumb b{color:var(--rubric);}
+.art-title{font-family:var(--display);font-size:clamp(30px,5.4vw,52px);line-height:1;color:var(--text);margin:6px 0;}
+.byline{font-style:italic;color:var(--text-soft);margin-bottom:16px;}
+.hero{position:relative;border:2px solid var(--frame);border-radius:12px;overflow:hidden;margin-bottom:8px;box-shadow:0 8px 28px var(--shadow);}
+.hero img{display:block;width:100%;height:clamp(220px,38vw,400px);object-fit:cover;}
+.hero .border{position:absolute;inset:6px;border:1px solid var(--frame2);border-radius:8px;}
+.caption{font-style:italic;color:var(--text-soft);font-size:13.5px;text-align:center;margin:4px 0 22px;}
+.article-body{font-size:18px;max-width:74ch;}
+.article-body p{margin:0 0 16px;}
+.dropcap::first-letter{font-family:var(--display);font-size:84px;line-height:.7;float:left;color:var(--rubric);
+  margin:8px 12px -6px 0;text-shadow:2px 2px 0 var(--frame2);padding:0 2px;}
+.article-body h2{font-family:"Cormorant Garamond",serif;color:var(--rubric);font-size:27px;margin:30px 0 4px;}
+.article-body h3{font-family:"Cormorant Garamond",serif;color:var(--moss-deep);font-size:21px;margin:20px 0 4px;}
+html[data-theme="dark"] .article-body h3{color:var(--ochre);}
+.divider{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--gold);margin:8px 0 18px;}
+.divider .ln{height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.inscription{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:21px;color:var(--text-soft);
+  border-left:4px solid var(--terra);background:rgba(182,85,47,.07);padding:14px 18px;border-radius:0 8px 8px 0;margin:18px 0;}
+.pullquote{font-family:var(--display);font-size:clamp(22px,3.6vw,32px);color:var(--rubric);text-align:center;
+  border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);padding:18px 10px;margin:26px 0;line-height:1.15;
+  text-shadow:0 0 12px rgba(184,146,51,.25);}
+.checklist{list-style:none;padding:0;margin:8px 0 18px;}
+.checklist li{padding:6px 0 6px 30px;position:relative;}
+.checklist li::before{content:"✦";position:absolute;left:6px;color:var(--gold);}
+.inline-img{float:right;width:min(280px,42%);margin:6px 0 12px 18px;border:2px solid var(--frame);border-radius:10px;overflow:hidden;box-shadow:0 6px 20px var(--shadow);}
+.inline-img img{width:100%;display:block;}
+.inline-img .cap{font-style:italic;font-size:12.5px;color:var(--text-soft);padding:6px 8px;text-align:center;background:var(--surface2);}
+.arcana{list-style:none;padding:0;counter-reset:none;}
+.arcana li{display:flex;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);}
+.arcana .num{font-family:var(--display);color:var(--rubric);font-size:22px;flex:0 0 56px;text-align:right;}
+.arcana .txt b{color:var(--moss-deep);}
+html[data-theme="dark"] .arcana .txt b{color:var(--ochre);}
+.apothecary{clear:both;margin:24px 0;background:repeating-linear-gradient(var(--surface2),var(--surface2) 28px,rgba(120,90,40,.06) 28px,rgba(120,90,40,.06) 29px);
+  border:1px solid var(--terra);border-radius:8px;padding:14px 18px;position:relative;}
+.apothecary::before{content:"℞";position:absolute;top:8px;right:14px;font-family:var(--display);font-size:34px;color:var(--terra);opacity:.5;}
+.apothecary .lab{font-family:"Cormorant Garamond",serif;text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:var(--terra-deep);}
+
+/* guestbook */
+.guestbook{margin-top:34px;background:var(--surface);border:1px solid var(--frame);border-radius:12px;padding:20px;box-shadow:0 6px 24px var(--shadow);}
+.guestbook h2{font-family:var(--display);color:var(--rubric);font-size:30px;margin:0 0 2px;}
+.review-note{font-style:italic;color:var(--text-soft);font-size:13.5px;margin-bottom:14px;}
+.gbcomment{font-size:15.5px;padding-left:14px;position:relative;margin-bottom:14px;}
+.gbcomment::before{content:"";position:absolute;left:0;top:3px;bottom:3px;width:3px;background:var(--moss);border-radius:3px;}
+.gbcomment .who{font-family:"Cormorant Garamond",serif;font-weight:700;color:var(--moss-deep);}
+html[data-theme="dark"] .gbcomment .who{color:var(--ochre);}
+.gbform{display:grid;gap:10px;margin-top:8px;}
+.gbform input,.gbform textarea{font-family:"EB Garamond",serif;font-size:15px;background:var(--surface2);
+  border:1px solid var(--frame);border-radius:8px;padding:10px 12px;color:var(--text);}
+.gbform textarea{min-height:80px;resize:vertical;}
+.gbform button{justify-self:start;}
+
+/* footer */
+.footer{margin-top:30px;text-align:center;padding:22px;background:var(--surface);border:1px solid var(--frame);border-radius:12px;box-shadow:0 6px 24px var(--shadow);}
+.footer .orn{color:var(--gold);font-size:20px;}
+.footer .ft{font-family:"Cormorant Garamond",serif;color:var(--rubric);font-size:18px;letter-spacing:.04em;margin:6px 0 4px;}
+.footer .sm{font-style:italic;color:var(--text-soft);font-size:13.5px;}
+
+/* ============ MUSIC PLAYER ============ */
+#player{
+  position:fixed; left:16px; bottom:16px; z-index:60; width:300px; max-width:calc(100vw - 32px);
+  background:linear-gradient(var(--surface2),var(--surface));
+  border:2px solid var(--frame); border-radius:14px; padding:14px 14px 12px;
+  box-shadow:0 12px 34px var(--shadow), inset 0 0 0 1px var(--frame2);
+  transition:transform .45s cubic-bezier(.2,.8,.2,1), opacity .3s;
+}
+#player.hidden{transform:translateX(-130%);opacity:0;pointer-events:none;}
+#player::before{content:"";position:absolute;inset:5px;border:1px solid var(--frame2);border-radius:9px;pointer-events:none;opacity:.55;}
+.pl-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.pl-head .mb{color:var(--gold);}
+.pl-title{font-family:"Cormorant Garamond",serif;font-weight:700;color:var(--rubric);font-size:15px;letter-spacing:.05em;flex:1;}
+.pl-close{background:none;border:none;color:var(--text-soft);cursor:pointer;display:grid;place-items:center;}
+.pl-close:hover{color:var(--rubric);}
+.now{font-style:italic;color:var(--text-soft);font-size:13px;margin-bottom:8px;min-height:18px;}
+.now b{color:var(--text);font-style:normal;font-family:"Cormorant Garamond",serif;}
+.transport{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.tbtn{background:rgba(180,140,60,.12);border:1px solid var(--frame);border-radius:8px;color:var(--text);
+  width:36px;height:36px;display:grid;place-items:center;cursor:pointer;}
+.tbtn.play{background:var(--rubric);color:var(--cream);border-color:var(--rubric2);width:42px;height:42px;}
+.tbtn:hover{filter:brightness(1.08);}
+.vol-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;color:var(--text-soft);}
+input[type=range]{-webkit-appearance:none;appearance:none;height:5px;border-radius:4px;flex:1;
+  background:linear-gradient(90deg,var(--moss),var(--ochre));outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+  background:var(--gold-bright);border:2px solid var(--frame);cursor:pointer;}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--gold-bright);border:2px solid var(--frame);cursor:pointer;}
+.playlist{list-style:none;margin:0 0 8px;padding:0;max-height:120px;overflow-y:auto;}
+.playlist li{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:6px;cursor:pointer;font-size:13.5px;}
+.playlist li:hover{background:rgba(180,140,60,.12);}
+.playlist li.cur{background:rgba(168,50,24,.14);color:var(--rubric);font-weight:600;}
+.playlist li .dur{margin-left:auto;color:var(--text-soft);font-size:12px;font-variant-numeric:tabular-nums;}
+.upload{display:flex;align-items:center;gap:7px;justify-content:center;border:1px dashed var(--frame);border-radius:8px;
+  padding:8px;font-size:12.5px;color:var(--text-soft);cursor:pointer;font-family:"Cormorant Garamond",serif;letter-spacing:.04em;}
+.upload:hover{background:rgba(180,140,60,.1);color:var(--text);}
+#reopenTab{position:fixed;left:0;bottom:30px;z-index:60;display:none;background:var(--rubric);color:var(--cream);
+  border:1px solid var(--rubric2);border-left:none;border-radius:0 12px 12px 0;padding:12px 10px;cursor:pointer;box-shadow:0 6px 18px var(--shadow);}
+#reopenTab.show{display:grid;place-items:center;}
+
+/* ============ TOAST ============ */
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,40px);z-index:90;
+  background:linear-gradient(var(--surface2),var(--surface));border:1px solid var(--gold);
+  color:var(--rubric);font-family:"Cormorant Garamond",serif;font-weight:600;letter-spacing:.04em;
+  padding:11px 20px;border-radius:30px;box-shadow:0 10px 30px var(--shadow);opacity:0;pointer-events:none;
+  transition:.4s cubic-bezier(.2,.8,.2,1);max-width:88vw;text-align:center;}
+#toast.show{opacity:1;transform:translate(-50%,0);}
+#toast .sp{color:var(--gold);}
+
+/* ============ SECRET PANEL ============ */
+#secretPanel{position:fixed;inset:0;z-index:95;display:none;place-items:center;background:rgba(10,6,2,.55);backdrop-filter:blur(4px);}
+#secretPanel.on{display:grid;}
+.secret-card{max-width:480px;width:90vw;background:var(--surface2);border:2px solid var(--gold);border-radius:16px;
+  padding:30px 28px;text-align:center;box-shadow:0 20px 60px #000,inset 0 0 30px rgba(184,146,51,.2);position:relative;
+  animation:rise .5s cubic-bezier(.2,.9,.2,1);}
+@keyframes rise{from{transform:translateY(20px) scale(.96);opacity:0}to{transform:none;opacity:1}}
+.secret-card h3{font-family:var(--display);color:var(--rubric);font-size:30px;margin:0 0 6px;}
+.secret-card p{font-style:italic;color:var(--text-soft);}
+.secret-card .glyph{font-size:46px;color:var(--gold);text-shadow:0 0 18px var(--gold-bright);}
+.secret-card .close{margin-top:14px;}
+
+/* ============ COSMOO CAT ============ */
+#cosmoo{position:fixed;bottom:30px;left:-160px;z-index:88;width:120px;pointer-events:none;display:none;}
+#cosmoo.run{display:block;animation:walk 5.5s linear forwards;}
+@keyframes walk{from{left:-160px}to{left:110vw}}
+
+/* falling particles container */
+#fall{position:fixed;inset:0;z-index:70;pointer-events:none;overflow:hidden;}
+.leaf{position:absolute;top:-30px;font-size:20px;animation:drop linear forwards;}
+@keyframes drop{to{transform:translateY(110vh) rotate(720deg);opacity:.2}}
+
+/* fade-in stagger */
+.fade{opacity:0;transform:translateY(14px);animation:fin .7s ease forwards;}
+@keyframes fin{to{opacity:1;transform:none}}
+
+/* screen shake */
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-4px,2px) rotate(-.3deg)}40%{transform:translate(4px,-3px)}60%{transform:translate(-3px,-2px)}80%{transform:translate(3px,3px)}}
+.chaos #app{animation:shake .5s ease 2;}
+
+/* ===================================================================== */
+/* ============ MAX-CHAOS REIGEN LAYER (muted rainbow Y2K) ============ */
+/* ===================================================================== */
+
+/* ---- MUTED RAINBOW keyframe cycle (dusty hues, NOT neon) ---- */
+@keyframes mrRainbow{
+  0%,100%{color:var(--mr-red)} 8%{color:var(--mr-orange)} 16%{color:var(--mr-yellow)}
+  24%{color:var(--mr-lime)} 33%{color:var(--mr-green)} 41%{color:var(--mr-teal)}
+  50%{color:var(--mr-cyan)} 58%{color:var(--mr-blue)} 66%{color:var(--mr-indigo)}
+  75%{color:var(--mr-purple)} 83%{color:var(--mr-magenta)} 91%{color:var(--mr-pink)}
+}
+.mr-cycle{animation:mrRainbow 9s linear infinite;}
+
+/* chunky pixel multi-direction outline helper */
+.pix-out{
+  text-shadow:
+    1px 0 var(--near-black),-1px 0 var(--near-black),0 1px var(--near-black),0 -1px var(--near-black),
+    1px 1px var(--mr-indigo),-1px -1px var(--mr-magenta),1px -1px var(--mr-teal),-1px 1px var(--mr-orange);
+}
+
+/* ---- CRT / SCANLINES / RGB sub-pixel / flicker overlay ---- */
+#crt{position:fixed;inset:0;z-index:72;pointer-events:none;display:block;}
+#crt.off{display:none;}
+#crt::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(rgba(18,16,16,0) 50%,rgba(0,0,0,.22) 50%),
+    linear-gradient(90deg,rgba(176,106,94,.05),rgba(95,138,106,.02),rgba(110,128,172,.05));
+  background-size:100% 3px,4px 100%;opacity:.4;}
+#crt::after{content:"";position:absolute;inset:0;background:rgba(18,16,16,.05);
+  animation:flicker 9s steps(60) infinite;}
+@keyframes flicker{0%{opacity:.1}10%{opacity:.22}20%{opacity:.08}35%{opacity:.26}50%{opacity:.14}
+  65%{opacity:.28}80%{opacity:.1}95%{opacity:.24}100%{opacity:.12}}
+html[data-theme="dark"] #crt::before{opacity:.7;}
+.crt-toggle{position:fixed;right:8px;bottom:8px;z-index:73;font-family:var(--pix-tiny);font-size:8px;
+  background:var(--win-silver);color:var(--near-black);border:none;padding:5px 7px;cursor:pointer;
+  box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px gray,inset 2px 2px #dfdfdf;}
+
+/* ---- FALLING STAR RAIN (gilded sparks, behind content) ---- */
+#starRain{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.mr-star{position:absolute;top:-40px;font-family:var(--pix);line-height:1;
+  text-shadow:0 0 4px currentColor,0 0 9px currentColor;animation:starFall linear infinite;}
+@keyframes starFall{0%{transform:translateY(0) rotate(0);opacity:0}
+  8%{opacity:.9}90%{opacity:.9}100%{transform:translateY(108vh) rotate(140deg);opacity:0}}
+
+/* ---- WIN9x WINDOW CHROME (grimoire-flavored) ---- */
+.win9x{position:relative;background:var(--surface);
+  border:2px solid;border-color:#fff gray gray #fff;
+  box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #dfdfdf,2px 2px 0 var(--shadow);border-radius:0;}
+html[data-theme="dark"] .win9x{background:var(--surface2);}
+.win9x-bar{display:flex;align-items:center;gap:6px;padding:3px 4px 3px 6px;
+  background:linear-gradient(90deg,var(--mr-indigo),var(--mr-purple) 60%,var(--mr-magenta));
+  color:#f4ead2;font-family:var(--pix);font-size:12px;letter-spacing:.04em;
+  text-shadow:1px 1px 0 rgba(0,0,0,.5);user-select:none;}
+.win9x-bar .wtitle{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px;}
+.win9x-bar .wtitle svg{flex:0 0 auto;}
+.win9x-btns{display:flex;gap:2px;}
+.win9x-btns span{width:15px;height:14px;display:grid;place-items:center;
+  background:var(--win-silver);color:#111;font-family:var(--pix-tiny);font-size:7px;line-height:1;
+  box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #fff,inset -2px -2px gray,inset 2px 2px #dfdfdf;cursor:default;}
+.win9x-body{padding:12px 13px;}
+/* a parchment/ornamental skin variant for "grimoire windows" */
+.win9x.grimoire{border-color:var(--frame2) var(--frame) var(--frame) var(--frame2);
+  box-shadow:inset 0 0 0 1px var(--frame2),2px 2px 0 var(--shadow);}
+.win9x.grimoire .win9x-bar{background:linear-gradient(90deg,var(--ochre-deep),var(--terra-deep));}
+
+/* ---- RIGHT RAIL of dense widgets ---- */
+.rail{display:flex;flex-direction:column;gap:14px;}
+.rail .win9x{font-family:var(--pix);}
+.rail .win9x-body{font-size:12px;line-height:1.5;color:var(--text);}
+
+/* pixel visitor counter (library stamp styled) */
+.pixcount{display:flex;justify-content:center;gap:2px;margin:4px 0;}
+.pixcount span{font-family:var(--pix-tiny);font-size:14px;background:var(--near-black);color:var(--mr-lime);
+  padding:5px 4px;border:1px solid #000;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 0 6px rgba(138,154,91,.4);}
+.count-cap{text-align:center;font-family:var(--pix);font-size:10px;color:var(--text-soft);letter-spacing:.06em;margin-top:6px;}
+
+/* fake webring box */
+.webring{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;}
+.webring .wr-nav{display:flex;gap:8px;align-items:center;font-family:var(--pix);font-size:13px;}
+.webring .wr-nav a{color:var(--mr-blue);cursor:pointer;}
+.webring .wr-nav a:hover{color:var(--mr-magenta);}
+.webring .wr-title{font-family:var(--chunk);font-size:14px;color:var(--rubric);letter-spacing:.04em;}
+.webring .wr-sub{font-size:10px;color:var(--text-soft);}
+
+/* 88x31 button wall */
+.btnwall{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
+.b88{width:88px;height:31px;display:grid;place-items:center;text-align:center;line-height:1.05;
+  font-family:var(--pix);font-size:9px;letter-spacing:.02em;color:#fff;cursor:pointer;
+  border:1px solid #000;box-shadow:inset 1px 1px rgba(255,255,255,.4),inset -1px -1px rgba(0,0,0,.5);
+  text-shadow:1px 1px 0 rgba(0,0,0,.6);user-select:none;text-decoration:none;padding:0 2px;}
+.b88:hover{filter:invert(1) hue-rotate(180deg);}
+
+/* status / grimoire mood box */
+.statusbox{font-size:12px;line-height:1.45;}
+.statusbox .sb-line{margin:2px 0;}
+.statusbox b{color:var(--mr-teal);font-family:var(--chunk);font-weight:400;}
+html[data-theme="dark"] .statusbox b{color:var(--mr-cyan);}
+.statusbox .mood{color:var(--rubric);font-family:var(--chunk);}
+
+/* guestbook/tagboard teaser */
+.tagboard{display:flex;flex-direction:column;gap:5px;font-size:11.5px;}
+.tagboard .tb-line{padding:3px 5px;background:rgba(120,90,40,.08);border-left:3px solid var(--mr-purple);}
+.tagboard .tb-line:nth-child(2){border-left-color:var(--mr-green);}
+.tagboard .tb-line:nth-child(3){border-left-color:var(--mr-orange);}
+.tagboard .tb-line b{color:var(--rubric);font-family:var(--chunk);font-weight:400;}
+.tagboard .tb-more{text-align:center;font-size:10px;color:var(--mr-blue);cursor:pointer;margin-top:2px;}
+.tagboard .tb-more:hover{color:var(--mr-magenta);}
+
+/* marquee of incantations */
+.mr-marquee{overflow:hidden;white-space:nowrap;border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);
+  padding:5px 0;margin:0;}
+.mr-marquee .track{display:inline-block;animation:marq 26s linear infinite;font-family:var(--pix);font-size:12px;
+  color:var(--text-soft);}
+.mr-marquee .track .glow{color:var(--gold-leaf);}
+@keyframes marq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* posterized retro-print images */
+.posterize{filter:url(#posterize) contrast(1.04);}
+
+/* ARTICLE: keep the reading column calmer (a document window over the chaos) */
+.article-body{background:var(--surface);border:2px solid;border-color:#fff gray gray #fff;
+  box-shadow:inset -1px -1px #0a0a0a,inset 1px 1px #dfdfdf;padding:20px 24px;border-radius:0;
+  max-width:none;}
+html[data-theme="dark"] .article-body{background:var(--surface2);}
+
+/* topbar gets a faux win9x title strip vibe via brand outline */
+.brand.mr-cycle{text-shadow:1px 1px 0 var(--near-black),-1px -1px 0 var(--frame2);}
+
+/* music-box player → win9x title bar treatment (non-destructive skin) */
+#player{border-color:#fff gray gray #fff !important;border-radius:6px;}
+.pl-head{margin:-14px -14px 8px;padding:3px 5px 3px 8px;
+  background:linear-gradient(90deg,var(--ochre-deep),var(--terra-deep));
+  border-radius:5px 5px 0 0;}
+.pl-head .mb{color:var(--gold-bright);}
+.pl-head .pl-title{color:#f4ead2;font-family:var(--pix);font-size:13px;letter-spacing:.03em;
+  text-shadow:1px 1px 0 rgba(0,0,0,.5);}
+.pl-head .pl-close{color:#f4ead2;}
+.pl-head .pl-close:hover{color:#fff;}
+
+/* featured diary panel → grimoire-window flavored title strip */
+#diaryPanel{padding-top:0;overflow:hidden;}
+#diaryPanel .panel-title{margin:0 -18px 12px;padding:4px 12px;
+  background:linear-gradient(90deg,var(--mr-indigo),var(--mr-purple));
+  color:#f4ead2;font-family:var(--pix);font-size:14px;
+  text-shadow:1px 1px 0 rgba(0,0,0,.5);}
+#diaryPanel .panel-title .sigil{color:var(--gold-bright);}
+
+/* sidebar header chunkier + label outlines */
+.sidebar h3{font-family:var(--pix);letter-spacing:.1em;}
+.panel-title{letter-spacing:.02em;}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:860px){ .grid2{grid-template-columns:1fr;} .plates{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:768px){
+  .hamburger{display:grid;place-items:center;}
+  .tagline{display:none;}
+  .shell{grid-template-columns:1fr;}
+  .sidebar{
+    position:fixed; top:0; left:0; z-index:50; width:80vw; max-width:300px; height:100vh; max-height:100vh;
+    margin:0; border-radius:0 14px 14px 0; transform:translateX(-105%); transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  }
+  .sidebar.open{transform:none;}
+  .main{padding:12px 14px 90px;}
+  .inline-img{float:none;width:100%;margin:6px 0 14px;}
+  .brand{font-size:24px;}
+  .viewbtn{padding:7px 10px;font-size:11px;}
+  #player{width:calc(100vw - 32px);}
+  .article-body{font-size:16.5px;padding:14px 15px;}
+  .rail{order:2;}
+  .btnwall{justify-content:flex-start;}
+}
+/* widgets never overflow at 375px */
+@media (max-width:430px){
+  .b88{width:calc(50% - 4px);}
+  .pixcount span{font-size:12px;padding:4px 3px;}
+  .crt-toggle{font-size:7px;}
+}
+@media (max-width:430px){
+  .plates{grid-template-columns:1fr 1fr;}
+  .topnav{gap:5px;}
+  .icobtn{width:34px;height:34px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SVG FILTERS (posterize + dither) for crunchy retro print -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="posterize">
+      <feComponentTransfer>
+        <feFuncR type="discrete" tableValues="0 .25 .5 .75 1"/>
+        <feFuncG type="discrete" tableValues="0 .25 .5 .75 1"/>
+        <feFuncB type="discrete" tableValues="0 .2 .45 .7 1"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="dither">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="saturate" values="0" result="g"/>
+      <feComponentTransfer in="g" result="d"><feFuncA type="discrete" tableValues="0 .04 0 .04"/></feComponentTransfer>
+      <feComposite in="SourceGraphic" in2="d" operator="over"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- VIZ BACKGROUND -->
+<div id="vizWrap"><canvas id="viz"></canvas></div>
+<div id="fallbackStars"></div>
+<!-- FALLING STAR RAIN (gilded sparks, behind content) -->
+<div id="starRain"></div>
+<div id="scrim"></div>
+<!-- CRT / SCANLINE overlay (above content, below cursor FX) -->
+<div id="crt"></div>
+<button class="crt-toggle" id="crtToggle" aria-label="Toggle CRT">CRT</button>
+
+<div id="app">
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <div class="brand mr-cycle" id="brand">317010<span class="dot">.</span>xyz
+      <span class="brand-secret" id="brandSecret" title="…"></span>
+    </div>
+    <span class="tagline">a little corner of the internet</span>
+    <nav class="topnav">
+      <button class="viewbtn active" data-view="home">Home</button>
+      <button class="viewbtn" data-view="article">Read Article</button>
+      <button class="icobtn" id="themeBtn" title="Toggle theme" aria-label="Toggle theme"></button>
+    </nav>
+  </header>
+
+  <div class="shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <h3>The Corners</h3>
+      <div id="cornerList"></div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <!-- ===== HOME ===== -->
+      <section class="view active" id="view-home">
+        <div class="frontispiece fade" style="animation-delay:.05s">
+          <div class="ornframe"></div>
+          <h1 class="front-title">317010<span class="dot">.</span>xyz</h1>
+          <div class="front-sub">a little corner of the internet</div>
+          <div class="flourish"><span class="ln"></span>❦<span class="ln"></span></div>
+        </div>
+
+        <div class="grid2">
+          <div class="panel fade" id="diaryPanel" style="animation-delay:.15s">
+            <div class="panel-title"><span class="sigil">✶</span> From the Margins — Random Thoughts</div>
+            <p class="diary dropcap-sm">
+              <span class="stamp">today, 2:14am</span><br>
+              Couldn't sleep, so I lit the little candle on my desk and watched the wax pool like a tiny tide. Started rereading my tarot journal from last winter and realized half my "predictions" were just me being honest about what I already wanted. Maybe that's the whole trick of it. Drank too much cold tea. Cosmoo knocked a crystal off the shelf at 1am like a furry omen. Anyway — going to sketch the Moon card before I forget the feeling.
+            </p>
+          </div>
+
+          <div class="panel fade" style="animation-delay:.25s">
+            <div class="panel-title"><span class="sigil">✷</span> Wheel of Fortune</div>
+            <div class="wheel-wrap">
+              <div class="wheel-ptr"></div>
+              <div class="wheel" id="wheel"><div class="hub">✶</div></div>
+              <button class="tinybtn" id="spinBtn">Spin the Wheel</button>
+              <div class="wheel-msg" id="wheelMsg">ask, and the cosmos shrugs…</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel fade" style="animation-delay:.35s" style="margin-bottom:22px">
+          <div class="panel-title"><span class="sigil">❧</span> The Corner Plates</div>
+          <div class="plates" id="plates"></div>
+        </div>
+
+        <div class="panel fade" style="animation-delay:.45s">
+          <div class="visitor-row">
+            <div class="stampmark">
+              <span class="sigil" id="stampSigil" title="…">✶</span>
+              you are visitor<b>#017,010</b>since the year of our cat
+            </div>
+            <div style="flex:1;min-width:200px;color:var(--text-soft);font-style:italic;font-size:15px">
+              Welcome, traveler. Sign the guestbook, spin the wheel, read a corner. The candle is lit and the kettle is warm.
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== MARQUEE OF INCANTATIONS ===== -->
+        <div class="mr-marquee fade" style="animation-delay:.5s;margin:18px 0 18px">
+          <div class="track" id="marqTrack"></div>
+        </div>
+
+        <!-- ===== DENSE WIDGET RAIL (the heart of the chaos) ===== -->
+        <div class="rail fade" id="rail" style="animation-delay:.55s;margin-bottom:22px"></div>
+
+        <div class="footer fade" style="animation-delay:.65s;margin-top:22px">
+          <div class="orn">❦ ❧ ❦</div>
+          <div class="ft">Signed in good faith — Madison</div>
+          <div class="sm">hand-bound in pixels · est. somewhere between the moss and the stars</div>
+        </div>
+      </section>
+
+      <!-- ===== ARTICLE ===== -->
+      <section class="view" id="view-article">
+        <div class="fade" style="animation-delay:.05s">
+          <div class="breadcrumb"><b>Witchcraft Corner</b> › Tarot</div>
+          <h1 class="art-title">Reading the Major Arcana: A Beginner's Field Guide</h1>
+          <div class="byline">by Madison · 12 min read</div>
+          <figure class="hero">
+            <img src="https://picsum.photos/seed/tarot/1200/520" alt="tarot spread" loading="lazy">
+            <div class="border"></div>
+          </figure>
+          <div class="caption">a midnight spread on the old kitchen table, candle just out of frame</div>
+        </div>
+
+        <article class="article-body fade" style="animation-delay:.15s">
+          <p class="dropcap">There is a particular hush that falls over a room when you lay the first card down. The Major Arcana are the loud, archetypal voices of the deck — kings and fools and falling towers — and learning to read them is less about memorizing meanings than about learning to listen. This is the field guide I wish someone had handed me on my first quiet, candle-lit hour.</p>
+
+          <div class="divider"><span class="ln"></span>❧<span class="ln"></span></div>
+          <h2>What the Major Arcana Are</h2>
+          <p>Twenty-two cards, numbered zero through twenty-one, each a chapter in a story we keep retelling ourselves. Where the Minor Arcana whisper about the daily and the practical, the Majors arrive like weather. When several turn up at once, the reading is telling you something structural about your life — not "you'll lose your keys" but "you are at a threshold."</p>
+
+          <div class="inline-img">
+            <img src="https://picsum.photos/seed/moon/600/420" alt="the moon">
+            <div class="cap">the Moon card — intuition, tides, and the things we only see at night</div>
+          </div>
+
+          <h3>Before You Begin</h3>
+          <p>Don't rush to interpretation. Sit with the image. Notice what your eye lands on first, what color hums, what figure looks back at you. The cards are mirrors before they are messengers.</p>
+
+          <blockquote class="inscription">"The card does not predict your future; it describes the present so honestly that the future stops surprising you."</blockquote>
+
+          <h2>What You'll Need</h2>
+          <ul class="checklist">
+            <li>a candle (any color — I favor beeswax for the honey smell)</li>
+            <li>a journal, for the readings you'll want to remember</li>
+            <li>your deck — borrowed, gifted, or chosen; it doesn't matter</li>
+            <li>one quiet hour, doors closed, phone face-down</li>
+          </ul>
+
+          <div class="pullquote">listen first. the meanings will keep.</div>
+
+          <h2>The First Three Arcana</h2>
+          <ol class="arcana">
+            <li><span class="num">0</span><span class="txt"><b>The Fool.</b> The leap before the look — innocence, beginnings, and a faith that the ground will rise to meet your foot. Pull this and you are at the start of something, whether you've admitted it or not.</span></li>
+            <li><span class="num">I</span><span class="txt"><b>The Magician.</b> All four suits laid on the table: you already have the tools. This card is a reminder that will, focus, and a little showmanship turn intention into a made thing.</span></li>
+            <li><span class="num">II</span><span class="txt"><b>The High Priestess.</b> The veil and the quiet behind it. She rules the knowing you can't quite explain — sit down, hush, and let intuition speak before logic muscles in.</span></li>
+          </ol>
+
+          <div class="apothecary">
+            <div class="lab">Apothecary Aside · Herb Pairing</div>
+            <p style="margin:6px 0 0"><b>Herb pairing: mugwort.</b> Brewed weak as a bedtime tea or simply kept dried on the table, mugwort is the old companion to divination — said to sharpen dreams and soften the wall between knowing and guessing. Go gently; a little is plenty.</p>
+          </div>
+
+          <div class="divider"><span class="ln"></span>❦<span class="ln"></span></div>
+        </article>
+
+        <!-- GUESTBOOK -->
+        <section class="guestbook fade" style="animation-delay:.25s">
+          <h2>The Guestbook</h2>
+          <div class="review-note">comments are reviewed before they appear</div>
+          <div class="gbcomment"><span class="who">willowbark —</span> I started keeping a journal like you said and my readings finally make sense. The High Priestess keeps showing up for me too. Spooky in the good way.</div>
+          <div class="gbcomment"><span class="who">cosmo's_human —</span> read this twice with tea. the mugwort tip is real, my dreams went technicolor. thank you for writing the guide i needed three years ago.</div>
+          <form class="gbform" onsubmit="event.preventDefault();showToast('thank you — your note awaits review');this.reset();">
+            <input type="text" placeholder="your name" required>
+            <textarea placeholder="leave a kind note…" required></textarea>
+            <button class="tinybtn" type="submit">Sign the Guestbook</button>
+          </form>
+        </section>
+
+        <div class="footer fade" style="animation-delay:.35s;margin-top:22px">
+          <div class="orn">❦ ❧ ❦</div>
+          <div class="ft">More from the Witchcraft Corner soon</div>
+          <div class="sm">written by candlelight · revised by daylight</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<!-- DRAWER OVERLAY -->
+<div id="drawerOverlay"></div>
+
+<!-- MUSIC PLAYER -->
+<div id="player">
+  <div class="pl-head">
+    <span class="mb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+    <span class="pl-title">Arcane Music-Box</span>
+    <button class="pl-close" id="playerClose" aria-label="Close player">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="now" id="now">— <b>silent</b> · press play to wake the spell</div>
+  <div class="transport">
+    <button class="tbtn" id="prevBtn" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zM20 6 9 12l11 6z"/></svg></button>
+    <button class="tbtn play" id="playBtn" aria-label="Play">
+      <svg id="playIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="pauseIcon" style="display:none" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>
+    </button>
+    <button class="tbtn" id="nextBtn" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4 6l11 6L4 18z"/></svg></button>
+  </div>
+  <div class="vol-row">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M19 8a5 5 0 0 1 0 8"/></svg>
+    <input type="range" id="vol" min="0" max="100" value="55">
+  </div>
+  <ul class="playlist" id="playlist"></ul>
+  <label class="upload">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 17V3m0 0-5 5m5-5 5 5"/><path d="M5 21h14"/></svg>
+    Upload track (.wav / .mp4)
+    <input type="file" accept=".wav,.mp4,audio/*,video/mp4" style="display:none" id="uploadInput">
+  </label>
+</div>
+
+<button id="reopenTab" aria-label="Reopen player">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+</button>
+
+<!-- SECRET PANEL -->
+<div id="secretPanel">
+  <div class="secret-card">
+    <div class="glyph">☉</div>
+    <h3>The Secret Room</h3>
+    <p id="secretText">"To the one who knocks thrice upon the brand: the kettle is always warm, the candle never out. You have found the room behind the bookshelf. Welcome to the marginalia."</p>
+    <button class="tinybtn close" onclick="document.getElementById('secretPanel').classList.remove('on')">Close the door</button>
+  </div>
+</div>
+
+<!-- COSMOO -->
+<svg id="cosmoo" viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="60" cy="75" rx="38" ry="9" fill="rgba(0,0,0,.18)"/>
+  <path d="M30 70 q-4 8 2 10 M50 72 q-3 9 3 10 M70 72 q-3 9 3 10 M90 70 q4 8 -2 10" stroke="#5b3a52" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="58" cy="55" rx="34" ry="20" fill="#5b3a52"/>
+  <circle cx="92" cy="44" r="16" fill="#5b3a52"/>
+  <path d="M80 32 l-4 -12 8 6z M98 32 l8 -12 -4 14z" fill="#5b3a52"/>
+  <circle cx="88" cy="42" r="2.4" fill="#d9b758"/><circle cx="98" cy="42" r="2.4" fill="#d9b758"/>
+  <path d="M93 48 l-3 3 3 2 3 -2z" fill="#b6552f"/>
+  <path d="M26 52 q-14 4 -16 -4 q10 2 14 -4z" fill="#5b3a52"/>
+  <text x="60" y="86" text-anchor="middle" font-family="Cormorant Garamond" font-size="10" fill="#5b3a52">Cosmoo</text>
+</svg>
+
+<div id="fall"></div>
+<div id="toast"></div>
+
+<!-- CURSOR CHAOS TRAIL (full-viewport, pointer-events:none) -->
+<canvas id="cursorFx"></canvas>
+
+<script>
+/* ===================== DATA ===================== */
+const CORNERS = [
+  ["Witchcraft Corner","witch"],["Sci Corner","galaxy"],["Health Corner","herbs"],
+  ["Random Thoughts","desk"],["Wheel of Fortune","wheelimg"],["Art Blog","paint"],
+  ["Music Player","lute"],["Book Tracker","books"],["Fav Movies","cinema"],
+  ["Recipes","kitchen"],["Fav Restaurants","table"],["Travel Map","map"],
+  ["Vision Board","collage"],["Meme Gallery","meme"],["Animal Gallery","cosmoo"]
+];
+const PLATES = [
+  ["Witchcraft Corner","witch"],["Sci Corner","galaxy"],["Art Blog","paint"],
+  ["Book Tracker","books"],["Travel Map","map"],["Animal Gallery","cosmoo"]
+];
+const TRACKS = [
+  ["Candlelit Vigil","3:33", 132],
+  ["The Veil Between","4:11", 99],
+  ["Mugwort Dreams","2:58", 168],
+  ["Cosmoo's Lullaby","3:47", 116]
+];
+
+/* ===================== BUILD UI ===================== */
+const PENCIL = '<svg class="pencil" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+
+const cornerList = document.getElementById('cornerList');
+CORNERS.forEach(([name,seed])=>{
+  const el=document.createElement('div');
+  el.className='corner';
+  el.innerHTML=`<div class="thumb" style="background-image:url('https://picsum.photos/seed/${seed}317/84/84')"></div>
+    <div class="cname">${name}</div>${PENCIL}`;
+  el.onclick=(e)=>{
+    if(e.target.closest('svg')){showToast('replace image — CMS affordance');return;}
+    if(name==='Witchcraft Corner'){setView('article');}
+    else showToast('the «'+name+'» corner is being illuminated…');
+    closeDrawer();
+  };
+  cornerList.appendChild(el);
+});
+
+const platesEl=document.getElementById('plates');
+PLATES.forEach(([name,seed])=>{
+  const p=document.createElement('div');
+  p.className='plate';
+  p.innerHTML=`<div class="img" style="background-image:url('https://picsum.photos/seed/${seed}p/420/320')"></div>
+    <div class="veil"></div><div class="border"></div>
+    <svg class="pencil" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+    <div class="lbl">${name}</div>`;
+  p.onclick=(e)=>{
+    if(e.target.closest('svg')){showToast('replace image — CMS affordance');return;}
+    if(name==='Witchcraft Corner') setView('article');
+    else showToast('opening «'+name+'»…');
+  };
+  platesEl.appendChild(p);
+});
+
+const playlistEl=document.getElementById('playlist');
+TRACKS.forEach(([t,d],i)=>{
+  const li=document.createElement('li');
+  li.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> ${t}<span class="dur">${d}</span>`;
+  li.onclick=()=>{loadTrack(i);if(!playing)togglePlay();};
+  playlistEl.appendChild(li);
+});
+
+/* ===================== MAX-CHAOS REIGEN WIDGETS ===================== */
+const MR_HUES=['var(--mr-red)','var(--mr-orange)','var(--mr-yellow)','var(--mr-lime)','var(--mr-green)',
+  'var(--mr-teal)','var(--mr-cyan)','var(--mr-blue)','var(--mr-indigo)','var(--mr-purple)',
+  'var(--mr-magenta)','var(--mr-pink)','var(--mr-lilac)'];
+
+/* win9x window helper — beveled frame + silver title bar + pixel min/close glyphs */
+function win9x(title,bodyHTML,grimoire){
+  return `<div class="win9x${grimoire?' grimoire':''}">
+    <div class="win9x-bar"><span class="wtitle">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="1"/><path d="M3 8h18"/></svg>
+      ${title}</span>
+      <span class="win9x-btns"><span>_</span><span>□</span><span>x</span></span>
+    </div>
+    <div class="win9x-body">${bodyHTML}</div>
+  </div>`;
+}
+
+/* falling star rain — pixel glyphs in muted hues (NOT emoji) */
+function buildStarRain(){
+  const sr=document.getElementById('starRain');if(!sr)return;
+  const glyphs=['★','✶','✦','✷','✧'];
+  for(let i=0;i<26;i++){
+    const s=document.createElement('span');s.className='mr-star';
+    s.textContent=glyphs[(Math.random()*glyphs.length)|0];
+    s.style.left=Math.random()*100+'%';
+    s.style.color=MR_HUES[(Math.random()*MR_HUES.length)|0];
+    s.style.fontSize=(8+Math.random()*16)+'px';
+    const dur=6+Math.random()*8;
+    s.style.animationDuration=dur+'s';
+    s.style.animationDelay=(-Math.random()*dur)+'s';
+    sr.appendChild(s);
+  }
+}
+buildStarRain();
+
+/* marquee of scrolling incantations / announcements (doubled for seamless loop) */
+const INCANT=['✶ now reading the tea leaves of 2:14am','❦ guestbook open — be kind, the cat is watching',
+  '✷ wheel of fortune spins on the hour','★ new corner illuminated soon: the Travel Map',
+  '✦ mugwort tea steeping in the back room','❧ cosmoo demands tribute (a crystal, knocked off the shelf)'];
+(function(){
+  const t=document.getElementById('marqTrack');if(!t)return;
+  const one=INCANT.map(x=>`<span class="glow">&nbsp;&nbsp;${x}&nbsp;&nbsp;✶</span>`).join('');
+  t.innerHTML=one+one;
+})();
+
+/* CRT scanline toggle */
+(function(){
+  const crt=document.getElementById('crt'),btn=document.getElementById('crtToggle');
+  if(!crt||!btn)return;
+  btn.onclick=()=>{crt.classList.toggle('off');btn.style.opacity=crt.classList.contains('off')?'.5':'1';
+    showToast(crt.classList.contains('off')?'the glass clears':'the cathode hums to life');};
+})();
+
+/* posterize the picsum imagery for crunchy retro print */
+function posterizeImages(){
+  document.querySelectorAll('.hero img,.inline-img img,.plate .img,.corner .thumb')
+    .forEach(el=>el.classList.add('posterize'));
+}
+
+/* mood pool for the status/grimoire-mood box, tied to the music-box */
+const MOODS=['divining by candle','reshelving the grimoire','steeping mugwort','sketching the Moon card',
+  'consulting cosmoo','dusting the star-charts'];
+function currentMood(){return MOODS[(Math.random()*MOODS.length)|0];}
+function nowDivining(){
+  // tie "currently divining" to the playing track if any
+  const tr=(typeof playing!=='undefined'&&playing)?TRACKS[curTrack][0]:'silence';
+  return tr;
+}
+function refreshStatusBox(){
+  const el=document.getElementById('sb-now');if(!el)return;
+  el.textContent=nowDivining();
+}
+
+/* 88x31 button wall — CSS bevel/gradient badges in muted rainbow */
+const BUTTONS=[
+  ['MOSS&STARS','linear-gradient(135deg,var(--mr-green),var(--moss-deep))'],
+  ['TAROT.zip','linear-gradient(135deg,var(--mr-purple),var(--plum-deep))'],
+  ['cosmoo.fan','linear-gradient(135deg,var(--mr-orange),var(--terra-deep))'],
+  ['WEB 1.0','linear-gradient(135deg,var(--mr-blue),var(--mr-indigo))'],
+  ['mugwort','linear-gradient(135deg,var(--mr-lime),var(--moss))'],
+  ['the VEIL','linear-gradient(135deg,var(--mr-magenta),var(--mr-purple))'],
+  ['midnite.tea','linear-gradient(135deg,var(--mr-teal),var(--mr-cyan))'],
+  ['CANDLE 88','linear-gradient(135deg,var(--mr-yellow),var(--ochre-deep))'],
+  ['no AI here','linear-gradient(135deg,var(--mr-red),var(--terra-deep))'],
+  ['best in IE6','linear-gradient(135deg,var(--mr-cyan),var(--mr-blue))'],
+  ['❦ shrine','linear-gradient(135deg,var(--mr-pink),var(--mr-magenta))'],
+  ['Y2K codex','linear-gradient(135deg,var(--mr-indigo),var(--mr-lilac))']
+];
+
+/* build the dense right rail */
+(function buildRail(){
+  const rail=document.getElementById('rail');if(!rail)return;
+
+  // visitor counter (pixel digits as a library stamp)
+  const digits='017010'.split('').map(d=>`<span>${d}</span>`).join('');
+  const counter=win9x('counter.exe',
+    `<div class="pixcount">${digits}</div>
+     <div class="count-cap">visitors since the year of our cat ✶</div>`);
+
+  // webring
+  const webring=win9x('the moss-ring webring',
+    `<div class="webring">
+       <div class="wr-title mr-cycle">✶ THE MOSS-RING ✶</div>
+       <div class="wr-nav">
+         <a id="wrPrev">‹ prev</a><a id="wrRand">random</a><a id="wrNext">next ›</a>
+       </div>
+       <div class="btnwall" style="margin-top:6px">
+         <a class="b88" style="background:linear-gradient(135deg,var(--mr-green),var(--moss-deep))">join the ring</a>
+         <a class="b88" style="background:linear-gradient(135deg,var(--mr-purple),var(--plum-deep))">★ members ★</a>
+       </div>
+       <div class="wr-sub">a hand-bound circle of small witchy corners</div>
+     </div>`,true);
+
+  // status / grimoire mood (tied to music box)
+  const status=win9x('status.txt',
+    `<div class="statusbox">
+       <div class="sb-line">mood: <span class="mood">${currentMood()}</span></div>
+       <div class="sb-line">currently divining: <b id="sb-now">silence</b></div>
+       <div class="sb-line">tea: <b>cold, again</b> · candle: <b>lit</b></div>
+       <div class="sb-line">cosmoo: <b>plotting</b></div>
+     </div>`,true);
+
+  // 88x31 button wall
+  const wall=win9x('buttons.htm',
+    `<div class="btnwall">${BUTTONS.map(([t,bg])=>
+       `<a class="b88" style="background:${bg}" title="${t}">${t}</a>`).join('')}</div>`);
+
+  // guestbook / tagboard teaser
+  const tag=win9x('tagboard',
+    `<div class="tagboard">
+       <div class="tb-line"><b>willowbark:</b> the High Priestess again!! spooky</div>
+       <div class="tb-line"><b>cosmo's_human:</b> dreams went technicolor, ty 🜂</div>
+       <div class="tb-line"><b>marigold:</b> sign mine back? ✶ new layout soon</div>
+       <div class="tb-more" id="tbMore">— read the full guestbook ›</div>
+     </div>`,true);
+
+  rail.innerHTML=counter+webring+status+wall+tag;
+
+  // wiring
+  document.getElementById('wrRand').onclick=()=>{showToast('the moss-ring spins you to a stranger…');loadRandomPreset&&loadRandomPreset(1.0);};
+  document.getElementById('wrPrev').onclick=()=>showToast('‹ a quieter corner, all ferns and rain');
+  document.getElementById('wrNext').onclick=()=>showToast('a louder corner › neon koi and broken GIFs');
+  document.getElementById('tbMore').onclick=()=>setView('article');
+  rail.querySelectorAll('.btnwall .b88').forEach(b=>{
+    if(!b.onclick) b.onclick=()=>showToast('«'+b.textContent.trim()+'» — a button to nowhere (and everywhere)');
+  });
+  refreshStatusBox();
+})();
+
+posterizeImages();
+
+/* ===================== VIEW SWITCH ===================== */
+const views={home:document.getElementById('view-home'),article:document.getElementById('view-article')};
+function setView(v){
+  Object.entries(views).forEach(([k,el])=>el.classList.toggle('active',k===v));
+  document.querySelectorAll('.viewbtn').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.viewbtn').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+
+/* ===================== THEME ===================== */
+const SUN='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+const themeBtn=document.getElementById('themeBtn');
+function applyThemeIcon(){themeBtn.innerHTML=document.documentElement.dataset.theme==='light'?MOON:SUN;}
+applyThemeIcon();
+themeBtn.onclick=()=>{
+  const next=document.documentElement.dataset.theme==='light'?'dark':'light';
+  document.documentElement.dataset.theme=next;applyThemeIcon();
+  showToast(next==='dark'?'the codex descends into the stars':'the manuscript returns to candlelight');
+};
+
+/* ===================== MOBILE DRAWER ===================== */
+const sidebar=document.getElementById('sidebar'),overlay=document.getElementById('drawerOverlay');
+function openDrawer(){sidebar.classList.add('open');overlay.classList.add('on');}
+function closeDrawer(){sidebar.classList.remove('open');overlay.classList.remove('on');}
+document.getElementById('hamburger').onclick=openDrawer;
+overlay.onclick=closeDrawer;
+
+/* ===================== TOAST ===================== */
+let toastT;
+function showToast(msg,secret){
+  const t=document.getElementById('toast');
+  t.innerHTML=(secret?'<span class="sp">✶ you found a secret! ✶</span><br>':'')+msg;
+  t.classList.add('show');clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+/* ===================== AUDIO + BUTTERCHURN ===================== */
+let audioCtx,masterGain,visualizer,presetKeys=[],vizOK=false;
+let oscNodes=[],lfo,noiseSrc,filter,playing=false,curTrack=0,rafId;
+
+function buildStarfield(){
+  const fs=document.getElementById('fallbackStars');fs.classList.add('on');
+  for(let i=0;i<90;i++){const s=document.createElement('div');s.className='fbstar';
+    s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';
+    s.style.animationDelay=(Math.random()*3)+'s';s.style.transform='scale('+(.5+Math.random()*1.6)+')';
+    fs.appendChild(s);}
+}
+
+function ensureAudio(){
+  if(audioCtx) return;
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    masterGain=audioCtx.createGain();
+    masterGain.gain.value=0; // silent until Play ramps it up
+    filter=audioCtx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=700;filter.Q.value=6;
+    filter.connect(masterGain);masterGain.connect(audioCtx.destination);
+    // slow LFO modulating filter
+    lfo=audioCtx.createOscillator();const lfoGain=audioCtx.createGain();
+    lfo.frequency.value=0.07;lfoGain.gain.value=320;lfo.connect(lfoGain);lfoGain.connect(filter.frequency);lfo.start();
+    // soft noise bed
+    const buf=audioCtx.createBuffer(1,audioCtx.sampleRate*2,audioCtx.sampleRate);
+    const data=buf.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*0.18;
+    noiseSrc=audioCtx.createBufferSource();noiseSrc.buffer=buf;noiseSrc.loop=true;
+    const nGain=audioCtx.createGain();nGain.gain.value=0.05;noiseSrc.connect(nGain);nGain.connect(filter);noiseSrc.start();
+    initViz();
+  }catch(e){console.warn('audio init failed',e);}
+}
+
+function startOscillators(base){
+  stopOscillators();
+  const dets=[0,7,-5];const types=['sine','triangle','sine'];
+  dets.forEach((d,i)=>{
+    const o=audioCtx.createOscillator();o.type=types[i];
+    o.frequency.value=base*Math.pow(2,i*0/12)*(i===2?1.5:1)+d*1.2;
+    o.detune.value=d*8;
+    const g=audioCtx.createGain();g.gain.value=0;g.gain.setTargetAtTime(0.16,audioCtx.currentTime,1.2);
+    o.connect(g);g.connect(filter);o.start();oscNodes.push({o,g});
+  });
+}
+function stopOscillators(){oscNodes.forEach(({o,g})=>{try{g.gain.setTargetAtTime(0,audioCtx.currentTime,.3);o.stop(audioCtx.currentTime+.6);}catch(e){}});oscNodes=[];}
+
+function initViz(){
+  try{
+    const BC=window.butterchurn?.default||window.butterchurn;
+    const PRESETS=(window.butterchurnPresets?.default||window.butterchurnPresets).getPresets();
+    if(!BC||!PRESETS) throw new Error('butterchurn missing');
+    const canvas=document.getElementById('viz');
+    visualizer=BC.createVisualizer(audioCtx,canvas,{
+      width:innerWidth,height:innerHeight,pixelRatio:Math.min(devicePixelRatio||1,2)
+    });
+    visualizer.connectAudio(filter);
+    presetKeys=Object.keys(PRESETS);
+    visualizer.loadPreset(PRESETS[presetKeys[(Math.random()*presetKeys.length)|0]],0.0);
+    vizOK=true;
+    function loop(){visualizer.render();rafId=requestAnimationFrame(loop);}
+    loop();
+  }catch(e){console.warn('viz failed',e);buildStarfield();vizOK=false;}
+}
+function loadRandomPreset(blend){
+  if(!vizOK||!presetKeys.length) return;
+  try{
+    const BC_P=(window.butterchurnPresets?.default||window.butterchurnPresets).getPresets();
+    const k=presetKeys[(Math.random()*presetKeys.length)|0];
+    visualizer.loadPreset(BC_P[k],blend===undefined?2.0:blend);
+  }catch(e){}
+}
+function loadWildPreset(){
+  if(!vizOK||!presetKeys.length) return;
+  try{
+    const BC_P=(window.butterchurnPresets?.default||window.butterchurnPresets).getPresets();
+    // bias toward presets that read as "wild" by name; fallback random
+    const wild=presetKeys.filter(k=>/martin|geiss|flexi|aderrasi|fiery|burst|explos|flux|chaos|swirl/i.test(k));
+    const pool=wild.length?wild:presetKeys;
+    visualizer.loadPreset(BC_P[pool[(Math.random()*pool.length)|0]],0.0);
+  }catch(e){}
+}
+
+addEventListener('resize',()=>{if(visualizer)try{visualizer.setRendererSize(innerWidth,innerHeight);}catch(e){}});
+
+/* If butterchurn never even loaded as a script, show starfield after load */
+addEventListener('load',()=>{
+  // Butterchurn CDN scripts run before this handler, so it's safe to init now.
+  // MilkDrop is always active & audio-reactive; masterGain stays silent until Play.
+  ensureAudio();
+  setTimeout(()=>{ if(!window.butterchurn && !vizOK){ buildStarfield(); } },1200);
+});
+
+/* ===================== PLAYER LOGIC ===================== */
+const nowEl=document.getElementById('now'),playIcon=document.getElementById('playIcon'),
+      pauseIcon=document.getElementById('pauseIcon');
+function refreshPlaylistUI(){
+  [...playlistEl.children].forEach((li,i)=>li.classList.toggle('cur',i===curTrack));
+}
+function loadTrack(i){
+  curTrack=(i+TRACKS.length)%TRACKS.length;
+  const[name,dur,base]=TRACKS[curTrack];
+  nowEl.innerHTML=`now playing — <b>${name}</b> · ${dur}`;
+  refreshPlaylistUI();
+  if(audioCtx&&playing){startOscillators(base);}
+  loadRandomPreset();
+  if(typeof refreshStatusBox==='function')refreshStatusBox();
+}
+function togglePlay(){
+  ensureAudio();
+  if(!audioCtx){return;}
+  if(audioCtx.state==='suspended')audioCtx.resume();
+  playing=!playing;
+  playIcon.style.display=playing?'none':'block';
+  pauseIcon.style.display=playing?'block':'none';
+  if(playing){
+    const base=TRACKS[curTrack][2];startOscillators(base);
+    const vol=parseInt(document.getElementById('vol').value);
+    if(masterGain)masterGain.gain.setTargetAtTime((vol/100)*0.5,audioCtx.currentTime,0.25);
+    nowEl.innerHTML=`now playing — <b>${TRACKS[curTrack][0]}</b> · ${TRACKS[curTrack][1]}`;
+    refreshPlaylistUI();
+  }else{
+    stopOscillators();
+    if(masterGain)masterGain.gain.setTargetAtTime(0,audioCtx.currentTime,0.25);
+    nowEl.innerHTML=`paused — <b>${TRACKS[curTrack][0]}</b>`;
+  }
+  if(typeof refreshStatusBox==='function')refreshStatusBox();
+}
+document.getElementById('playBtn').onclick=togglePlay;
+document.getElementById('nextBtn').onclick=()=>{loadTrack(curTrack+1);};
+document.getElementById('prevBtn').onclick=()=>{loadTrack(curTrack-1);};
+document.getElementById('vol').oninput=(e)=>{
+  if(masterGain&&playing)masterGain.gain.value=(e.target.value/100)*0.5;
+};
+document.getElementById('uploadInput').onchange=(e)=>{
+  if(e.target.files[0]) showToast('“'+e.target.files[0].name+'” received — bind it to the playlist (CMS)');
+};
+// player close / reopen
+const player=document.getElementById('player'),reopen=document.getElementById('reopenTab');
+document.getElementById('playerClose').onclick=()=>{player.classList.add('hidden');reopen.classList.add('show');};
+reopen.onclick=()=>{player.classList.remove('hidden');reopen.classList.remove('show');};
+
+// default current track
+refreshPlaylistUI();loadTrackLabelOnly();
+function loadTrackLabelOnly(){nowEl.innerHTML=`— <b>silent</b> · press play to wake the spell`;document.querySelector('.playlist li').classList.add('cur');}
+
+/* first gesture anywhere resumes audio context (idle viz before that) */
+let firstGesture=false;
+function firstGestureResume(){
+  if(firstGesture)return;firstGesture=true;
+  ensureAudio();
+  if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+}
+addEventListener('pointerdown',firstGestureResume,{once:false});
+addEventListener('mousemove',firstGestureResume,{once:true});
+addEventListener('keydown',firstGestureResume,{once:true});
+addEventListener('touchstart',firstGestureResume,{once:true});
+
+/* ===================== WHEEL OF FORTUNE ===================== */
+const FORTUNES=["a slow week, then a door opens","trust the cat, distrust the email",
+  "the thing you lost returns by Thursday","speak less, brew more tea","a small risk repays you tenfold",
+  "the Moon favors your night work","rest is also a spell","an old friend writes first"];
+let wheelDeg=0;
+document.getElementById('spinBtn').onclick=()=>{
+  const wheel=document.getElementById('wheel'),msg=document.getElementById('wheelMsg');
+  wheelDeg+=720+Math.floor(Math.random()*360);
+  wheel.style.transform='rotate('+wheelDeg+'deg)';
+  msg.textContent='the wheel turns…';
+  setTimeout(()=>{msg.textContent='“'+FORTUNES[(Math.random()*FORTUNES.length)|0]+'”';},2600);
+};
+
+/* ===================== FALLING PARTICLES ===================== */
+function rainParticles(glyphs){
+  const fall=document.getElementById('fall');
+  for(let i=0;i<46;i++){
+    const s=document.createElement('span');s.className='leaf';
+    s.textContent=glyphs[(Math.random()*glyphs.length)|0];
+    s.style.left=Math.random()*100+'%';
+    s.style.color=['#5a6b3b','#b6552f','#c79a3a','#5b3a52','#b89233'][(Math.random()*5)|0];
+    const dur=4+Math.random()*4;s.style.animationDuration=dur+'s';
+    s.style.fontSize=(14+Math.random()*18)+'px';s.style.animationDelay=(Math.random()*1.5)+'s';
+    fall.appendChild(s);setTimeout(()=>s.remove(),(dur+2)*1000);
+  }
+}
+
+/* ===================== SECRET / EASTER EGGS ===================== */
+// 1) Hidden sigil in drop-cap of featured note — click the dropcap area (small hint cursor on diary)
+document.querySelector('.diary').addEventListener('click',(e)=>{
+  // only first ~50px (the drop cap region)
+  if(e.offsetX<54 && e.offsetY<54){
+    rainParticles(['✦','✧','❋','✶']);loadWildPreset();
+    showToast('the candle flares — gold-leaf sparkles fall',true);
+  }
+});
+document.querySelector('.diary').style.cursor='default';
+
+// 2) Hidden sigil inside the visitor library stamp → releases Cosmoo the cat
+document.getElementById('stampSigil').onclick=(e)=>{
+  e.stopPropagation();
+  const c=document.getElementById('cosmoo');c.classList.remove('run');void c.offsetWidth;c.classList.add('run');
+  showToast('Cosmoo escapes across the page!',true);
+  loadRandomPreset(1.0);
+};
+
+// 3) Brand: triple-click OR long-press → secret room ; single hidden tap region (brand-secret) → leaves
+let clickCount=0,clickT,pressT;
+const brand=document.getElementById('brand');
+brand.addEventListener('click',()=>{
+  clickCount++;clearTimeout(clickT);
+  clickT=setTimeout(()=>clickCount=0,600);
+  if(clickCount>=3){clickCount=0;document.getElementById('secretPanel').classList.add('on');showToast('a hidden room behind the bookshelf…',true);}
+});
+brand.addEventListener('pointerdown',()=>{pressT=setTimeout(()=>{document.getElementById('secretPanel').classList.add('on');showToast('you held the spine long enough…',true);},700);});
+brand.addEventListener('pointerup',()=>clearTimeout(pressT));
+brand.addEventListener('pointerleave',()=>clearTimeout(pressT));
+// hidden tap region overlaid on brand → leaves + wild preset
+document.getElementById('brandSecret').addEventListener('dblclick',(e)=>{
+  e.stopPropagation();
+  rainParticles(['🍂','✦','❦','✧','❧'].filter(x=>x!=='🍂').concat(['✤','❖']));
+  loadWildPreset();showToast('autumn leaves spill from the margins',true);
+});
+
+// 4) Konami code → chaos mode
+const KONAMI=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+let kbuf=[];
+addEventListener('keydown',(e)=>{
+  kbuf.push(e.key.length===1?e.key.toLowerCase():e.key);
+  if(kbuf.length>KONAMI.length)kbuf.shift();
+  if(KONAMI.every((k,i)=>kbuf[i]===k)){
+    kbuf=[];
+    document.body.classList.add('chaos');setTimeout(()=>document.body.classList.remove('chaos'),1100);
+    loadWildPreset();rainParticles(['✦','✶','❋','✷','✤','❖']);
+    showToast('CHAOS MODE — the codex trembles',true);
+  }
+});
+
+// 5) Hidden sigil flourish on frontispiece — click the ❦ glyph in the flourish
+document.querySelector('.frontispiece .flourish').addEventListener('click',(e)=>{
+  if(e.target.classList.contains('ln'))return;
+  loadWildPreset();
+  document.getElementById('viz').animate?.([{filter:'hue-rotate(0)'},{filter:'hue-rotate(80deg)'},{filter:''}],{duration:1400});
+  showToast('the illumination shifts its colors',true);
+});
+document.querySelector('.frontispiece .flourish').style.cursor='pointer';
+
+/* ===================== INTRO FADE STAGGER (extra elements) ===================== */
+// (CSS handles .fade; nothing else required)
+
+/* ===================== READING-RAINBOW FLOWING RIBBON ===================== */
+(function cursorFx(){
+  const coarse = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
+  if(coarse) return;                       // skip touch devices — no lag/error
+
+  const cv = document.getElementById('cursorFx');
+  if(!cv || !cv.getContext) return;
+  const ctx = cv.getContext('2d');
+
+  let DPR = Math.min(window.devicePixelRatio||1, 2);
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    cv.width = Math.floor(innerWidth*DPR);
+    cv.height = Math.floor(innerHeight*DPR);
+    cv.style.width = innerWidth+'px';
+    cv.style.height = innerHeight+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  resize();
+  addEventListener('resize', resize);
+
+  // ---- ring buffer of trail points {x,y,t} ----
+  const TAIL_MS = 1150;                      // slow fade-out after the cursor stops
+  const MAX_PTS = 260;
+  const pts = [];                            // ring buffer (oldest first)
+  let mx=-9999, my=-9999, haveCursor=false;
+
+  addEventListener('pointermove', (e)=>{
+    if(e.pointerType==='touch') return;
+    mx=e.clientX; my=e.clientY; haveCursor=true;
+    // tiny per-point jitter so the ribbon breathes
+    const jx=(Math.random()-.5)*1.2, jy=(Math.random()-.5)*1.2;
+    pts.push({ x:mx+jx, y:my+jy, t:performance.now(), spark:Math.random()<0.08 });
+    if(pts.length>MAX_PTS) pts.shift();
+  });
+
+  // hue helper — Reading-Rainbow spectrum, biased very slightly warm/gilded
+  function ribbonColor(hue, light){
+    return 'hsl('+(hue%360)+','+ (88) +'%,'+ light +'%)';
+  }
+
+  function tick(){
+    const now = performance.now();
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+
+    // re-glue the head to the live cursor every frame (no lag)
+    if(haveCursor){
+      const head = pts[pts.length-1];
+      if(head){ head.x=mx; head.y=my; }
+    }
+
+    // drop expired points
+    while(pts.length && now-pts[0].t > TAIL_MS) pts.shift();
+
+    if(pts.length>=2){
+      ctx.globalCompositeOperation='lighter';
+      ctx.lineCap='round';
+      ctx.lineJoin='round';
+      const drift = now*0.045;               // slow spectrum drift over time
+
+      // one continuous smooth ribbon via quadraticCurveTo between midpoints
+      for(let i=1;i<pts.length;i++){
+        const p0 = pts[i-1], p1 = pts[i];
+        const age = now - p1.t;
+        const lifeT = Math.max(0, 1 - age/TAIL_MS);   // 1 head → 0 tail
+        const headness = i/(pts.length-1);            // 0 tail → 1 head
+
+        // width tapers ~7px head → ~0.6px tail
+        const w = 0.6 + 6.4*headness*lifeT;
+        // per-segment alpha decreases with age, peak ~0.8
+        const alpha = 0.8 * lifeT;
+        if(alpha<=0.02) continue;
+
+        // Reading-Rainbow hue cycling along the ribbon + slow time drift
+        const hue = (drift + headness*300 + 20) % 360; // +20 nudge slightly warmer/gilded
+        const col = ribbonColor(hue, 60);
+
+        // midpoints for a smooth quadratic through p0→p1
+        const mPrev = (i>=2) ? mid(pts[i-2],p0) : p0;
+        const mCurr = mid(p0,p1);
+
+        ctx.beginPath();
+        ctx.moveTo(mPrev.x, mPrev.y);
+        ctx.quadraticCurveTo(p0.x, p0.y, mCurr.x, mCurr.y);
+        ctx.strokeStyle = col;
+        ctx.shadowColor = col;
+        ctx.shadowBlur = 12*lifeT + 4;        // soft luminous glow
+        ctx.globalAlpha = alpha;
+        ctx.lineWidth = w;
+        ctx.stroke();
+
+        // occasional sparkle riding the ribbon
+        if(p1.spark && lifeT>0.25){
+          ctx.beginPath();
+          ctx.globalAlpha = alpha*0.9;
+          ctx.fillStyle = ribbonColor(hue+40, 78);
+          ctx.shadowBlur = 10;
+          ctx.arc(p1.x, p1.y, 0.8 + 1.6*lifeT, 0, Math.PI*2);
+          ctx.fill();
+        }
+      }
+    }
+
+    ctx.shadowBlur=0; ctx.globalAlpha=1; ctx.globalCompositeOperation='source-over';
+    requestAnimationFrame(tick);
+  }
+  function mid(a,b){ return { x:(a.x+b.x)/2, y:(a.y+b.y)/2 }; }
+  requestAnimationFrame(tick);
+})();
+</script>
+
+<!-- BUTTERCHURN CDN (UMD globals) -->
+<script src="https://unpkg.com/butterchurn@2.6.7/lib/butterchurn.min.js"></script>
+<script src="https://unpkg.com/butterchurn-presets@2.4.7/lib/butterchurnPresets.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>317010.xyz — a little corner of the internet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Gloria+Hallelujah&family=Permanent+Marker&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0a0a0a;
+    --paper:#f4efe1;
+    --yellow:#ffe600;
+    --tomato:#ff3b1d;
+    --cobalt:#1d4dff;
+    --lime:#9bff2e;
+    --pink:#ff4fb0;
+    --cyan:#00e0d0;
+    --orange:#ff8c1a;
+    --sh:6px 6px 0 var(--black);
+    --sh-big:10px 10px 0 var(--black);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Space Mono',monospace;
+    background:var(--paper);
+    color:var(--black);
+    /* paper grid texture */
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,.07) 1px, transparent 0);
+    background-size:22px 22px;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  /* ---- generic brutalist primitives ---- */
+  .box{border:4px solid var(--black);box-shadow:var(--sh);background:#fff;}
+  .tape{
+    position:absolute;height:30px;width:120px;
+    background:rgba(255,230,0,.78);
+    border:2px dashed rgba(0,0,0,.45);
+    box-shadow:0 2px 4px rgba(0,0,0,.25);
+    z-index:6;
+  }
+  .tape::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(0,0,0,.06) 8px 10px);}
+  .pin{
+    position:absolute;width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff 0 3px, var(--tomato) 4px 100%);
+    border:2px solid var(--black);box-shadow:2px 3px 0 rgba(0,0,0,.4);z-index:7;
+  }
+  .pin::after{content:"";position:absolute;left:9px;top:18px;width:3px;height:14px;background:var(--black);transform:rotate(8deg);}
+  .clip{
+    position:absolute;width:18px;height:42px;border:4px solid #9aa0a6;border-radius:10px;
+    background:transparent;z-index:7;box-shadow:1px 1px 0 rgba(0,0,0,.3);
+  }
+  .marker{font-family:'Permanent Marker',cursive;}
+  .hand{font-family:'Gloria Hallelujah',cursive;}
+  .disp{font-family:'Archivo Black',sans-serif;text-transform:uppercase;letter-spacing:-.02em;}
+
+  /* highlighter effect */
+  .hl{
+    background:linear-gradient(120deg, transparent 0, var(--lime) .2em, var(--lime) calc(100% - .2em), transparent 100%);
+    box-decoration-break:clone;-webkit-box-decoration-break:clone;
+    padding:0 .1em;
+  }
+  .hl.pink{background:linear-gradient(120deg,transparent 0, var(--pink) .2em, var(--pink) calc(100% - .2em),transparent 100%);}
+  .hl.cyan{background:linear-gradient(120deg,transparent 0, var(--cyan) .2em, var(--cyan) calc(100% - .2em),transparent 100%);}
+
+  /* ---- toggle ---- */
+  #toggle{
+    position:fixed;top:18px;right:18px;z-index:1000;
+    display:flex;gap:0;
+  }
+  #toggle button{
+    font-family:'Archivo Black',sans-serif;text-transform:uppercase;
+    font-size:14px;padding:12px 16px;border:4px solid var(--black);
+    background:#fff;cursor:pointer;box-shadow:var(--sh);
+    transition:transform .12s ease, box-shadow .12s ease, background .12s;
+  }
+  #toggle button:first-child{border-right-width:2px;transform:rotate(-2deg);}
+  #toggle button:last-child{border-left-width:2px;transform:rotate(2deg);}
+  #toggle button:hover{transform:translate(-2px,-2px) rotate(0);box-shadow:var(--sh-big);}
+  #toggle button.active{background:var(--tomato);color:#fff;}
+  #toggle button:first-child.active{background:var(--cobalt);}
+
+  /* ---- views ---- */
+  .view{display:none;max-width:1180px;margin:0 auto;padding:90px 24px 120px;}
+  .view.show{display:block;}
+
+  /* staggered pop-in */
+  .pop{opacity:0;transform:translateY(24px) scale(.94);}
+  .view.show .pop{animation:pop .55s cubic-bezier(.18,1.5,.4,1) forwards;}
+  @keyframes pop{to{opacity:1;transform:translateY(0) scale(1);}}
+
+  /* ===================== HOME ===================== */
+  .masthead{position:relative;margin-bottom:42px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:18px;}
+  .brandblock{
+    background:var(--yellow);border:5px solid var(--black);box-shadow:var(--sh-big);
+    padding:18px 30px 22px;transform:rotate(-1.5deg);position:relative;
+  }
+  .brandblock h1{font-family:'Archivo Black',sans-serif;font-size:clamp(44px,8vw,92px);line-height:.9;letter-spacing:-.04em;}
+  .brandblock h1 .dot{color:var(--tomato);}
+  .tagsticker{
+    font-family:'Permanent Marker',cursive;font-size:19px;background:var(--pink);color:#fff;
+    border:4px solid var(--black);padding:8px 16px;transform:rotate(3deg);box-shadow:var(--sh);
+    align-self:center;text-shadow:1px 1px 0 rgba(0,0,0,.4);
+  }
+  .doodle-arrow{position:absolute;right:-10px;top:-40px;font-family:'Gloria Hallelujah',cursive;font-size:15px;transform:rotate(8deg);}
+
+  /* corner nav stickerbomb */
+  .navbomb{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:46px;align-items:center;}
+  .navbomb .label{font-family:'Archivo Black',sans-serif;font-size:13px;background:var(--black);color:#fff;padding:8px 10px;transform:rotate(-3deg);}
+  .tag{
+    font-family:'Space Mono',monospace;font-weight:700;font-size:13px;
+    border:3px solid var(--black);padding:7px 12px;background:#fff;cursor:pointer;
+    box-shadow:4px 4px 0 var(--black);white-space:nowrap;text-decoration:none;color:var(--black);
+    transition:transform .14s ease, box-shadow .14s ease;
+  }
+  .tag:hover{transform:translate(-2px,-3px) rotate(0)!important;box-shadow:7px 8px 0 var(--black);}
+  .tag:nth-child(2n){background:var(--yellow);}
+  .tag:nth-child(3n){background:var(--cyan);}
+  .tag:nth-child(4n){background:var(--lime);}
+  .tag:nth-child(5n){background:var(--pink);color:#fff;}
+  .tag:nth-child(7n){background:var(--orange);}
+  .tag:nth-child(2){transform:rotate(2deg);}
+  .tag:nth-child(3){transform:rotate(-2deg);}
+  .tag:nth-child(4){transform:rotate(3deg);}
+  .tag:nth-child(5){transform:rotate(-1deg);}
+  .tag:nth-child(6){transform:rotate(2.5deg);}
+  .tag:nth-child(7){transform:rotate(-3deg);}
+  .tag:nth-child(8){transform:rotate(1.5deg);}
+  .tag:nth-child(9){transform:rotate(-2.5deg);}
+  .tag:nth-child(10){transform:rotate(2deg);}
+  .tag:nth-child(11){transform:rotate(-1.5deg);}
+  .tag:nth-child(12){transform:rotate(3deg);}
+  .tag:nth-child(13){transform:rotate(-2deg);}
+  .tag:nth-child(14){transform:rotate(1deg);}
+  .tag:nth-child(15){transform:rotate(-3deg);}
+  .tag:nth-child(16){transform:rotate(2deg);}
+
+  /* featured */
+  .featured{
+    position:relative;border:5px solid var(--black);background:#fff;box-shadow:var(--sh-big);
+    padding:30px 34px 34px;transform:rotate(-.6deg);margin-bottom:54px;
+  }
+  .featured .kicker{display:inline-block;background:var(--tomato);color:#fff;font-family:'Archivo Black',sans-serif;font-size:13px;padding:6px 12px;border:3px solid var(--black);transform:rotate(-2deg);}
+  .featured h2{font-family:'Archivo Black',sans-serif;font-size:clamp(28px,4vw,46px);margin:16px 0 6px;line-height:.95;}
+  .featured .stamp{font-family:'Permanent Marker',cursive;color:var(--cobalt);font-size:15px;border:3px solid var(--cobalt);display:inline-block;padding:3px 10px;transform:rotate(2deg);}
+  .featured p{font-size:15px;line-height:1.7;margin-top:16px;max-width:760px;}
+  .featured .scribble{position:absolute;right:30px;bottom:18px;font-family:'Gloria Hallelujah',cursive;font-size:14px;transform:rotate(-6deg);color:var(--tomato);}
+
+  /* masonry */
+  .grid{columns:3;column-gap:22px;margin-bottom:54px;}
+  @media(max-width:900px){.grid{columns:2;}}
+  @media(max-width:600px){.grid{columns:1;}}
+  .card{
+    break-inside:avoid;border:4px solid var(--black);background:#fff;box-shadow:var(--sh);
+    margin-bottom:22px;padding:18px 18px 22px;position:relative;cursor:pointer;
+    transition:transform .16s ease, box-shadow .16s ease;
+  }
+  .card:hover{transform:rotate(0) translate(-3px,-4px);box-shadow:var(--sh-big);z-index:20;}
+  .card .cat{font-family:'Archivo Black',sans-serif;font-size:12px;letter-spacing:.02em;padding:5px 9px;border:3px solid var(--black);display:inline-block;}
+  .card h3{font-family:'Space Mono',monospace;font-weight:700;font-size:18px;margin:12px 0 8px;line-height:1.2;}
+  .card p{font-size:13px;line-height:1.6;}
+  .card .meta{font-size:11px;margin-top:12px;opacity:.7;}
+  .card .doodle{position:absolute;font-family:'Gloria Hallelujah',cursive;font-size:13px;}
+  .card:nth-child(1){transform:rotate(-1.4deg);}
+  .card:nth-child(2){transform:rotate(1.2deg);}
+  .card:nth-child(3){transform:rotate(-.8deg);}
+  .card:nth-child(4){transform:rotate(1.6deg);}
+  .card:nth-child(5){transform:rotate(-1.1deg);}
+  .card:nth-child(6){transform:rotate(.9deg);}
+  .card:nth-child(7){transform:rotate(-1.7deg);}
+  .card:nth-child(8){transform:rotate(1.3deg);}
+  .card:nth-child(9){transform:rotate(-1deg);}
+  .card .ph{width:100%;height:120px;border:3px solid var(--black);object-fit:cover;display:block;filter:contrast(1.05) saturate(1.1);}
+
+  .widgets{display:grid;grid-template-columns:1fr 1fr;gap:30px;}
+  @media(max-width:780px){.widgets{grid-template-columns:1fr;}}
+
+  /* boombox */
+  .boombox{position:relative;border:5px solid var(--black);background:var(--cobalt);color:#fff;box-shadow:var(--sh-big);padding:22px;transform:rotate(-1deg);}
+  .boombox h3{font-family:'Archivo Black',sans-serif;font-size:22px;margin-bottom:14px;text-shadow:2px 2px 0 var(--black);}
+  .speakers{display:flex;gap:14px;margin-bottom:14px;align-items:center;}
+  .speaker{width:62px;height:62px;border:4px solid var(--black);border-radius:50%;background:repeating-radial-gradient(circle at center, #fff 0 4px, #0a0a0a 4px 7px);}
+  .nowplaying{flex:1;background:var(--lime);color:var(--black);border:4px solid var(--black);padding:8px 12px;font-weight:700;font-size:13px;}
+  .nowplaying small{display:block;font-size:10px;opacity:.7;}
+  .eq{display:flex;gap:4px;height:26px;align-items:flex-end;margin:8px 0 12px;}
+  .eq span{width:7px;background:var(--yellow);border:2px solid var(--black);animation:eq 1s ease-in-out infinite;}
+  .eq span:nth-child(2){animation-delay:.2s;}.eq span:nth-child(3){animation-delay:.4s;}
+  .eq span:nth-child(4){animation-delay:.1s;}.eq span:nth-child(5){animation-delay:.3s;}
+  .eq span:nth-child(6){animation-delay:.5s;}
+  @keyframes eq{0%,100%{height:6px;}50%{height:26px;}}
+  .tracklist{list-style:none;font-size:13px;}
+  .tracklist li{padding:6px 0;border-bottom:2px dashed rgba(255,255,255,.4);display:flex;justify-content:space-between;}
+  .tracklist li span{opacity:.7;}
+
+  /* wheel */
+  .wheelcard{position:relative;border:5px solid var(--black);background:var(--yellow);box-shadow:var(--sh-big);padding:22px;transform:rotate(1.2deg);text-align:center;}
+  .wheelcard h3{font-family:'Archivo Black',sans-serif;font-size:22px;margin-bottom:8px;}
+  .wheelcard p{font-size:12px;margin-bottom:16px;}
+  .wheelwrap{position:relative;width:200px;height:200px;margin:0 auto;}
+  .wheel{
+    width:200px;height:200px;border-radius:50%;border:5px solid var(--black);box-shadow:var(--sh);
+    background:conic-gradient(
+      var(--tomato) 0 60deg, var(--cobalt) 60deg 120deg, var(--lime) 120deg 180deg,
+      var(--pink) 180deg 240deg, var(--cyan) 240deg 300deg, var(--orange) 300deg 360deg);
+    animation:spin 7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .wheel-hub{position:absolute;top:50%;left:50%;width:34px;height:34px;border-radius:50%;background:#fff;border:4px solid var(--black);transform:translate(-50%,-50%);}
+  .wheel-ptr{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:24px solid var(--black);z-index:5;}
+  .spinbtn{margin-top:16px;font-family:'Archivo Black',sans-serif;font-size:14px;border:4px solid var(--black);background:#fff;padding:10px 20px;cursor:pointer;box-shadow:var(--sh);transition:transform .12s,box-shadow .12s;}
+  .spinbtn:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-big);}
+
+  /* ===================== ARTICLE ===================== */
+  .breadcrumb{font-size:13px;margin-bottom:20px;font-weight:700;}
+  .breadcrumb a{color:var(--cobalt);text-decoration:none;border-bottom:3px solid var(--cobalt);}
+  .article-head{position:relative;margin-bottom:30px;}
+  .article-head h1{font-family:'Archivo Black',sans-serif;font-size:clamp(32px,5.5vw,62px);line-height:.92;margin-bottom:14px;letter-spacing:-.03em;}
+  .article-head h1 em{font-style:normal;background:var(--yellow);padding:0 .1em;border:3px solid var(--black);box-decoration-break:clone;-webkit-box-decoration-break:clone;}
+  .byline{display:inline-block;font-family:'Permanent Marker',cursive;font-size:16px;background:var(--black);color:#fff;padding:6px 14px;transform:rotate(-1.5deg);}
+  .hero{position:relative;margin:28px 0 40px;max-width:760px;}
+  .hero img{width:100%;height:auto;border:5px solid var(--black);box-shadow:var(--sh-big);display:block;filter:contrast(1.05) saturate(1.12);}
+  .article-body{max-width:760px;font-size:16px;line-height:1.8;}
+  .article-body p{margin-bottom:22px;}
+  .lead{font-size:19px;font-weight:700;}
+  .article-body h2{
+    font-family:'Archivo Black',sans-serif;font-size:26px;display:inline-block;
+    background:var(--cobalt);color:#fff;border:4px solid var(--black);padding:6px 14px;
+    margin:34px 0 18px;transform:rotate(-1deg);box-shadow:var(--sh);
+  }
+  .article-body h3{
+    font-family:'Space Mono',monospace;font-weight:700;font-size:18px;display:inline-block;
+    background:var(--lime);border:3px solid var(--black);padding:4px 12px;margin:24px 0 14px;
+    transform:rotate(.6deg);
+  }
+  .article-body blockquote{
+    border:5px solid var(--black);background:var(--pink);color:#fff;box-shadow:var(--sh-big);
+    padding:26px 28px;margin:30px 0;font-family:'Permanent Marker',cursive;font-size:24px;line-height:1.4;
+    transform:rotate(-.8deg);text-shadow:2px 2px 0 rgba(0,0,0,.4);
+  }
+  .needs{border:4px solid var(--black);background:var(--cyan);box-shadow:var(--sh);padding:22px 26px;margin:26px 0;transform:rotate(.5deg);}
+  .needs h3{background:#fff;margin-top:0;}
+  .needs ul{list-style:none;margin-top:10px;}
+  .needs li{padding:7px 0;font-weight:700;font-size:15px;display:flex;gap:10px;align-items:flex-start;}
+  .needs li::before{content:"✶";font-size:18px;color:var(--tomato);}
+  figure.inline{margin:30px 0;position:relative;max-width:480px;}
+  figure.inline img{width:100%;border:4px solid var(--black);box-shadow:var(--sh);display:block;filter:contrast(1.05);}
+  figure.inline figcaption{font-family:'Gloria Hallelujah',cursive;font-size:13px;margin-top:10px;background:var(--yellow);border:3px solid var(--black);padding:5px 10px;display:inline-block;transform:rotate(-1deg);}
+  .pullquote{font-family:'Permanent Marker',cursive;font-size:28px;line-height:1.35;margin:34px 0;}
+  ol.arcana{list-style:none;counter-reset:none;margin:20px 0;}
+  ol.arcana li{border:3px solid var(--black);background:#fff;box-shadow:4px 4px 0 var(--black);padding:14px 16px;margin-bottom:14px;display:flex;gap:14px;align-items:flex-start;}
+  ol.arcana li .num{font-family:'Archivo Black',sans-serif;background:var(--orange);border:3px solid var(--black);padding:4px 10px;font-size:16px;flex-shrink:0;}
+  ol.arcana li:nth-child(1){transform:rotate(-.6deg);}
+  ol.arcana li:nth-child(2){transform:rotate(.6deg);}
+  ol.arcana li:nth-child(3){transform:rotate(-.4deg);}
+  ol.arcana li b{font-size:15px;}
+  .sticky-note{
+    position:relative;background:var(--yellow);border:3px solid var(--black);box-shadow:var(--sh);
+    padding:22px 24px;margin:34px 0;max-width:420px;transform:rotate(2deg);
+    font-family:'Gloria Hallelujah',cursive;font-size:15px;line-height:1.6;
+  }
+  .sticky-note b{font-family:'Permanent Marker',cursive;display:block;font-size:18px;margin-bottom:6px;color:var(--tomato);}
+
+  /* comments */
+  .comments{border-top:5px dashed var(--black);margin-top:60px;padding-top:34px;max-width:760px;}
+  .comments h2{font-family:'Archivo Black',sans-serif;font-size:34px;background:var(--tomato);color:#fff;border:4px solid var(--black);display:inline-block;padding:6px 16px;box-shadow:var(--sh);transform:rotate(-1deg);}
+  .mod-note{font-family:'Permanent Marker',cursive;font-size:14px;margin:18px 0 24px;color:var(--cobalt);}
+  .comment{position:relative;border:3px solid var(--black);background:var(--paper);box-shadow:var(--sh);padding:18px 20px;margin-bottom:20px;}
+  .comment:nth-child(odd){transform:rotate(-.8deg);background:#fff;}
+  .comment:nth-child(even){transform:rotate(.8deg);}
+  .comment .who{font-weight:700;font-size:14px;}
+  .comment .when{font-size:11px;opacity:.6;}
+  .comment .approved{position:absolute;top:-12px;right:14px;font-family:'Permanent Marker',cursive;font-size:12px;background:var(--lime);border:3px solid var(--black);padding:2px 8px;transform:rotate(4deg);}
+  .comment p{font-size:14px;line-height:1.6;margin-top:8px;}
+  .cform{border:4px solid var(--black);background:#fff;box-shadow:var(--sh-big);padding:24px;margin-top:30px;transform:rotate(-.4deg);}
+  .cform h3{font-family:'Archivo Black',sans-serif;font-size:18px;margin-bottom:16px;background:var(--yellow);border:3px solid var(--black);display:inline-block;padding:4px 10px;}
+  .cform label{display:block;font-weight:700;font-size:13px;margin-bottom:6px;}
+  .cform input,.cform textarea{width:100%;border:3px solid var(--black);padding:10px;font-family:'Space Mono',monospace;font-size:14px;margin-bottom:18px;background:var(--paper);}
+  .cform input:focus,.cform textarea:focus{outline:none;box-shadow:var(--sh);background:#fff;}
+  .cform button{font-family:'Archivo Black',sans-serif;font-size:15px;border:4px solid var(--black);background:var(--pink);color:#fff;padding:12px 24px;cursor:pointer;box-shadow:var(--sh);transition:transform .12s,box-shadow .12s;text-shadow:1px 1px 0 rgba(0,0,0,.4);}
+  .cform button:hover{transform:translate(-2px,-2px);box-shadow:var(--sh-big);}
+
+  footer{text-align:center;margin-top:80px;font-size:12px;}
+  footer .stickerline{display:inline-block;background:var(--black);color:#fff;padding:8px 18px;transform:rotate(-1deg);font-family:'Space Mono',monospace;}
+</style>
+</head>
+<body>
+
+<!-- toggle -->
+<div id="toggle">
+  <button id="btnHome" class="active" onclick="showView('home')">Home</button>
+  <button id="btnArticle" onclick="showView('article')">Read Article</button>
+</div>
+
+<!-- ===================== HOME VIEW ===================== -->
+<main id="view-home" class="view show">
+
+  <div class="masthead pop">
+    <div class="brandblock">
+      <span class="doodle-arrow hand">↙ yes this is real</span>
+      <h1>317010<span class="dot">.xyz</span></h1>
+    </div>
+    <div class="tagsticker">a little corner of the internet</div>
+  </div>
+
+  <div class="navbomb pop" style="animation-delay:.05s">
+    <span class="label">CORNERS ▶</span>
+    <a class="tag" href="#" onclick="return false">Witchcraft Corner</a>
+    <a class="tag" href="#" onclick="return false">Sci Corner</a>
+    <a class="tag" href="#" onclick="return false">Health Corner</a>
+    <a class="tag" href="#" onclick="return false">Random Thoughts</a>
+    <a class="tag" href="#" onclick="return false">Wheel of Fortune</a>
+    <a class="tag" href="#" onclick="return false">Art Blog</a>
+    <a class="tag" href="#" onclick="return false">Music Player</a>
+    <a class="tag" href="#" onclick="return false">Book Tracker</a>
+    <a class="tag" href="#" onclick="return false">Fav Movies</a>
+    <a class="tag" href="#" onclick="return false">Recipes</a>
+    <a class="tag" href="#" onclick="return false">Fav Restaurants</a>
+    <a class="tag" href="#" onclick="return false">Travel Map</a>
+    <a class="tag" href="#" onclick="return false">Vision Board</a>
+    <a class="tag" href="#" onclick="return false">Meme Gallery</a>
+    <a class="tag" href="#" onclick="return false">Animal Gallery (Cosmoo &amp; kitties)</a>
+  </div>
+
+  <!-- featured -->
+  <article class="featured pop" style="animation-delay:.1s">
+    <div class="tape" style="top:-15px;left:60px;transform:rotate(-6deg);"></div>
+    <div class="tape" style="top:-13px;right:90px;width:90px;transform:rotate(5deg);background:rgba(0,224,208,.7);"></div>
+    <div class="pin" style="top:-8px;left:50%;"></div>
+    <span class="kicker">★ MOST RECENT · RANDOM THOUGHTS</span>
+    <h2>why do 2am thoughts feel like prophecy?</h2>
+    <span class="stamp">today, 2:14am</span>
+    <p>Lying here wide awake and my brain decided NOW is the time to solve every unsolved feeling I've ever had. Why does milk go in cereal but tea gets the milk last? Is my cat plotting? (yes.) I keep a notebook on the floor by the bed for exactly these moments and tonight's page just says "be the weird little guy you needed when you were twelve." I think that's actually good advice. Going to screenshot my own thought and frame it. Goodnight, internet corner. Be kind to your future sleepy self.</p>
+    <span class="scribble hand">↑ unhinged but correct</span>
+  </article>
+
+  <!-- masonry grid -->
+  <section class="grid">
+    <div class="card pop" style="animation-delay:.12s">
+      <div class="clip" style="top:-16px;left:24px;"></div>
+      <span class="cat" style="background:var(--pink);color:#fff;">WITCHCRAFT</span>
+      <h3>moon water: does it actually do anything?</h3>
+      <p>Left a jar out under the full moon. It is now... cold water with vibes. 10/10 would charge again.</p>
+      <span class="meta">3 days ago · 6 min</span>
+      <span class="doodle hand" style="bottom:6px;right:10px;color:var(--cobalt);">☾</span>
+    </div>
+    <div class="card pop" style="animation-delay:.14s">
+      <span class="cat" style="background:var(--cyan);">SCI CORNER</span>
+      <img class="ph" src="https://picsum.photos/seed/galaxy/400/240" alt="">
+      <h3>tardigrades are tiny invincible kings</h3>
+      <p>They survive space. They survive boiling. They survive me. A short love letter to water bears.</p>
+      <span class="meta">1 week ago · 4 min</span>
+    </div>
+    <div class="card pop" style="animation-delay:.16s">
+      <div class="pin" style="top:-9px;right:18px;background:radial-gradient(circle at 35% 30%,#fff 0 3px,var(--cobalt) 4px 100%);"></div>
+      <span class="cat" style="background:var(--lime);">RECIPES</span>
+      <h3>the world's most chaotic grilled cheese</h3>
+      <p>Four cheeses, one regret, zero structural integrity. Recipe + a diagram I drew at 1am.</p>
+      <span class="meta">5 days ago · 7 min</span>
+    </div>
+    <div class="card pop" style="animation-delay:.18s">
+      <span class="cat" style="background:var(--yellow);">ANIMAL GALLERY</span>
+      <img class="ph" src="https://picsum.photos/seed/cosmoo/400/300" alt="">
+      <h3>Cosmoo &amp; the kitties: a photo dump</h3>
+      <p>This is just an excuse to post pictures of my animals. No notes. They are perfect.</p>
+      <span class="meta">2 days ago · ∞ min</span>
+      <span class="doodle hand" style="bottom:6px;left:14px;color:var(--tomato);">♡♡♡</span>
+    </div>
+    <div class="card pop" style="animation-delay:.2s">
+      <span class="cat" style="background:var(--orange);">BOOK TRACKER</span>
+      <h3>read 41/52 — i will not make it</h3>
+      <p>Current: a 900-page fantasy I started "casually." Send snacks. Current rating mood: 🟥🟨🟩.</p>
+      <span class="meta">yesterday · 3 min</span>
+    </div>
+    <div class="card pop" style="animation-delay:.22s">
+      <div class="clip" style="top:-16px;right:30px;border-color:var(--tomato);"></div>
+      <span class="cat" style="background:var(--cobalt);color:#fff;">ART BLOG</span>
+      <img class="ph" src="https://picsum.photos/seed/sketch/400/260" alt="">
+      <h3>sticker sheet i designed at the bus stop</h3>
+      <p>Process photos + the doodles that didn't make the cut. Kiss-cut dreams.</p>
+      <span class="meta">4 days ago · 5 min</span>
+    </div>
+    <div class="card pop" style="animation-delay:.24s">
+      <span class="cat" style="background:var(--pink);color:#fff;">MEME GALLERY</span>
+      <h3>memes i'm legally obligated to share</h3>
+      <p>Curated. Cursed. Categorically unhinged. The hall of fame for june.</p>
+      <span class="meta">6 days ago · 2 min</span>
+    </div>
+    <div class="card pop" style="animation-delay:.26s">
+      <span class="cat" style="background:var(--lime);">TRAVEL MAP</span>
+      <img class="ph" src="https://picsum.photos/seed/roadtrip/400/220" alt="">
+      <h3>pin #18: the world's saddest gas station</h3>
+      <p>It had ONE snack. The snack was beautiful. New favorite place, honestly.</p>
+      <span class="meta">last month · 8 min</span>
+    </div>
+    <div class="card pop" style="animation-delay:.28s">
+      <span class="cat" style="background:var(--cyan);">VISION BOARD</span>
+      <h3>2026: cozy, feral, employed (pick 3)</h3>
+      <p>Manifesting a reading nook, a garden, and zero unread emails. We love delusional optimism.</p>
+      <span class="meta">2 weeks ago · 4 min</span>
+    </div>
+  </section>
+
+  <!-- widgets -->
+  <section class="widgets">
+    <div class="boombox pop" style="animation-delay:.3s">
+      <div class="tape" style="top:-14px;left:40px;transform:rotate(-7deg);background:rgba(255,79,176,.8);"></div>
+      <h3>♪ MUSIC PLAYER</h3>
+      <div class="speakers">
+        <div class="speaker"></div>
+        <div class="nowplaying"><small>NOW PLAYING</small>Mitski — Washing Machine Heart</div>
+        <div class="speaker"></div>
+      </div>
+      <div class="eq"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <ul class="tracklist">
+        <li>Vampire Weekend — Harmony Hall <span>3:33</span></li>
+        <li>Beach House — Space Song <span>5:21</span></li>
+        <li>Tame Impala — The Less I Know <span>3:36</span></li>
+        <li>Phoebe Bridgers — Motion Sickness <span>4:03</span></li>
+      </ul>
+    </div>
+
+    <div class="wheelcard pop" style="animation-delay:.32s">
+      <div class="pin" style="top:-9px;left:30px;"></div>
+      <h3>WHEEL OF FORTUNE</h3>
+      <p class="marker" style="font-size:14px">spin to decide what i blog next →</p>
+      <div class="wheelwrap">
+        <div class="wheel-ptr"></div>
+        <div class="wheel" id="theWheel"></div>
+        <div class="wheel-hub"></div>
+      </div>
+      <button class="spinbtn" onclick="spinWheel()">SPIN IT</button>
+      <p class="hand" id="wheelResult" style="margin-top:12px;min-height:18px;color:var(--cobalt)"></p>
+    </div>
+  </section>
+
+  <footer><span class="stickerline">made with too much glue · 317010.xyz · est. whenever</span></footer>
+</main>
+
+<!-- ===================== ARTICLE VIEW ===================== -->
+<main id="view-article" class="view">
+
+  <div class="breadcrumb pop"><a href="#" onclick="return false">Witchcraft Corner</a> &rsaquo; <a href="#" onclick="return false">Tarot</a></div>
+
+  <header class="article-head pop" style="animation-delay:.05s">
+    <h1>Reading the <em>Major Arcana</em>: A Beginner's Field Guide</h1>
+    <span class="byline">by Madison · 12 min read</span>
+  </header>
+
+  <div class="hero pop" style="animation-delay:.1s">
+    <div class="tape" style="top:-15px;left:50px;transform:rotate(-6deg);"></div>
+    <div class="tape" style="top:-13px;right:70px;width:100px;transform:rotate(6deg);background:rgba(155,255,46,.75);"></div>
+    <img src="https://picsum.photos/seed/tarot/900/420" alt="Tarot cards spread on a table">
+  </div>
+
+  <div class="article-body pop" style="animation-delay:.14s">
+    <p class="lead">So you bought a tarot deck on impulse (relatable) and now twenty-two strange, beautiful cards are staring at you. Don't panic. The Major Arcana isn't a test — it's a story you already know, told in pictures. This is the field guide I wish someone had handed me when I started.</p>
+
+    <p>The Majors are the "big" cards: the milestones, the archetypes, the plot beats of a life. When one shows up in a reading, the universe is basically tapping you on the shoulder. We're going to walk through how to actually <span class="hl">read</span> them instead of just memorizing meanings off the little booklet (we've all been there).</p>
+
+    <h2>First, ditch the fear</h2>
+    <p>The most-feared cards — Death, The Tower, The Devil — are almost never literal. Death means transformation. The Tower means a much-needed shake-up. The cards are honest, not cruel. Approach them like a friend who tells you the truth because they love you.</p>
+
+    <blockquote>"The cards don't predict the future. They describe the present so clearly that the future becomes obvious."</blockquote>
+
+    <h3>How a reading actually feels</h3>
+    <p>Less "fortune teller in a tent," more "journaling with a really wise stranger." You pull a card, you sit with the image, you notice what your gut says <em>before</em> you look anything up. That gut reaction is the reading. Everything else is decoration.</p>
+
+    <div class="needs">
+      <h3>✶ What you'll need</h3>
+      <ul>
+        <li>A candle — for ambiance and a little ceremony</li>
+        <li>A journal — write the card + your first gut reaction</li>
+        <li>Your deck — whichever one called to you in the shop</li>
+        <li>A quiet hour — phone face-down, notifications off</li>
+      </ul>
+    </div>
+
+    <figure class="inline">
+      <div class="pin" style="top:-9px;left:20px;"></div>
+      <img src="https://picsum.photos/seed/moon/600/360" alt="The moon over water">
+      <figcaption class="hand">The Moon card teaches you to trust intuition over logic ☾</figcaption>
+    </figure>
+
+    <p class="pullquote"><span class="hl pink">Read the picture first.</span> <span class="hl cyan">The book second.</span> Always.</p>
+
+    <h2>The first three cards</h2>
+    <p>If you only learn three to start, learn these. They're the opening act of the whole deck, and once you feel them, the rest start clicking into place.</p>
+
+    <ol class="arcana">
+      <li><span class="num">0</span><span><b>The Fool</b> — the leap of faith. Beginnings, innocence, saying yes before you're ready. You at the start of literally anything.</span></li>
+      <li><span class="num">I</span><span><b>The Magician</b> — you already have every tool you need. Focus, willpower, turning ideas into reality. Stop waiting.</span></li>
+      <li><span class="num">II</span><span><b>The High Priestess</b> — the quiet knowing. Intuition, secrets, the answer you can feel but can't yet explain.</span></li>
+    </ol>
+
+    <div class="sticky-note">
+      <div class="clip" style="top:-16px;left:30px;"></div>
+      <b>Herb pairing: mugwort</b>
+      A little dried mugwort near your reading space is the classic intuition booster. Tuck a sprig in your journal or burn a tiny bit. Smells like a witchy attic. Perfect.
+    </div>
+
+    <p>That's it. That's the start. Pull one card tomorrow morning, write your gut reaction, and don't look it up until the evening. Do that for a week and you'll be reading the Majors like you've known them your whole life — because, honestly, you kind of have.</p>
+  </div>
+
+  <!-- comments -->
+  <section class="comments pop" style="animation-delay:.18s">
+    <h2>COMMENTS</h2>
+    <p class="mod-note">★ comments are reviewed before they appear</p>
+
+    <div class="comment">
+      <span class="approved">approved ✓</span>
+      <span class="who">starlight_sam</span> · <span class="when">2 days ago</span>
+      <p>okay the "read the picture first" thing genuinely unlocked tarot for me. i've had my deck for a YEAR and never thought to just... look at it. thank you Madison 🥹</p>
+    </div>
+    <div class="comment">
+      <span class="approved">approved ✓</span>
+      <span class="who">mugwort_enjoyer</span> · <span class="when">yesterday</span>
+      <p>can confirm the mugwort tip. my reading nook now smells like a haunted library and i've never been happier. more witchcraft corner posts pls!!</p>
+    </div>
+
+    <div class="cform">
+      <h3>leave a comment</h3>
+      <label for="cname">NAME</label>
+      <input id="cname" type="text" placeholder="what should we call you?">
+      <label for="cmsg">MESSAGE</label>
+      <textarea id="cmsg" rows="4" placeholder="be nice — it goes through review first"></textarea>
+      <button onclick="fakeSubmit(event)">SUBMIT FOR REVIEW</button>
+      <p class="hand" id="formNote" style="margin-top:14px;color:var(--cobalt);min-height:18px"></p>
+    </div>
+  </section>
+
+  <footer><span class="stickerline">made with too much glue · 317010.xyz · est. whenever</span></footer>
+</main>
+
+<script>
+  function showView(which){
+    document.getElementById('view-home').classList.toggle('show', which==='home');
+    document.getElementById('view-article').classList.toggle('show', which==='article');
+    document.getElementById('btnHome').classList.toggle('active', which==='home');
+    document.getElementById('btnArticle').classList.toggle('active', which==='article');
+    window.scrollTo({top:0, behavior:'instant' in window ? 'auto':'auto'});
+    // restart pop-in animations by reflow
+    var v = document.getElementById(which==='home'?'view-home':'view-article');
+    v.querySelectorAll('.pop').forEach(function(el){ el.style.animation='none'; });
+    void v.offsetWidth;
+    v.querySelectorAll('.pop').forEach(function(el){ el.style.animation=''; });
+  }
+
+  var spins=0;
+  var picks=['Witchcraft Corner','Recipes','Meme Gallery','Random Thoughts','Animal Gallery','Sci Corner','Art Blog','Travel Map'];
+  function spinWheel(){
+    spins++;
+    var extra = 360*4 + Math.floor(Math.random()*360);
+    var w=document.getElementById('theWheel');
+    w.style.animation='none';
+    w.style.transition='transform 2.4s cubic-bezier(.15,.9,.25,1)';
+    w.style.transform='rotate('+(spins*extra)+'deg)';
+    var res=document.getElementById('wheelResult');
+    res.textContent='spinning…';
+    setTimeout(function(){
+      res.textContent='→ next post: '+picks[Math.floor(Math.random()*picks.length)]+'!';
+    },2450);
+  }
+
+  function fakeSubmit(e){
+    e.preventDefault();
+    document.getElementById('formNote').textContent='✓ sent! a human (me) will read it before it shows up.';
+    document.getElementById('cname').value='';
+    document.getElementById('cmsg').value='';
+  }
+</script>
+</body>
+</html>

@@ -18,7 +18,7 @@ export default function CursorRibbon(): ReactElement {
 
   useEffect(() => {
     // Skip on touch / coarse pointers.
-    if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+    if (window.matchMedia('(pointer: coarse)').matches) {
       return;
     }
     const bc = canvasRef.current;
