@@ -3,16 +3,17 @@ import { requests } from '../shared/api';
 import en from '../shared/lang/en';
 import { stringsDef } from '../shared/strings';
 import { RouterProvider, RouterView } from './router';
+import AppShell from './components/shell/AppShell';
 import './styles.css';
 
 bootstrapApp({
   requests,
   RouterProvider,
   render: () => (
-    <>
+    <AppShell>
       <RouterView />
       <FeedbackButton />
-    </>
+    </AppShell>
   ),
   strings: {
     defaultLang: stringsDef.defaultLang,

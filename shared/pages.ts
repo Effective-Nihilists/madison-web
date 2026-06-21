@@ -14,6 +14,17 @@ import { definePage, definePages } from 'ugly-app/shared';
 // Navigate to it from anywhere via: useRouter().push('route-key', params)
 export const pages = definePages({
   '': definePage<{}>({ auth: false }),
+
+  // ── Blog / CMS routes ──────────────────────────────────────────────────────
+  'article/:slug': definePage<{ slug: string }>({ auth: false }),
+  'corner/:corner': definePage<{ corner: string }>({ auth: false }),
+  'admin': definePage<{}>({ auth: true }),
+  'admin/articles': definePage<{}>({ auth: true }),
+  'admin/articles/new': definePage<{}>({ auth: true }),
+  'admin/articles/:id': definePage<{ id: string }>({ auth: true }),
+  'admin/comments': definePage<{}>({ auth: true }),
+  'admin/media': definePage<{}>({ auth: true }),
+
   'auth-demo': definePage<{}>({ auth: false }),
   'user/:userId': definePage<{ userId: string }>(),
   'search': definePage<{ q?: string }>({ auth: false }),
