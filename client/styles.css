@@ -1,3 +1,8 @@
+/* Ported global stylesheet for the 317010.xyz retro shell (fonts, themes,
+   Win9x chrome, widgets). Imported first so app-level rules below can
+   override where needed. */
+@import './madison.css';
+
 :root {
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-right: env(safe-area-inset-right, 0px);
