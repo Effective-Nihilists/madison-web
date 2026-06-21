@@ -1,6 +1,25 @@
 import { z } from 'zod';
 import type { InferDocType } from 'ugly-app/shared';
 import { defineCollections } from 'ugly-app/shared';
+import {
+  ArticleSchema,
+  CommentSchema,
+  RandomThoughtSchema,
+  MediaAssetSchema,
+  MusicTrackSchema,
+  ButtonImageSchema,
+  AdminUserSchema,
+} from './blog';
+
+export type {
+  Article,
+  Comment,
+  RandomThought,
+  MediaAsset,
+  MusicTrack,
+  ButtonImage,
+  AdminUser,
+} from './blog';
 
 // ─── Schemas & Types ─────────────────────────────────────────────────────────
 
@@ -58,6 +77,36 @@ export const collections = defineCollections({
   collabDoc: {
     schema: CollabDocSchema,
     meta: { cache: false, trackable: false, public: false, cascadeFrom: null },
+  },
+
+  // ── Blog / CMS ─────────────────────────────────────────────────────────────
+  article: {
+    schema: ArticleSchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, trackKeys: ['corner'] },
+  },
+  comment: {
+    schema: CommentSchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: 'article', trackKeys: ['articleId'] },
+  },
+  randomThought: {
+    schema: RandomThoughtSchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: null },
+  },
+  mediaAsset: {
+    schema: MediaAssetSchema,
+    meta: { cache: false, trackable: false, public: false, cascadeFrom: null },
+  },
+  musicTrack: {
+    schema: MusicTrackSchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: null },
+  },
+  buttonImage: {
+    schema: ButtonImageSchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: null },
+  },
+  adminUser: {
+    schema: AdminUserSchema,
+    meta: { cache: true, trackable: false, public: false, cascadeFrom: null },
   },
 });
 
