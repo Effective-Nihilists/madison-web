@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid';
 import type { TypedDB } from 'ugly-app/shared';
 import { dbDefaults } from 'ugly-app/shared';
-import { createStorageClient } from 'ugly-app/server';
 import type { RequestHandlers } from 'ugly-app';
 import type { requests } from '../shared/api';
 import { collections } from '../shared/collections';
@@ -51,6 +50,20 @@ function decodeBase64(dataBase64: string): Buffer {
   return Buffer.from(raw, 'base64');
 }
 
+/**
+ * Storage `put` injected per-entry so this shared module stays
+ * Workers-safe. `server/index.ts` (Node) passes the S3-backed
+ * `createStorageClient().put`; `server/workers.ts` passes the
+ * Workers adapter's R2-backed `getAdapter().storage.put`. Mirrors the
+ * framework's `StorageAdapter.put` signature.
+ */
+type StoragePut = (
+  bucket: 'public' | 'temp',
+  key: string,
+  body: Buffer | Uint8Array,
+  contentType: string,
+) => Promise<string>;
+
 const CONTENT_TYPE: Record<MediaAsset['kind'], string> = {
   image: 'image/png',
   audio: 'audio/wav',
@@ -66,7 +79,10 @@ const CONTENT_TYPE: Record<MediaAsset['kind'], string> = {
  * `createApp`/`createWorkersApp` with handlers BEFORE `app.db` exists, so the
  * getter form lets callers defer resolving `app.db` until a request runs.
  */
-export function makeHandlers(dbOrGetter: TypedDB | (() => TypedDB)): BlogHandlers {
+export function makeHandlers(
+  dbOrGetter: TypedDB | (() => TypedDB),
+  storagePut: StoragePut,
+): BlogHandlers {
   const db: TypedDB =
     typeof dbOrGetter === 'function'
       ? new Proxy({} as TypedDB, {
@@ -215,10 +231,9 @@ export function makeHandlers(dbOrGetter: TypedDB | (() => TypedDB)): BlogHandler
 
     uploadMedia: async (userId, { kind, name, dataBase64 }) => {
       await requireAdmin(db, userId);
-      const storage = createStorageClient();
       const body = decodeBase64(dataBase64);
       const key = `media/${Date.now()}-${nanoid(8)}-${name}`;
-      const url = await storage.put('public', key, body, CONTENT_TYPE[kind]);
+      const url = await storagePut('public', key, body, CONTENT_TYPE[kind]);
       const asset: MediaAsset = { _id: nanoid(), url, kind, name, ownerId: userId, ...dbDefaults() };
       await db.setDoc(collections.mediaAsset, asset);
       return { url };

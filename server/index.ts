@@ -11,6 +11,7 @@ import {
   type InboundEmail,
   type RequestHandlers,
 } from 'ugly-app';
+import { createStorageClient } from 'ugly-app/server';
 import { nanoid } from 'nanoid';
 import { enableConversations } from 'ugly-app/conversation/server';
 import { enableCollab } from 'ugly-app/collab/server';
@@ -38,6 +39,10 @@ const cronHandlers: WorkerHandlers<typeof cronTasks> = {
     console.log(`[Cron] dailyCleanup: deleted ${result.rowCount} old completed todos`);
   },
 };
+
+// S3-backed storage for the Node entry. The Workers entry injects the R2-backed
+// adapter storage instead (see server/workers.ts) so handlers.ts stays node-free.
+const storage = createStorageClient();
 
 const app = createApp(
   { requests, messages },
@@ -120,7 +125,13 @@ const app = createApp(
     // Blog / CMS handlers — shared with server/workers.ts via makeHandlers.
     // `app.db` isn't assigned yet during createApp, so pass a lazy getter.
     // The explicit return annotation breaks the app↔handlers inference cycle.
-    ...makeHandlers((): TypedDB => app.db),
+    // Storage is injected per-entry (Node S3 here, Workers R2 in workers.ts) so
+    // the shared handlers module stays free of the Node-only `ugly-app/server`
+    // barrel and the Workers bundle stays node-free.
+    ...makeHandlers(
+      (): TypedDB => app.db,
+      (bucket, key, body, contentType) => storage.put(bucket, key, Buffer.from(body), contentType),
+    ),
   } satisfies RequestHandlers<typeof requests>,
   collections,
   (configurator: AppConfigurator) => {

@@ -58,7 +58,8 @@ describe('makeHandlers', () => {
 
   beforeEach(async () => {
     db = makeFakeDb();
-    h = makeHandlers(db);
+    // eslint-disable-next-line @typescript-eslint/require-await
+    h = makeHandlers(db, async () => 'https://blob/x');
     await seedAdmin(db, ADMIN);
   });
 

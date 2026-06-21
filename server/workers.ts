@@ -18,6 +18,7 @@ import {
   CollectionDO,
   SessionDO,
   createWorkersApp,
+  getAdapter,
   getAppContext,
 } from 'ugly-app/server/adapter/workers';
 import type { RequestHandlers } from 'ugly-app';
@@ -37,10 +38,25 @@ function workersDb(): TypedDB {
   return db;
 }
 
+// Workers-safe storage: the R2-backed adapter installed by createWorkersApp.
+// Resolved lazily (per request) because the adapter is null at module-eval
+// time — `setAdapter()` runs inside the Worker's `fetch` handler. We import
+// `getAdapter` from the Workers adapter barrel, NOT `ugly-app/server` (the
+// Node barrel that drags in pg/nats/fs and breaks the worker bundle).
+const workersStoragePut = (
+  bucket: 'public' | 'temp',
+  key: string,
+  body: Buffer | Uint8Array,
+  contentType: string,
+): Promise<string> => getAdapter().storage.put(bucket, key, body, contentType);
+
 // Request handlers run inside the Worker for `fetch` requests. These are the
 // SAME blog/CMS handlers wired into `server/index.ts` (the two-entry footgun:
 // a handler missing here ships a Worker that returns `[Router] not registered`).
-const requestHandlers: Partial<RequestHandlers<typeof requests>> = makeHandlers(workersDb);
+const requestHandlers: Partial<RequestHandlers<typeof requests>> = makeHandlers(
+  workersDb,
+  workersStoragePut,
+);
 
 // Cron handlers run on Cloudflare Cron Triggers (matches the schedule
 // declared in `shared/cron.ts`).
