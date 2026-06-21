@@ -1,13 +1,269 @@
-import type { ReactElement } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type ReactElement } from 'react';
+import { useApp } from 'ugly-app/client';
 import Win9xWindow from '../../components/Win9xWindow';
+import AdminGate from './AdminGate';
+import Markdown from '../../components/Markdown';
+import { Link, useRouter } from '../../router';
+import { CORNERS, CORNER_KEYS, type Article } from '../../../shared/blog';
+import { uploadMedia } from '../../admin/upload';
 
-// ArticleEditorPage — stub (Task 13 adds the markdown + image-upload editor).
-// Used for both `admin/articles/new` and `admin/articles/:id`; `id` is optional.
+function slugify(input: string): string {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
+
+type Status = 'draft' | 'published';
+
+function EditorInner({ id }: { id?: string }): ReactElement {
+  const { socket } = useApp();
+  const router = useRouter();
+
+  const [title, setTitle] = useState('');
+  const [slug, setSlug] = useState('');
+  const [slugTouched, setSlugTouched] = useState(false);
+  const [corner, setCorner] = useState<string>(CORNER_KEYS[0]);
+  const [excerpt, setExcerpt] = useState('');
+  const [bodyMarkdown, setBodyMarkdown] = useState('');
+  const [coverImageUrl, setCoverImageUrl] = useState<string | null>(null);
+  const [status, setStatus] = useState<Status>('draft');
+
+  const [loaded, setLoaded] = useState(!id);
+  const [saving, setSaving] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingInline, setUploadingInline] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    let active = true;
+    void (async () => {
+      const doc = await socket.getDoc<Article>('article', id);
+      if (!active || !doc) {
+        if (active) setLoaded(true);
+        return;
+      }
+      setTitle(doc.title);
+      setSlug(doc.slug);
+      setSlugTouched(true);
+      setCorner(doc.corner);
+      setExcerpt(doc.excerpt);
+      setBodyMarkdown(doc.bodyMarkdown);
+      setCoverImageUrl(doc.coverImageUrl);
+      setStatus(doc.status);
+      setLoaded(true);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [socket, id]);
+
+  function handleTitleChange(value: string): void {
+    setTitle(value);
+    if (!slugTouched) setSlug(slugify(value));
+  }
+
+  async function handleCover(e: ChangeEvent<HTMLInputElement>): Promise<void> {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploadingCover(true);
+    setError(null);
+    try {
+      const url = await uploadMedia(socket, 'image', file);
+      setCoverImageUrl(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'cover upload failed');
+    } finally {
+      setUploadingCover(false);
+    }
+  }
+
+  async function handleInlineImage(e: ChangeEvent<HTMLInputElement>): Promise<void> {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploadingInline(true);
+    setError(null);
+    try {
+      const url = await uploadMedia(socket, 'image', file);
+      const snippet = `\n![](${url})\n`;
+      const el = bodyRef.current;
+      if (el) {
+        const start = el.selectionStart;
+        const end = el.selectionEnd;
+        setBodyMarkdown((prev) => prev.slice(0, start) + snippet + prev.slice(end));
+      } else {
+        setBodyMarkdown((prev) => prev + snippet);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'image upload failed');
+    } finally {
+      setUploadingInline(false);
+    }
+  }
+
+  async function handleSave(): Promise<void> {
+    if (!title.trim() || !slug.trim()) {
+      setError('title and slug are required');
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await socket.request('saveArticle', {
+        ...(id ? { id } : {}),
+        title: title.trim(),
+        slug: slug.trim(),
+        corner,
+        excerpt,
+        bodyMarkdown,
+        coverImageUrl,
+        status,
+      });
+      const { id: savedId } = res as { id: string };
+      if (!id) router.replace('admin/articles/:id', { id: savedId });
+      else router.push('admin/articles', {});
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'save failed');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!loaded) {
+    return (
+      <Win9xWindow title="editor.exe — loading" bodyClassName="doc-body">
+        <p className="note">loading article…</p>
+      </Win9xWindow>
+    );
+  }
+
+  return (
+    <Win9xWindow
+      title={`editor.exe — ${id ? slug || 'article' : 'new article'}`}
+      bodyClassName="doc-body"
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+        <h1 className="article" style={{ flex: 1, margin: 0 }}>
+          {id ? 'Edit article' : 'New article'}
+        </h1>
+        <Link to="admin/articles" params={{}} className="tbtn">
+          ← all articles
+        </Link>
+      </div>
+
+      {error && (
+        <p className="note" style={{ color: 'crimson', marginTop: 8 }}>
+          {error}
+        </p>
+      )}
+
+      <div className="cform" style={{ marginTop: 16 }}>
+        <label className="note">title</label>
+        <input type="text" value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="article title" />
+
+        <label className="note">slug</label>
+        <input
+          type="text"
+          value={slug}
+          onChange={(e) => {
+            setSlug(e.target.value);
+            setSlugTouched(true);
+          }}
+          placeholder="article-slug"
+        />
+
+        <label className="note">corner</label>
+        <select
+          value={corner}
+          onChange={(e) => setCorner(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '9px 11px',
+            margin: '6px 0',
+            border: '2px solid var(--panel-edge)',
+            borderRadius: 9,
+            background: 'var(--surface-solid)',
+            color: 'var(--text)',
+          }}
+        >
+          {CORNERS.map((c) => (
+            <option key={c.key} value={c.key}>
+              {c.label}
+            </option>
+          ))}
+        </select>
+
+        <label className="note">excerpt</label>
+        <textarea value={excerpt} rows={2} onChange={(e) => setExcerpt(e.target.value)} placeholder="short summary shown on cards" />
+
+        <label className="note">cover image</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', margin: '6px 0' }}>
+          <input type="file" accept="image/*" onChange={(e) => void handleCover(e)} disabled={uploadingCover} />
+          {uploadingCover && <span className="note">uploading…</span>}
+          {coverImageUrl && (
+            <>
+              <img src={coverImageUrl} alt="cover" style={{ maxWidth: 120, borderRadius: 8, border: '2px solid var(--panel-edge)' }} />
+              <button className="tbtn" type="button" onClick={() => setCoverImageUrl(null)}>
+                remove
+              </button>
+            </>
+          )}
+        </div>
+
+        <label className="note">body (markdown)</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '6px 0' }}>
+          <input type="file" accept="image/*" onChange={(e) => void handleInlineImage(e)} disabled={uploadingInline} />
+          <span className="note">{uploadingInline ? 'uploading…' : 'insert image at cursor'}</span>
+        </div>
+        <textarea
+          ref={bodyRef}
+          value={bodyMarkdown}
+          rows={14}
+          onChange={(e) => setBodyMarkdown(e.target.value)}
+          placeholder="# Heading&#10;&#10;Write in markdown…"
+          style={{ fontFamily: 'var(--pixel-font, monospace)' }}
+        />
+
+        <fieldset style={{ border: '2px solid var(--panel-edge)', borderRadius: 9, padding: '8px 12px', margin: '6px 0' }}>
+          <legend className="note">status</legend>
+          <label style={{ marginRight: 16 }}>
+            <input type="radio" name="status" checked={status === 'draft'} onChange={() => setStatus('draft')} /> draft
+          </label>
+          <label>
+            <input type="radio" name="status" checked={status === 'published'} onChange={() => setStatus('published')} /> published
+          </label>
+        </fieldset>
+
+        <button className="tbtn" type="button" onClick={() => void handleSave()} disabled={saving}>
+          {saving ? 'saving…' : 'save article'}
+        </button>
+      </div>
+
+      <hr style={{ margin: '24px 0', border: 0, borderTop: '3px double var(--panel-edge)' }} />
+
+      <h2 style={{ fontFamily: 'var(--orn-font)' }}>Live preview</h2>
+      {bodyMarkdown.trim() ? (
+        <Markdown source={bodyMarkdown} />
+      ) : (
+        <p className="note">nothing to preview yet.</p>
+      )}
+    </Win9xWindow>
+  );
+}
+
+// ArticleEditorPage — markdown + image-upload editor for both
+// `admin/articles/new` and `admin/articles/:id` (Task 13). Keyed on `id` so the
+// component remounts (and reloads) when navigating new → edit.
 export default function ArticleEditorPage({ id }: { id?: string }): ReactElement {
   return (
-    <Win9xWindow title={`editor.exe — ${id ?? 'new article'}`} bodyClassName="doc-body">
-      <h1>{id ? `Edit article ${id}` : 'New article'}</h1>
-      <p className="note">coming soon — markdown editor with live preview + image upload.</p>
-    </Win9xWindow>
+    <AdminGate>
+      <EditorInner key={id ?? 'new'} {...(id ? { id } : {})} />
+    </AdminGate>
   );
 }
