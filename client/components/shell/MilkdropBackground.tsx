@@ -211,15 +211,19 @@ const MilkdropBackground = forwardRef<MilkdropHandle>(function MilkdropBackgroun
         presetsRef.current = presets;
         presetKeysRef.current = keys;
 
+        // Backing store MUST match the render resolution. Using pixelRatio>1
+        // without sizing the canvas to width*pixelRatio renders only the
+        // top-left quarter (looks zoomed-in). pixelRatio:1 + canvas sized to
+        // the viewport gives a correct 1:1 fill (soft on retina, fine for a bg).
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
         const viz = BC.createVisualizer(ctx, canvas, {
           width: window.innerWidth,
           height: window.innerHeight,
-          pixelRatio: Math.min(window.devicePixelRatio, 2),
+          pixelRatio: 1,
         });
         visualizerRef.current = viz;
         try { viz.connectAudio(filter); } catch { /* ignore */ }
-        // Force the renderer to the current viewport so the initial frame
-        // isn't rendered at a stale/zoomed size.
         try { viz.setRendererSize(window.innerWidth, window.innerHeight); } catch { /* ignore */ }
         loadRandomPreset();
 
@@ -236,10 +240,10 @@ const MilkdropBackground = forwardRef<MilkdropHandle>(function MilkdropBackgroun
     }
 
     function onResize(): void {
-      // Let Butterchurn own the canvas backing store — it applies pixelRatio
-      // internally. Manually setting canvas.width/height to CSS pixels fought
-      // the 2x pixelRatio and rendered the visual zoomed-in/cropped.
+      const canvas = canvasRef.current;
       const viz = visualizerRef.current;
+      // Keep the backing store == render resolution (pixelRatio:1) on resize.
+      if (canvas) { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
       if (viz) { try { viz.setRendererSize(window.innerWidth, window.innerHeight); } catch { /* ignore */ } }
     }
 

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="mr" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b06a5e"/>
+      <stop offset="0.16" stop-color="#c08a52"/>
+      <stop offset="0.32" stop-color="#c2b15c"/>
+      <stop offset="0.48" stop-color="#8a9a5b"/>
+      <stop offset="0.62" stop-color="#5e9590"/>
+      <stop offset="0.78" stop-color="#6e80ac"/>
+      <stop offset="0.90" stop-color="#9a6fa0"/>
+      <stop offset="1" stop-color="#a96a8e"/>
+    </linearGradient>
+    <radialGradient id="bg" cx="0.5" cy="0.42" r="0.75">
+      <stop offset="0" stop-color="#241a30"/>
+      <stop offset="1" stop-color="#100c18"/>
+    </radialGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <!-- dark rounded tile with a Win9x-ish bevel -->
+  <rect x="8" y="8" width="496" height="496" rx="96" fill="url(#bg)"/>
+  <rect x="14" y="14" width="484" height="484" rx="90" fill="none" stroke="#3a3050" stroke-width="3"/>
+  <rect x="14" y="14" width="484" height="484" rx="90" fill="none" stroke="#c2b15c" stroke-width="1.5" opacity="0.5"/>
+  <!-- big muted-rainbow sparkle -->
+  <path filter="url(#glow)" fill="url(#mr)"
+        d="M256 64 C 282 214 298 230 448 256 C 298 282 282 298 256 448 C 230 298 214 282 64 256 C 214 230 230 214 256 64 Z"/>
+  <!-- small accent sparkles -->
+  <path fill="#cabfe6" opacity="0.95" d="M392 120 C 400 156 404 160 440 168 C 404 176 400 180 392 216 C 384 180 380 176 344 168 C 380 160 384 156 392 120 Z"/>
+  <circle cx="132" cy="372" r="11" fill="#c2b15c"/>
+  <circle cx="408" cy="356" r="7" fill="#7fae8c"/>
+</svg>
