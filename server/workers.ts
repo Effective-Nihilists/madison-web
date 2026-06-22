@@ -67,31 +67,6 @@ const cronHandlers: WorkerHandlers<typeof cronTasks> = {
   },
 };
 
-// ── Token-free email via the Cloudflare Email Service `send_email` binding ──
-// The framework's `emailSend` only knows the REST API (needs a CF API token)
-// or the retired ugly.bot proxy. To send WITHOUT any token, we expose a tiny
-// route that calls the native `env.EMAIL` binding (auth is implicit at the
-// Worker runtime — no bearer needed for Cloudflare), and point the framework's
-// EMAIL_PROXY_URL at it. So: magic-link → emailSend → POST /_email/send →
-// env.EMAIL.send(). A shared EMAIL_PROXY_TOKEN guards the route from outside.
-interface EmailSendBinding {
-  send(msg: {
-    from: string;
-    to: string;
-    subject: string;
-    html?: string;
-    text?: string;
-  }): Promise<unknown>;
-}
-interface RawEmailCtx {
-  req: { header(name: string): string | undefined; json(): Promise<unknown> };
-  env: { EMAIL?: EmailSendBinding; EMAIL_PROXY_TOKEN?: string; EMAIL_FROM?: string };
-  json(body: unknown, status?: number): Response;
-}
-interface RawRouteApp {
-  post(path: string, handler: (c: RawEmailCtx) => Promise<Response>): void;
-}
-
 const app = createWorkersApp(
   { requests, messages },
   requestHandlers,
@@ -102,42 +77,8 @@ const app = createWorkersApp(
     cfg.setOnUserCreate(async (userId, initial, db) => {
       await seedAdminOnCreate(db, userId, initial.email);
     });
-
-    // Token-free email route — calls the `env.EMAIL` send_email binding.
-    (cfg as unknown as {
-      setRawRoutes: (register: (rawApp: RawRouteApp) => void) => void;
-    }).setRawRoutes((rawApp) => {
-      rawApp.post('/_email/send', async (c) => {
-        const expected = c.env.EMAIL_PROXY_TOKEN;
-        if (!expected || c.req.header('authorization') !== `Bearer ${expected}`) {
-          return c.json({ error: 'unauthorized' }, 401);
-        }
-        const binding = c.env.EMAIL;
-        if (!binding) return c.json({ error: 'EMAIL binding not configured' }, 500);
-        const body = (await c.req.json().catch(() => ({}))) as {
-          to?: string;
-          subject?: string;
-          html?: string;
-          text?: string;
-        };
-        if (!body.to || !body.subject) {
-          return c.json({ error: 'missing to/subject' }, 400);
-        }
-        const msg: { from: string; to: string; subject: string; html?: string; text?: string } = {
-          from: c.env.EMAIL_FROM ?? 'noreply@317010.xyz',
-          to: body.to,
-          subject: body.subject,
-        };
-        if (body.html !== undefined) msg.html = body.html;
-        if (body.text !== undefined) msg.text = body.text;
-        try {
-          await binding.send(msg);
-          return c.json({ ok: true });
-        } catch (err) {
-          return c.json({ error: String((err as Error).message ?? err) }, 502);
-        }
-      });
-    });
+    // Transactional email (magic-link) sends via the Cloudflare Email Service
+    // `env.EMAIL` binding — wired automatically by ugly-app ≥0.1.660. No token.
   },
 );
 
