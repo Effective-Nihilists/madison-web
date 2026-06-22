@@ -218,6 +218,9 @@ const MilkdropBackground = forwardRef<MilkdropHandle>(function MilkdropBackgroun
         });
         visualizerRef.current = viz;
         try { viz.connectAudio(filter); } catch { /* ignore */ }
+        // Force the renderer to the current viewport so the initial frame
+        // isn't rendered at a stale/zoomed size.
+        try { viz.setRendererSize(window.innerWidth, window.innerHeight); } catch { /* ignore */ }
         loadRandomPreset();
 
         const loop = (): void => {
@@ -233,9 +236,10 @@ const MilkdropBackground = forwardRef<MilkdropHandle>(function MilkdropBackgroun
     }
 
     function onResize(): void {
-      const canvas = canvasRef.current;
+      // Let Butterchurn own the canvas backing store — it applies pixelRatio
+      // internally. Manually setting canvas.width/height to CSS pixels fought
+      // the 2x pixelRatio and rendered the visual zoomed-in/cropped.
       const viz = visualizerRef.current;
-      if (canvas) { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
       if (viz) { try { viz.setRendererSize(window.innerWidth, window.innerHeight); } catch { /* ignore */ } }
     }
 
