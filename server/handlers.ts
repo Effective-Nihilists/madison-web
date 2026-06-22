@@ -11,6 +11,7 @@ import type {
   MediaAsset,
   MusicTrack,
   ButtonImage,
+  Entry,
 } from '../shared/collections';
 import { isAdmin } from './admin';
 
@@ -36,7 +37,11 @@ type BlogRequestKey =
   | 'uploadMedia'
   | 'addMusicTrack'
   | 'deleteMusicTrack'
-  | 'setButtonImage';
+  | 'setButtonImage'
+  | 'listEntries'
+  | 'saveEntry'
+  | 'deleteEntry'
+  | 'adminListEntries';
 
 export type BlogHandlers = Pick<RequestHandlers<typeof requests>, BlogRequestKey>;
 
@@ -266,6 +271,58 @@ export function makeHandlers(
       const doc: ButtonImage = { _id: key, key, url, ...dbDefaults() };
       await db.setDoc(collections.buttonImage, doc);
       return { ok: true };
+    },
+
+    // ── Phase 2: generic entry/gallery system ─────────────────────────────────
+    listEntries: async (_userId, { corner, q }) => {
+      const entries = await db.getDocs<Entry>(collections.entry, { corner }, {
+        sort: { order: 1, created: -1 },
+      });
+      if (!q || !q.trim()) return { entries };
+      const needle = q.trim().toLowerCase();
+      const filtered = entries.filter((e) => {
+        const hay = [e.title, e.body, ...(e.tags ?? [])].join(' ').toLowerCase();
+        return hay.includes(needle);
+      });
+      return { entries: filtered };
+    },
+
+    saveEntry: async (userId, input) => {
+      await requireAdmin(db, userId);
+      const { id, corner, title, ...rest } = input;
+      const existing = id ? await db.getDoc<Entry>(collections.entry, id) : null;
+      const _id = existing?._id ?? id ?? nanoid();
+      const doc: Entry = {
+        _id,
+        corner,
+        title,
+        imageUrl: rest.imageUrl ?? existing?.imageUrl ?? null,
+        body: rest.body ?? existing?.body ?? '',
+        tags: rest.tags ?? existing?.tags ?? [],
+        rating: rest.rating ?? existing?.rating ?? null,
+        status: rest.status ?? existing?.status ?? '',
+        link: rest.link ?? existing?.link ?? '',
+        funFact: rest.funFact ?? existing?.funFact ?? '',
+        order: rest.order ?? existing?.order ?? 0,
+        authorId: existing?.authorId ?? userId,
+        ...dbDefaults(),
+      };
+      await db.setDoc(collections.entry, doc);
+      return { id: _id };
+    },
+
+    deleteEntry: async (userId, { id }) => {
+      await requireAdmin(db, userId);
+      await db.deleteDoc(collections.entry, id);
+      return { ok: true };
+    },
+
+    adminListEntries: async (userId, { corner }) => {
+      await requireAdmin(db, userId);
+      const entries = await db.getDocs<Entry>(collections.entry, { corner }, {
+        sort: { order: 1, created: -1 },
+      });
+      return { entries };
     },
   };
 }

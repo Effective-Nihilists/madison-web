@@ -5,7 +5,9 @@ import {
   MusicTrackSchema,
   ButtonImageSchema,
   RandomThoughtSchema,
+  CORNER_KEYS,
 } from './blog';
+import { EntrySchema } from './entries';
 
 // Article fields editable by the admin (everything except server-managed
 // authorId / publishedAt). Reused by saveArticle's input.
@@ -35,6 +37,31 @@ const CommentDoc = CommentSchema.extend(dbFields);
 const RandomThoughtDoc = RandomThoughtSchema.extend(dbFields);
 const MusicTrackDoc = MusicTrackSchema.extend(dbFields);
 const ButtonImageDoc = ButtonImageSchema.extend(dbFields);
+const EntryDoc = EntrySchema.extend(dbFields);
+
+// Entry fields editable by the admin (everything except server-managed
+// authorId). Reused by saveEntry's input.
+const EntryInputSchema = EntrySchema.pick({
+  corner: true,
+  title: true,
+  imageUrl: true,
+  body: true,
+  tags: true,
+  rating: true,
+  status: true,
+  link: true,
+  funFact: true,
+  order: true,
+}).partial({
+  imageUrl: true,
+  body: true,
+  tags: true,
+  rating: true,
+  status: true,
+  link: true,
+  funFact: true,
+  order: true,
+});
 
 export const requests = defineRequests({
   // Todo demo — CRUD requests
@@ -220,6 +247,27 @@ export const requests = defineRequests({
   setButtonImage: authReq({
     input: z.object({ key: z.string().min(1), url: z.string().min(1) }),
     output: z.object({ ok: z.boolean() }),
+  }),
+
+  // ── Phase 2: generic entry/gallery system ───────────────────────────────────
+  // Public read — list entries for one corner, optional text query.
+  listEntries: req({
+    input: z.object({ corner: z.enum(CORNER_KEYS), q: z.string().optional() }),
+    output: z.object({ entries: z.array(EntryDoc) }),
+  }),
+  // Admin write — upsert (nanoid when new), delete, and admin list (all corners
+  // unfiltered status, used by the EntryManager).
+  saveEntry: authReq({
+    input: EntryInputSchema.extend({ id: z.string().optional() }),
+    output: z.object({ id: z.string() }),
+  }),
+  deleteEntry: authReq({
+    input: z.object({ id: z.string().min(1) }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+  adminListEntries: authReq({
+    input: z.object({ corner: z.enum(CORNER_KEYS) }),
+    output: z.object({ entries: z.array(EntryDoc) }),
   }),
 
   // Example: public request — userId is string | null

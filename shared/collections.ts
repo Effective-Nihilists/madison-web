@@ -10,6 +10,7 @@ import {
   ButtonImageSchema,
   AdminUserSchema,
 } from './blog';
+import { EntrySchema } from './entries';
 
 export type {
   Article,
@@ -20,6 +21,7 @@ export type {
   ButtonImage,
   AdminUser,
 } from './blog';
+export type { Entry } from './entries';
 
 // ─── Schemas & Types ─────────────────────────────────────────────────────────
 
@@ -107,6 +109,12 @@ export const collections = defineCollections({
   adminUser: {
     schema: AdminUserSchema,
     meta: { cache: true, trackable: false, public: false, cascadeFrom: null },
+  },
+
+  // ── Phase 2: generic entry/gallery system ───────────────────────────────────
+  entry: {
+    schema: EntrySchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, trackKeys: ['corner'] },
   },
 });
 
