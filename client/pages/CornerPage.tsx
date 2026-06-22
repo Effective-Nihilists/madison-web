@@ -6,6 +6,7 @@ import { CORNERS, type Article } from '../../shared/blog';
 import { CORNER_CONFIG, isEntryCorner } from '../../shared/entries';
 import GalleryPage from './GalleryPage';
 import WitchcraftPage from './witchcraft/WitchcraftPage';
+import WheelPage from './WheelPage';
 
 function toMs(d: number | Date): number {
   return d instanceof Date ? d.getTime() : d;
@@ -18,6 +19,7 @@ export default function CornerPage({ corner }: { corner: string }): ReactElement
   // The Witchcraft Corner gets a bespoke hub (Tarot, Oracle, Decks, Herbs,
   // Spells) instead of the plain article list.
   if (corner === 'witchcraft') return <WitchcraftPage />;
+  if (corner === 'wheel') return <WheelPage />;
   if (isEntryCorner(corner)) {
     const config = CORNER_CONFIG[corner];
     if (config) return <GalleryPage corner={corner} config={config} />;

@@ -29,6 +29,10 @@ export default function AdminDashboard(): ReactElement {
             <h2 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>Media &amp; Music</h2>
             <p className="note">upload tracks and corner button images.</p>
           </Link>
+          <Link to="admin/wheels" params={{}} className="card" style={{ display: 'block', marginBottom: 0, textDecoration: 'none' }}>
+            <h2 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>Wheels of Fortune</h2>
+            <p className="note">create and edit custom spin wheels.</p>
+          </Link>
         </div>
 
         <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 24 }}>Galleries &amp; collections</h2>

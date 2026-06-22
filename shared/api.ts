@@ -8,6 +8,7 @@ import {
   CORNER_KEYS,
 } from './blog';
 import { EntrySchema, ENTRY_CORNER_ENUM } from './entries';
+import { WheelSchema } from './wheel';
 
 // Article fields editable by the admin (everything except server-managed
 // authorId / publishedAt). Reused by saveArticle's input.
@@ -38,6 +39,7 @@ const RandomThoughtDoc = RandomThoughtSchema.extend(dbFields);
 const MusicTrackDoc = MusicTrackSchema.extend(dbFields);
 const ButtonImageDoc = ButtonImageSchema.extend(dbFields);
 const EntryDoc = EntrySchema.extend(dbFields);
+const WheelDoc = WheelSchema.extend(dbFields);
 
 // Entry fields editable by the admin (everything except server-managed
 // authorId). Reused by saveEntry's input.
@@ -268,6 +270,27 @@ export const requests = defineRequests({
   adminListEntries: authReq({
     input: z.object({ corner: z.enum(ENTRY_CORNER_ENUM) }),
     output: z.object({ entries: z.array(EntryDoc) }),
+  }),
+
+  // ── Phase 2 (Batch 3): Wheel of Fortune ────────────────────────────────────
+  // Public read — list all custom wheels (built-in presets ship client-side).
+  listWheels: req({
+    input: z.object({}),
+    output: z.object({ wheels: z.array(WheelDoc) }),
+  }),
+  // Admin write — upsert (nanoid when new) and delete.
+  saveWheel: authReq({
+    input: z.object({
+      id: z.string().optional(),
+      name: z.string().min(1),
+      slices: z.array(z.string().min(1)).min(2),
+      order: z.number().optional(),
+    }),
+    output: z.object({ id: z.string() }),
+  }),
+  deleteWheel: authReq({
+    input: z.object({ id: z.string().min(1) }),
+    output: z.object({ ok: z.boolean() }),
   }),
 
   // Example: public request — userId is string | null

@@ -13,6 +13,7 @@ import type {
   ButtonImage,
   Entry,
 } from '../shared/collections';
+import type { Wheel } from '../shared/wheel';
 import { isAdmin } from './admin';
 
 // The blog/CMS subset of request names this module implements. The other
@@ -41,7 +42,10 @@ type BlogRequestKey =
   | 'listEntries'
   | 'saveEntry'
   | 'deleteEntry'
-  | 'adminListEntries';
+  | 'adminListEntries'
+  | 'listWheels'
+  | 'saveWheel'
+  | 'deleteWheel';
 
 export type BlogHandlers = Pick<RequestHandlers<typeof requests>, BlogRequestKey>;
 
@@ -323,6 +327,36 @@ export function makeHandlers(
         sort: { order: 1, created: -1 },
       });
       return { entries };
+    },
+
+    // ── Phase 2 (Batch 3): Wheel of Fortune ─────────────────────────────────
+    listWheels: async () => {
+      const wheels = await db.getDocs<Wheel>(collections.wheel, {}, {
+        sort: { order: 1, created: -1 },
+      });
+      return { wheels };
+    },
+
+    saveWheel: async (userId, { id, name, slices, order }) => {
+      await requireAdmin(db, userId);
+      const existing = id ? await db.getDoc<Wheel>(collections.wheel, id) : null;
+      const _id = existing?._id ?? id ?? nanoid();
+      const doc: Wheel = {
+        _id,
+        name,
+        slices,
+        order: order ?? existing?.order ?? 0,
+        ownerId: existing?.ownerId ?? userId,
+        ...dbDefaults(),
+      };
+      await db.setDoc(collections.wheel, doc);
+      return { id: _id };
+    },
+
+    deleteWheel: async (userId, { id }) => {
+      await requireAdmin(db, userId);
+      await db.deleteDoc(collections.wheel, id);
+      return { ok: true };
     },
   };
 }

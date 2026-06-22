@@ -33,6 +33,7 @@ export const allPages = {
   ['admin/comments']: lazyPage(() => import('./pages/admin/CommentModerationPage')),
   ['admin/media']: lazyPage(() => import('./pages/admin/MediaMusicPage')),
   ['admin/entries/:corner']: lazyPage(() => import('./pages/admin/EntryManager')),
+  ['admin/wheels']: lazyPage(() => import('./pages/admin/WheelManager')),
 
   ['auth-demo']: lazyPage(() => import('./pages/AuthDemoPage')),
   ['user/:userId']: lazyPage(() => import('./pages/UserPage')),

@@ -11,6 +11,7 @@ import {
   AdminUserSchema,
 } from './blog';
 import { EntrySchema } from './entries';
+import { WheelSchema } from './wheel';
 
 export type {
   Article,
@@ -115,6 +116,12 @@ export const collections = defineCollections({
   entry: {
     schema: EntrySchema,
     meta: { cache: false, trackable: true, public: true, cascadeFrom: null, trackKeys: ['corner'] },
+  },
+
+  // ── Phase 2 (Batch 3): Wheel of Fortune custom wheels ───────────────────────
+  wheel: {
+    schema: WheelSchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: null },
   },
 });
 

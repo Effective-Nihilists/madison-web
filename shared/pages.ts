@@ -33,6 +33,7 @@ export const pages = definePages({
   'admin/comments': definePage<{}>({ auth: true }),
   'admin/media': definePage<{}>({ auth: true }),
   'admin/entries/:corner': definePage<{ corner: string }>({ auth: true }),
+  'admin/wheels': definePage<{}>({ auth: true }),
 
   'auth-demo': definePage<{}>({ auth: false }),
   'user/:userId': definePage<{ userId: string }>(),
