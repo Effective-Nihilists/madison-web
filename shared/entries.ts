@@ -2,13 +2,24 @@ import { z } from 'zod';
 import type { InferDocType } from 'ugly-app/shared';
 import { CORNER_KEYS } from './blog';
 
+// Entry corners include the 15 blog corners PLUS the Witchcraft-Corner
+// sub-collections (`decks`, `herbs`) which reuse the generic entry system
+// without a dedicated collection. `entry.corner` is typed against this wider
+// enum so the extra keys are accepted while the blog `corner` enum stays
+// limited to the 15 navigable corners.
+export const ENTRY_CORNER_ENUM = [...CORNER_KEYS, 'decks', 'herbs'] as [
+  string,
+  ...string[],
+];
+
 // ─── Entry schema ─────────────────────────────────────────────────────────────
-// A single generic "entry" used by the 8 gallery/list/card corners (books,
-// movies, recipes, restaurants, travel, vision, memes, animals). Every field is
-// optional per-corner; CORNER_CONFIG below decides which fields each corner
-// surfaces and how it renders them.
+// A single generic "entry" used by the gallery/list/card corners (books,
+// movies, recipes, restaurants, travel, vision, memes, animals) plus the
+// witchcraft sub-collections (decks, herbs). Every field is optional per-corner;
+// CORNER_CONFIG below decides which fields each corner surfaces and how it
+// renders them.
 export const EntrySchema = z.object({
-  corner: z.enum(CORNER_KEYS),
+  corner: z.enum(ENTRY_CORNER_ENUM),
   title: z.string().min(1),
   imageUrl: z.string().nullable().default(null),
   body: z.string().default(''),
@@ -115,6 +126,29 @@ export const CORNER_CONFIG: Record<string, CornerConfig> = {
     addLabel: 'add animal',
     emptyText: 'no critters yet — Cosmoo & the kitties are shy.',
   },
+  // ── Witchcraft Corner sub-collections ────────────────────────────────────
+  decks: {
+    layout: 'gallery',
+    search: false,
+    fields: ['title', 'image', 'body', 'link'],
+    addLabel: 'add deck',
+    emptyText: 'no decks in the collection yet.',
+  },
+  herbs: {
+    layout: 'cards',
+    search: true,
+    fields: ['title', 'image', 'body', 'tags'],
+    addLabel: 'add herb',
+    emptyText: 'no herbs in the cabinet yet.',
+  },
+};
+
+// Display labels for entry corners that are NOT in the blog `CORNERS` list
+// (the witchcraft sub-collections). GalleryPage / EntryManager fall back to
+// this map before defaulting to the raw key.
+export const ENTRY_CORNER_LABELS: Record<string, string> = {
+  decks: 'My Decks',
+  herbs: 'Herbs Guide',
 };
 
 // Corner keys handled by the generic entry system (everything else routes to

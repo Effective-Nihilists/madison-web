@@ -19,6 +19,13 @@ export const allPages = {
   // ── Blog / CMS pages ────────────────────────────────────────────────────────
   ['article/:slug']: lazyPage(() => import('./pages/ArticlePage')),
   ['corner/:corner']: lazyPage(() => import('./pages/CornerPage')),
+
+  // ── Witchcraft Corner (Batch 2) ─────────────────────────────────────────────
+  ['witchcraft/tarot']: lazyPage(() => import('./pages/witchcraft/TarotGuidePage')),
+  ['witchcraft/tarot/:cardId']: lazyPage(() => import('./pages/witchcraft/TarotCardPage')),
+  ['witchcraft/oracle']: lazyPage(() => import('./pages/witchcraft/OraclePage')),
+  ['witchcraft/decks']: lazyPage(() => import('./pages/witchcraft/DecksPage')),
+  ['witchcraft/herbs']: lazyPage(() => import('./pages/witchcraft/HerbsPage')),
   ['admin']: lazyPage(() => import('./pages/admin/AdminDashboard')),
   ['admin/articles']: lazyPage(() => import('./pages/admin/ArticleListPage')),
   ['admin/articles/new']: lazyPage(() => import('./pages/admin/ArticleEditorPage')),

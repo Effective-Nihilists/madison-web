@@ -4,11 +4,11 @@ import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import { Link } from '../../router';
 import { CORNERS } from '../../../shared/blog';
-import { CORNER_CONFIG, STATUS_OPTIONS, type Entry } from '../../../shared/entries';
+import { CORNER_CONFIG, ENTRY_CORNER_LABELS, STATUS_OPTIONS, type Entry } from '../../../shared/entries';
 import { uploadMedia } from '../../admin/upload';
 
 function cornerLabel(key: string): string {
-  return CORNERS.find((c) => c.key === key)?.label ?? key;
+  return CORNERS.find((c) => c.key === key)?.label ?? ENTRY_CORNER_LABELS[key] ?? key;
 }
 
 const selectStyle = {

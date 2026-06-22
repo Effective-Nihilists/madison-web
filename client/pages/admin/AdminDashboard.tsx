@@ -3,7 +3,7 @@ import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import { Link } from '../../router';
 import { CORNERS } from '../../../shared/blog';
-import { ENTRY_CORNER_KEYS } from '../../../shared/entries';
+import { ENTRY_CORNER_KEYS, ENTRY_CORNER_LABELS } from '../../../shared/entries';
 
 // AdminDashboard — links to the CMS managers (Task 12). Wrapped in AdminGate so
 // only the allow-listed admin can see it.
@@ -46,7 +46,7 @@ export default function AdminDashboard(): ReactElement {
               style={{ display: 'block', marginBottom: 0, textDecoration: 'none' }}
             >
               <h2 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>
-                {CORNERS.find((c) => c.key === key)?.label ?? key}
+                {CORNERS.find((c) => c.key === key)?.label ?? ENTRY_CORNER_LABELS[key] ?? key}
               </h2>
             </Link>
           ))}

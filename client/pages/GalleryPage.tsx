@@ -4,7 +4,7 @@ import Win9xWindow from '../components/Win9xWindow';
 import Markdown from '../components/Markdown';
 import { Link } from '../router';
 import { CORNERS } from '../../shared/blog';
-import { CORNER_CONFIG, type CornerConfig, type Entry } from '../../shared/entries';
+import { CORNER_CONFIG, ENTRY_CORNER_LABELS, type CornerConfig, type Entry } from '../../shared/entries';
 
 // Render up to 5 muted-rainbow stars for a 0–5 rating (decorative ★ allowed).
 function Stars({ rating }: { rating: number }): ReactElement {
@@ -131,7 +131,7 @@ function EntryRow({ entry }: { entry: Entry }): ReactElement {
 // the 8 entry corners (books, movies, recipes, restaurants, travel, vision,
 // memes, animals). Fetches over same-origin HTTP so it works logged-out.
 export default function GalleryPage({ corner, config }: { corner: string; config: CornerConfig }): ReactElement {
-  const label = CORNERS.find((c) => c.key === corner)?.label ?? corner;
+  const label = CORNERS.find((c) => c.key === corner)?.label ?? ENTRY_CORNER_LABELS[corner] ?? corner;
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [q, setQ] = useState('');

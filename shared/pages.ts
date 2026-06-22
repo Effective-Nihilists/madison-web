@@ -18,6 +18,14 @@ export const pages = definePages({
   // ── Blog / CMS routes ──────────────────────────────────────────────────────
   'article/:slug': definePage<{ slug: string }>({ auth: false }),
   'corner/:corner': definePage<{ corner: string }>({ auth: false }),
+
+  // ── Witchcraft Corner (Batch 2) ─────────────────────────────────────────────
+  'witchcraft/tarot': definePage<{}>({ auth: false }),
+  'witchcraft/tarot/:cardId': definePage<{ cardId: string }>({ auth: false }),
+  'witchcraft/oracle': definePage<{}>({ auth: false }),
+  'witchcraft/decks': definePage<{}>({ auth: false }),
+  'witchcraft/herbs': definePage<{}>({ auth: false }),
+
   'admin': definePage<{}>({ auth: true }),
   'admin/articles': definePage<{}>({ auth: true }),
   'admin/articles/new': definePage<{}>({ auth: true }),

@@ -7,7 +7,7 @@ import {
   RandomThoughtSchema,
   CORNER_KEYS,
 } from './blog';
-import { EntrySchema } from './entries';
+import { EntrySchema, ENTRY_CORNER_ENUM } from './entries';
 
 // Article fields editable by the admin (everything except server-managed
 // authorId / publishedAt). Reused by saveArticle's input.
@@ -252,7 +252,7 @@ export const requests = defineRequests({
   // ── Phase 2: generic entry/gallery system ───────────────────────────────────
   // Public read — list entries for one corner, optional text query.
   listEntries: req({
-    input: z.object({ corner: z.enum(CORNER_KEYS), q: z.string().optional() }),
+    input: z.object({ corner: z.enum(ENTRY_CORNER_ENUM), q: z.string().optional() }),
     output: z.object({ entries: z.array(EntryDoc) }),
   }),
   // Admin write — upsert (nanoid when new), delete, and admin list (all corners
@@ -266,7 +266,7 @@ export const requests = defineRequests({
     output: z.object({ ok: z.boolean() }),
   }),
   adminListEntries: authReq({
-    input: z.object({ corner: z.enum(CORNER_KEYS) }),
+    input: z.object({ corner: z.enum(ENTRY_CORNER_ENUM) }),
     output: z.object({ entries: z.array(EntryDoc) }),
   }),
 
