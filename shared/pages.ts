@@ -24,6 +24,7 @@ export const pages = definePages({
   'admin/articles/:id': definePage<{ id: string }>({ auth: true }),
   'admin/comments': definePage<{}>({ auth: true }),
   'admin/media': definePage<{}>({ auth: true }),
+  'admin/entries/:corner': definePage<{ corner: string }>({ auth: true }),
 
   'auth-demo': definePage<{}>({ auth: false }),
   'user/:userId': definePage<{ userId: string }>(),

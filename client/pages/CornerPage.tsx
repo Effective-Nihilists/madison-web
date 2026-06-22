@@ -3,13 +3,26 @@ import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import { Link } from '../router';
 import { CORNERS, type Article } from '../../shared/blog';
+import { CORNER_CONFIG, isEntryCorner } from '../../shared/entries';
+import GalleryPage from './GalleryPage';
 
 function toMs(d: number | Date): number {
   return d instanceof Date ? d.getTime() : d;
 }
 
-// CornerPage — lists published articles for one corner.
+// CornerPage — dispatcher. The 8 entry corners (books/movies/recipes/…)
+// render the generic GalleryPage driven by CORNER_CONFIG; every other corner
+// keeps the original article-list behaviour (sci/health/art/witchcraft essays).
 export default function CornerPage({ corner }: { corner: string }): ReactElement {
+  if (isEntryCorner(corner)) {
+    const config = CORNER_CONFIG[corner];
+    if (config) return <GalleryPage corner={corner} config={config} />;
+  }
+  return <ArticleCorner corner={corner} />;
+}
+
+// ArticleCorner — original article-list behaviour for essay corners.
+function ArticleCorner({ corner }: { corner: string }): ReactElement {
   const label = CORNERS.find((c) => c.key === corner)?.label ?? corner;
   const [articles, setArticles] = useState<Article[]>([]);
   const [loaded, setLoaded] = useState(false);

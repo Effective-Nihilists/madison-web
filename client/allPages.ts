@@ -25,6 +25,7 @@ export const allPages = {
   ['admin/articles/:id']: lazyPage(() => import('./pages/admin/ArticleEditorPage')),
   ['admin/comments']: lazyPage(() => import('./pages/admin/CommentModerationPage')),
   ['admin/media']: lazyPage(() => import('./pages/admin/MediaMusicPage')),
+  ['admin/entries/:corner']: lazyPage(() => import('./pages/admin/EntryManager')),
 
   ['auth-demo']: lazyPage(() => import('./pages/AuthDemoPage')),
   ['user/:userId']: lazyPage(() => import('./pages/UserPage')),
