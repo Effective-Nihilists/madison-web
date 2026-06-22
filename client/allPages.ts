@@ -26,6 +26,11 @@ export const allPages = {
   ['witchcraft/oracle']: lazyPage(() => import('./pages/witchcraft/OraclePage')),
   ['witchcraft/decks']: lazyPage(() => import('./pages/witchcraft/DecksPage')),
   ['witchcraft/herbs']: lazyPage(() => import('./pages/witchcraft/HerbsPage')),
+
+  // ── Health Corner (Batch 4) ─────────────────────────────────────────────────
+  ['health/breathing']: lazyPage(() => import('./pages/health/GuidedBreathingPage')),
+  ['health/plants']: lazyPage(() => import('./pages/health/MedPlantsPage')),
+
   ['admin']: lazyPage(() => import('./pages/admin/AdminDashboard')),
   ['admin/articles']: lazyPage(() => import('./pages/admin/ArticleListPage')),
   ['admin/articles/new']: lazyPage(() => import('./pages/admin/ArticleEditorPage')),

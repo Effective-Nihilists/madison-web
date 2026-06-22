@@ -26,6 +26,10 @@ export const pages = definePages({
   'witchcraft/decks': definePage<{}>({ auth: false }),
   'witchcraft/herbs': definePage<{}>({ auth: false }),
 
+  // ── Health Corner (Batch 4) ─────────────────────────────────────────────────
+  'health/breathing': definePage<{}>({ auth: false }),
+  'health/plants': definePage<{}>({ auth: false }),
+
   'admin': definePage<{}>({ auth: true }),
   'admin/articles': definePage<{}>({ auth: true }),
   'admin/articles/new': definePage<{}>({ auth: true }),

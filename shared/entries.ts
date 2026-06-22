@@ -3,11 +3,12 @@ import type { InferDocType } from 'ugly-app/shared';
 import { CORNER_KEYS } from './blog';
 
 // Entry corners include the 15 blog corners PLUS the Witchcraft-Corner
-// sub-collections (`decks`, `herbs`) which reuse the generic entry system
-// without a dedicated collection. `entry.corner` is typed against this wider
-// enum so the extra keys are accepted while the blog `corner` enum stays
-// limited to the 15 navigable corners.
-export const ENTRY_CORNER_ENUM = [...CORNER_KEYS, 'decks', 'herbs'] as [
+// sub-collections (`decks`, `herbs`) and the Health-Corner Med Plants guide
+// (`medplants`) which reuse the generic entry system without a dedicated
+// collection. `entry.corner` is typed against this wider enum so the extra keys
+// are accepted while the blog `corner` enum stays limited to the 15 navigable
+// corners.
+export const ENTRY_CORNER_ENUM = [...CORNER_KEYS, 'decks', 'herbs', 'medplants'] as [
   string,
   ...string[],
 ];
@@ -141,6 +142,15 @@ export const CORNER_CONFIG: Record<string, CornerConfig> = {
     addLabel: 'add herb',
     emptyText: 'no herbs in the cabinet yet.',
   },
+  // ── Health Corner: Medicinal Plants guide ────────────────────────────────
+  // `body` carries the markdown writeup (uses / preparation / cautions).
+  medplants: {
+    layout: 'cards',
+    search: true,
+    fields: ['title', 'image', 'body', 'tags'],
+    addLabel: 'add plant',
+    emptyText: 'no plants in the guide yet.',
+  },
 };
 
 // Display labels for entry corners that are NOT in the blog `CORNERS` list
@@ -149,6 +159,7 @@ export const CORNER_CONFIG: Record<string, CornerConfig> = {
 export const ENTRY_CORNER_LABELS: Record<string, string> = {
   decks: 'My Decks',
   herbs: 'Herbs Guide',
+  medplants: 'Med Plants',
 };
 
 // Corner keys handled by the generic entry system (everything else routes to

@@ -7,6 +7,7 @@ import { CORNER_CONFIG, isEntryCorner } from '../../shared/entries';
 import GalleryPage from './GalleryPage';
 import WitchcraftPage from './witchcraft/WitchcraftPage';
 import WheelPage from './WheelPage';
+import HealthPage from './health/HealthPage';
 
 function toMs(d: number | Date): number {
   return d instanceof Date ? d.getTime() : d;
@@ -20,6 +21,10 @@ export default function CornerPage({ corner }: { corner: string }): ReactElement
   // Spells) instead of the plain article list.
   if (corner === 'witchcraft') return <WitchcraftPage />;
   if (corner === 'wheel') return <WheelPage />;
+  // The Health Corner gets a bespoke hub (Guided Breathing, Med Plants, essays)
+  // instead of the plain article list. Other essay corners (sci, art) still fall
+  // through to ArticleCorner below.
+  if (corner === 'health') return <HealthPage />;
   if (isEntryCorner(corner)) {
     const config = CORNER_CONFIG[corner];
     if (config) return <GalleryPage corner={corner} config={config} />;
