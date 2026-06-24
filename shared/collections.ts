@@ -12,6 +12,7 @@ import {
 } from './blog';
 import { EntrySchema } from './entries';
 import { WheelSchema } from './wheel';
+import { SiteStatSchema, SiteConfigSchema } from './site';
 
 export type {
   Article,
@@ -122,6 +123,16 @@ export const collections = defineCollections({
   wheel: {
     schema: WheelSchema,
     meta: { cache: false, trackable: true, public: true, cascadeFrom: null },
+  },
+
+  // ── Site: real visitor counter + global customization (admin-only writes) ────
+  siteStat: {
+    schema: SiteStatSchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: null },
+  },
+  siteConfig: {
+    schema: SiteConfigSchema,
+    meta: { cache: true, trackable: true, public: true, cascadeFrom: null },
   },
 });
 

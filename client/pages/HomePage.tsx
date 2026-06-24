@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
+import AnimateIn from '../components/AnimateIn';
 import { Link } from '../router';
 import { CORNERS, type Article, type RandomThought } from '../../shared/blog';
 
@@ -51,22 +52,27 @@ export default function HomePage(): ReactElement {
 
   return (
     <>
-      <div className="announce">
-        <span>✦ welcome to 317010.xyz ✦ best viewed in Netscape Navigator @ 1024×768 ✦ now with 100% more chaos ✦ Cosmoo the loaf-knight approves ✦ sign the guestbook ✦ mind the scanlines ✦ tea is brewing ✦</span>
-      </div>
+      <AnimateIn>
+        <div className="announce">
+          <span>✦ welcome to 317010.xyz ✦ best viewed in Netscape Navigator @ 1024×768 ✦ now with 100% more chaos ✦ Cosmoo the loaf-knight approves ✦ sign the guestbook ✦ mind the scanlines ✦ tea is brewing ✦</span>
+        </div>
+      </AnimateIn>
 
       {isEmpty && (
-        <Win9xWindow title="welcome.txt — Notepad" className="featured stagger" bodyClassName="doc-body">
-          <span className="stamp">FRESH INSTALL</span>
-          <h2>no posts yet</h2>
-          <p className="note">
-            this little corner of the internet is still warming up — no random thoughts and no
-            published articles just yet. brew some tea and check back soon ✦
-          </p>
-        </Win9xWindow>
+        <AnimateIn>
+          <Win9xWindow title="welcome.txt — Notepad" className="featured" bodyClassName="doc-body">
+            <span className="stamp">FRESH INSTALL</span>
+            <h2>no posts yet</h2>
+            <p className="note">
+              this little corner of the internet is still warming up — no random thoughts and no
+              published articles just yet. brew some tea and check back soon ✦
+            </p>
+          </Win9xWindow>
+        </AnimateIn>
       )}
 
-      <Win9xWindow title="★ random_thoughts.txt — Notepad" className="featured stagger">
+      <AnimateIn>
+      <Win9xWindow title="★ random_thoughts.txt — Notepad" className="featured">
         <span className="stamp">FEATURED · RANDOM THOUGHTS</span>
         {thought ? (
           <>
@@ -86,7 +92,9 @@ export default function HomePage(): ReactElement {
           </>
         )}
       </Win9xWindow>
+      </AnimateIn>
 
+      <AnimateIn>
       <Win9xWindow title="recent_articles.dir — Explorer" className="article-win" bodyClassName="doc-body">
         <div className="breadcrumb">
           <b>Home</b> › recent articles
@@ -101,26 +109,28 @@ export default function HomePage(): ReactElement {
         {articles.length > 0 && (
           <div className="highlight-grid" style={{ gridTemplateColumns: '1fr', gap: 12 }}>
             {articles.map((a) => (
-              <Link
-                key={a._id}
-                to="article/:slug"
-                params={{ slug: a.slug }}
-                className="card"
-                style={{ display: 'block', marginBottom: 0, textDecoration: 'none' }}
-              >
-                <span className="stamp" style={{ marginBottom: 8 }}>
-                  {cornerLabel(a.corner)}
-                </span>
-                <h2 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>{a.title}</h2>
-                {a.excerpt && <p style={{ margin: '.4em 0 0' }}>{a.excerpt}</p>}
-                <div className="time" style={{ marginTop: 8 }}>
-                  {new Date(toMs(a.created)).toLocaleDateString()}
-                </div>
-              </Link>
+              <AnimateIn key={a._id}>
+                <Link
+                  to="article/:slug"
+                  params={{ slug: a.slug }}
+                  className="card"
+                  style={{ display: 'block', marginBottom: 0, textDecoration: 'none' }}
+                >
+                  <span className="stamp" style={{ marginBottom: 8 }}>
+                    {cornerLabel(a.corner)}
+                  </span>
+                  <h2 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>{a.title}</h2>
+                  {a.excerpt && <p style={{ margin: '.4em 0 0' }}>{a.excerpt}</p>}
+                  <div className="time" style={{ marginTop: 8 }}>
+                    {new Date(toMs(a.created)).toLocaleDateString()}
+                  </div>
+                </Link>
+              </AnimateIn>
             ))}
           </div>
         )}
       </Win9xWindow>
+      </AnimateIn>
     </>
   );
 }

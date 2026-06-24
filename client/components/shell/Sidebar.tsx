@@ -2,6 +2,10 @@ import { useEffect, useState, type ReactElement } from 'react';
 import { apiPost } from '../../api';
 import { CORNERS, type ButtonImage } from '../../../shared/blog';
 import { Link } from '../../router';
+import AnimateIn from '../AnimateIn';
+import Editable from './Editable';
+import { useSiteConfig, applyOrder } from './siteConfigContext';
+import { useDragReorder } from './useDragReorder';
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 // The corners navigation, ported from the v3-01 mock. Each corner is an
@@ -9,6 +13,9 @@ import { Link } from '../../router';
 // corner key) when present, else a deterministic picsum fallback. Navigates via
 // the typed <Link> to `corner/:corner`. Under 768px it becomes a slide-in
 // drawer (open/close driven by AppShell's hamburger).
+//
+// In admin edit mode the corners become drag-to-reorder (persisted as
+// cornerOrder) and their labels become inline-editable.
 
 function picsumFor(key: string): string {
   return `https://picsum.photos/seed/${key}/60/60`;
@@ -22,6 +29,7 @@ export default function Sidebar({
   onClose: () => void;
 }): ReactElement {
   const [images, setImages] = useState<Record<string, string>>({});
+  const { config, editMode, save } = useSiteConfig();
 
   useEffect(() => {
     let alive = true;
@@ -33,6 +41,12 @@ export default function Sidebar({
     }).catch(() => { /* fall back to picsum */ });
     return () => { alive = false; };
   }, []);
+
+  const orderedCorners = applyOrder([...CORNERS], config.cornerOrder, (c) => c.key);
+  const { itemProps } = useDragReorder(
+    orderedCorners.map((c) => c.key),
+    (next) => { save({ cornerOrder: next }); },
+  );
 
   return (
     <aside className={`sidebar win${open ? ' open' : ''}`}>
@@ -49,25 +63,30 @@ export default function Sidebar({
             <line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
           </svg>
         </button>
-        <h3>~ THE CORNERS ~</h3>
+        <Editable as="h3" id="sidebar.heading">~ THE CORNERS ~</Editable>
         <div>
-          {CORNERS.map((c) => (
-            <Link
-              key={c.key}
-              to="corner/:corner"
-              params={{ corner: c.key }}
-              className="corner"
-              onClick={onClose}
-            >
-              <span
-                className="thumb retrofx"
-                style={{ backgroundImage: `url(${images[c.key] ?? picsumFor(c.key)})` }}
-              />
-              <span>{c.label}</span>
-              <svg className="pencil" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
-              </svg>
-            </Link>
+          {orderedCorners.map((c) => (
+            <AnimateIn key={c.key}>
+              <Link
+                to="corner/:corner"
+                params={{ corner: c.key }}
+                className={`corner${editMode ? ' editing' : ''}`}
+                {...(editMode ? itemProps(c.key) : {})}
+                onClick={(e) => {
+                  if (editMode) { e.preventDefault(); e.stopPropagation(); return; }
+                  onClose();
+                }}
+              >
+                <span
+                  className="thumb retrofx"
+                  style={{ backgroundImage: `url(${images[c.key] ?? picsumFor(c.key)})` }}
+                />
+                <Editable as="span" id={`corner.${c.key}`}>{c.label}</Editable>
+                <svg className="pencil" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+                </svg>
+              </Link>
+            </AnimateIn>
           ))}
         </div>
       </div>

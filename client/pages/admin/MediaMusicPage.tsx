@@ -6,7 +6,13 @@ import { Link } from '../../router';
 import { uploadMedia } from '../../admin/upload';
 import { CORNERS, type ButtonImage, type MusicTrack } from '../../../shared/blog';
 
-type TrackKind = 'wav' | 'mp4';
+type TrackKind = 'mp3' | 'wav' | 'mp4';
+
+function trackKindFor(file: File): TrackKind {
+  if (/\.mp4$/i.test(file.name) || file.type.includes('mp4') || file.type.startsWith('video/')) return 'mp4';
+  if (/\.mp3$/i.test(file.name) || file.type.includes('mpeg')) return 'mp3';
+  return 'wav';
+}
 
 function MusicManager(): ReactElement {
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
@@ -29,15 +35,14 @@ function MusicManager(): ReactElement {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    const isMp4 = /\.mp4$/i.test(file.name) || file.type.includes('mp4') || file.type.startsWith('video/');
-    const kind: TrackKind = isMp4 ? 'mp4' : 'wav';
+    const kind = trackKindFor(file);
     setUploading(true);
     setError(null);
     try {
-      const url = await uploadMedia(isMp4 ? 'video' : 'audio', file);
+      const url = await uploadMedia(kind === 'mp4' ? 'video' : 'audio', file);
       setPendingUrl(url);
       setPendingKind(kind);
-      if (!title.trim()) setTitle(file.name.replace(/\.(wav|mp4)$/i, ''));
+      if (!title.trim()) setTitle(file.name.replace(/\.(mp3|wav|mp4)$/i, ''));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'upload failed');
     } finally {
@@ -70,8 +75,8 @@ function MusicManager(): ReactElement {
         </p>
       )}
       <div className="cform">
-        <label className="note">upload .wav / .mp4</label>
-        <input type="file" accept=".wav,.mp4,audio/*,video/mp4" onChange={(e) => void handleFile(e)} disabled={uploading} />
+        <label className="note">upload .mp3 / .wav / .mp4</label>
+        <input type="file" accept=".mp3,.wav,.mp4,audio/*,video/mp4" onChange={(e) => void handleFile(e)} disabled={uploading} />
         {uploading && <p className="note">uploading…</p>}
         {pendingUrl && <p className="note">uploaded ({pendingKind}) — add a title and save.</p>}
         <input type="text" placeholder="track title" value={title} onChange={(e) => setTitle(e.target.value)} />

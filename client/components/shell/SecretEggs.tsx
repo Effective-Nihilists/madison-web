@@ -6,7 +6,7 @@ import {
   useState,
   type RefObject,
 } from 'react';
-import type { MilkdropHandle } from './MilkdropBackground';
+import type { FractalHandle } from './FractalBackground';
 import { useShell } from './shellContext';
 
 // ─── SecretEggs ───────────────────────────────────────────────────────────────
@@ -32,7 +32,7 @@ const GLYPHS = ['❋', '✦', '❀', '✿', '❉', '✧', '♣', '❦'];
 const DOODLE_COLORS = ['#b5663b', '#5b6b3a', '#c79a3a', '#5a3a52', '#9a4a25'];
 const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
 
-const SecretEggs = forwardRef<SecretEggsHandle, { milkdrop: RefObject<MilkdropHandle | null> }>(
+const SecretEggs = forwardRef<SecretEggsHandle, { milkdrop: RefObject<FractalHandle | null> }>(
   function SecretEggs({ milkdrop }, ref) {
     const { toast } = useShell();
     const [roomOpen, setRoomOpen] = useState(false);

@@ -9,6 +9,7 @@ import {
 } from './blog';
 import { EntrySchema, ENTRY_CORNER_ENUM } from './entries';
 import { WheelSchema } from './wheel';
+import { SiteConfigSchema } from './site';
 
 // Article fields editable by the admin (everything except server-managed
 // authorId / publishedAt). Reused by saveArticle's input.
@@ -238,7 +239,7 @@ export const requests = defineRequests({
     input: z.object({
       title: z.string().min(1),
       url: z.string().min(1),
-      kind: z.enum(['wav', 'mp4']),
+      kind: z.enum(['mp3', 'wav', 'mp4']),
     }),
     output: z.object({ id: z.string() }),
   }),
@@ -290,6 +291,27 @@ export const requests = defineRequests({
   }),
   deleteWheel: authReq({
     input: z.object({ id: z.string().min(1) }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+
+  // ── Visitor counter (public, real DB-backed) ───────────────────────────────
+  getVisitCount: req({
+    input: z.object({}),
+    output: z.object({ count: z.number() }),
+  }),
+  recordVisit: req({
+    input: z.object({}),
+    output: z.object({ count: z.number() }),
+    rateLimit: { max: 30, window: 60 },
+  }),
+
+  // ── Site customization (public read; admin-gated write) ────────────────────
+  getSiteConfig: req({
+    input: z.object({}),
+    output: z.object({ config: SiteConfigSchema }),
+  }),
+  saveSiteConfig: authReq({
+    input: z.object({ patch: SiteConfigSchema.partial() }),
     output: z.object({ ok: z.boolean() }),
   }),
 

@@ -6,7 +6,7 @@ import {
 } from 'react';
 import { ThemeProvider, useTheme } from '../../theme';
 import { Link } from '../../router';
-import MilkdropBackground, { type MilkdropHandle } from './MilkdropBackground';
+import FractalBackground, { type FractalHandle } from './FractalBackground';
 import CursorRibbon from './CursorRibbon';
 import Scanlines from './Scanlines';
 import MusicPlayer from './MusicPlayer';
@@ -14,6 +14,8 @@ import Sidebar from './Sidebar';
 import WidgetRail from './WidgetRail';
 import SecretEggs, { type SecretEggsHandle } from './SecretEggs';
 import { ShellProvider } from './shellContext';
+import { SiteConfigProvider, useSiteConfig } from './siteConfigContext';
+import EditModeBar from './EditModeBar';
 
 // ─── AppShell ─────────────────────────────────────────────────────────────────
 // Composition root for the 317010.xyz retro shell. Wraps every routed page in:
@@ -64,10 +66,11 @@ function ThemeToggle(): ReactElement {
 }
 
 function ShellInner({ children }: { children: ReactNode }): ReactElement {
-  const milkdrop = useRef<MilkdropHandle | null>(null);
+  const fractal = useRef<FractalHandle | null>(null);
   const eggs = useRef<SecretEggsHandle | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [crt, setCrt] = useState(true);
+  const { config } = useSiteConfig();
 
   // brand triple-click / long-press -> secret room
   const clickCount = useRef(0);
@@ -91,8 +94,8 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
     <>
       <RetroFilters />
 
-      {/* fixed FX layers (low z-index milkdrop, high z-index ribbon) */}
-      <MilkdropBackground ref={milkdrop} />
+      {/* fixed FX layers (low z-index fractal bg, high z-index ribbon) */}
+      <FractalBackground ref={fractal} cycleSeconds={config.background.cycleSeconds} speed={config.background.speed} />
       <div className="star-field" aria-hidden="true" />
       <Scanlines enabled={crt} />
       <CursorRibbon />
@@ -151,11 +154,14 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
         aria-hidden="true"
       />
 
-      {/* floating music player (drives the viz) */}
-      <MusicPlayer milkdrop={milkdrop} />
+      {/* floating music player */}
+      <MusicPlayer milkdrop={fractal} />
 
       {/* the five secret eggs */}
-      <SecretEggs ref={eggs} milkdrop={milkdrop} />
+      <SecretEggs ref={eggs} milkdrop={fractal} />
+
+      {/* admin-only customizer (edit mode + colors/fonts) */}
+      <EditModeBar />
     </>
   );
 }
@@ -163,9 +169,11 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
 export default function AppShell({ children }: { children: ReactNode }): ReactElement {
   return (
     <ThemeProvider>
-      <ShellProvider>
-        <ShellInner>{children}</ShellInner>
-      </ShellProvider>
+      <SiteConfigProvider>
+        <ShellProvider>
+          <ShellInner>{children}</ShellInner>
+        </ShellProvider>
+      </SiteConfigProvider>
     </ThemeProvider>
   );
 }

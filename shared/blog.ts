@@ -60,7 +60,7 @@ export type MediaAsset = InferDocType<typeof MediaAssetSchema>;
 export const MusicTrackSchema = z.object({
   title: z.string().min(1),
   url: z.string(),
-  kind: z.enum(['wav', 'mp4']),
+  kind: z.enum(['mp3', 'wav', 'mp4']),
   order: z.number().default(0),
 });
 export type MusicTrack = InferDocType<typeof MusicTrackSchema>;

@@ -7,24 +7,22 @@ import {
 } from 'react';
 import { apiPost } from '../../api';
 import type { MusicTrack } from '../../../shared/blog';
-import type { MilkdropHandle } from './MilkdropBackground';
+import type { FractalHandle } from './FractalBackground';
 import { useShell } from './shellContext';
 
 // ─── MusicPlayer ──────────────────────────────────────────────────────────────
-// Floating bottom-left Win9x player ported from the v3-01 mock. Loads real
-// tracks via listMusicTracks() and plays them through a hidden <audio> (.wav)
-// or <video> (.mp4) element, piping its MediaElementSource into the Milkdrop
-// viz (via the shared MilkdropHandle) so the visualizer reacts to the real
-// track. When there are no tracks it falls back to the mock's ambient synth
-// (ramping the Milkdrop synth gain). Now-playing is published to the shell
-// context so the widget rail's status box can show it.
-
-const SYNTH_LABELS = ['moss & static', 'parchment dreams', 'aubergine night', 'the dreaming mind'];
+// Floating bottom-left Win9x player. Loads real tracks via listMusicTracks() and
+// plays them through a hidden <audio> (.mp3/.wav) or <video> (.mp4) element. When
+// there are no tracks it shows an empty state (no fake/placeholder songs).
+// Now-playing is published to the shell context so the widget rail's status box
+// can show it. The optional `milkdrop` handle (if a reactive visualizer is
+// mounted) is pinged on play so the viz reacts to the real track; it is a no-op
+// when the background is the standalone fractal renderer.
 
 export default function MusicPlayer({
   milkdrop,
 }: {
-  milkdrop: RefObject<MilkdropHandle | null>;
+  milkdrop?: RefObject<FractalHandle | null>;
 }): ReactElement {
   const { setNowPlaying, toast } = useShell();
 
@@ -42,15 +40,13 @@ export default function MusicPlayer({
     let alive = true;
     void apiPost<{ tracks: MusicTrack[] }>('listMusicTracks', {}).then((res) => {
       if (alive) setTracks(res.tracks.slice().sort((a, b) => a.order - b.order));
-    }).catch(() => { /* no tracks / offline — ambient synth fallback */ });
+    }).catch(() => { /* no tracks / offline */ });
     return () => { alive = false; };
   }, []);
 
   const current = tracks[idx];
   const hasTracks = tracks.length > 0;
-  const trackLabel = current
-    ? current.title
-    : (SYNTH_LABELS[idx % SYNTH_LABELS.length] ?? 'ambient');
+  const trackLabel = current?.title ?? '— no tracks —';
 
   // Pick the media element for the current track kind.
   function mediaEl(): HTMLMediaElement | null {
@@ -64,54 +60,35 @@ export default function MusicPlayer({
   }, [playing, trackLabel, setNowPlaying]);
 
   function play(): void {
-    milkdrop.current?.resume();
+    if (!hasTracks) return;
+    milkdrop?.current?.resume();
     setPlaying(true);
-    if (hasTracks) {
-      const el = mediaEl();
-      if (el) {
-        milkdrop.current?.connectTrackAudio(el);
-        el.volume = vol / 100;
-        void el.play().catch(() => { /* autoplay/gesture guard */ });
-      }
-    } else {
-      // ambient synth: ramp the Milkdrop synth gain up
-      const ctx = milkdrop.current?.getAudioContext();
-      const gain = milkdrop.current?.getSynthGain();
-      if (ctx && gain) gain.gain.setTargetAtTime(vol / 100, ctx.currentTime, 0.2);
+    const el = mediaEl();
+    if (el) {
+      milkdrop?.current?.connectTrackAudio(el);
+      el.volume = vol / 100;
+      void el.play().catch(() => { /* autoplay/gesture guard */ });
     }
   }
 
   function pause(): void {
     setPlaying(false);
-    if (hasTracks) {
-      mediaEl()?.pause();
-    } else {
-      const ctx = milkdrop.current?.getAudioContext();
-      const gain = milkdrop.current?.getSynthGain();
-      if (ctx && gain) gain.gain.setTargetAtTime(0, ctx.currentTime, 0.2);
-    }
+    mediaEl()?.pause();
   }
 
   function step(dir: number): void {
-    const count = hasTracks ? tracks.length : SYNTH_LABELS.length;
+    if (!hasTracks) return;
+    const count = tracks.length;
     const next = ((idx + dir) % count + count) % count;
-    // stop current media if switching
-    if (hasTracks && playing) mediaEl()?.pause();
+    if (playing) mediaEl()?.pause();
     setIdx(next);
-    milkdrop.current?.loadRandomPreset();
-    toast(`track: ${tracks[next]?.title ?? SYNTH_LABELS[next % SYNTH_LABELS.length] ?? 'ambient'}`);
+    toast(`track: ${tracks[next]?.title ?? 'unknown'}`);
   }
 
   function onVol(v: number): void {
     setVol(v);
-    if (hasTracks) {
-      const el = mediaEl();
-      if (el) el.volume = v / 100;
-    } else if (playing) {
-      const ctx = milkdrop.current?.getAudioContext();
-      const gain = milkdrop.current?.getSynthGain();
-      if (ctx && gain) gain.gain.setTargetAtTime(v / 100, ctx.currentTime, 0.1);
-    }
+    const el = mediaEl();
+    if (el) el.volume = v / 100;
   }
 
   // When the audio/video element ends, advance.
@@ -140,8 +117,8 @@ export default function MusicPlayer({
 
   return (
     <div className={`player${playing ? '' : ' paused'}`}>
-      {/* hidden media elements driving real-track playback + viz */}
-      <audio ref={audioRef} src={current?.kind === 'wav' ? current.url : undefined} preload="none" crossOrigin="anonymous" />
+      {/* hidden media elements driving real-track playback */}
+      <audio ref={audioRef} src={current && current.kind !== 'mp4' ? current.url : undefined} preload="none" crossOrigin="anonymous" />
       <video ref={videoRef} src={current?.kind === 'mp4' ? current.url : undefined} preload="none" crossOrigin="anonymous" style={{ display: 'none' }} />
 
       <div className="ptop">
@@ -154,15 +131,15 @@ export default function MusicPlayer({
           <span>{playing ? trackLabel : `— ${trackLabel} —`}</span>
         </div>
         <div className="transport">
-          <button className="icon-btn" aria-label="prev" onClick={() => { step(-1); }}>
+          <button className="icon-btn" aria-label="prev" onClick={() => { step(-1); }} disabled={!hasTracks}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14l-11-7z" /></svg>
           </button>
-          <button className="icon-btn" aria-label={playing ? 'pause' : 'play'} onClick={() => { if (playing) pause(); else play(); }}>
+          <button className="icon-btn" aria-label={playing ? 'pause' : 'play'} onClick={() => { if (playing) pause(); else play(); }} disabled={!hasTracks}>
             {playing
               ? <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>
               : <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z" /></svg>}
           </button>
-          <button className="icon-btn" aria-label="next" onClick={() => { step(1); }}>
+          <button className="icon-btn" aria-label="next" onClick={() => { step(1); }} disabled={!hasTracks}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5l11 7-11 7z" /></svg>
           </button>
         </div>
@@ -171,7 +148,7 @@ export default function MusicPlayer({
           <input type="range" min={0} max={100} value={vol} onChange={(e) => { onVol(Number(e.target.value)); }} aria-label="volume" />
         </div>
         {!hasTracks && (
-          <div className="note">no tracks yet — playing the ambient synth. add tracks in the CMS.</div>
+          <div className="note">no tracks yet — add some in the CMS.</div>
         )}
       </div>
     </div>

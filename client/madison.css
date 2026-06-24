@@ -458,6 +458,23 @@ input[type=range] { flex: 1; accent-color: var(--accent); }
 .stagger { opacity: 0; transform: translateY(14px); animation: rise .6s forwards; }
 @keyframes rise { to { opacity: 1; transform: none; } }
 
+/* ── Randomized entrance animations (see client/components/AnimateIn.tsx) ──── */
+@keyframes ani-fly-left  { from { opacity: 0; transform: translateX(-90px) rotate(-6deg); } to { opacity: 1; transform: none; } }
+@keyframes ani-fly-right { from { opacity: 0; transform: translateX(90px) rotate(6deg); }  to { opacity: 1; transform: none; } }
+@keyframes ani-fly-up    { from { opacity: 0; transform: translateY(70px); }               to { opacity: 1; transform: none; } }
+@keyframes ani-drop      { from { opacity: 0; transform: translateY(-70px); }               to { opacity: 1; transform: none; } }
+@keyframes ani-zoom      { from { opacity: 0; transform: scale(.4); }                       to { opacity: 1; transform: none; } }
+@keyframes ani-spin-in   { from { opacity: 0; transform: rotate(-200deg) scale(.5); }       to { opacity: 1; transform: none; } }
+@keyframes ani-flip      { from { opacity: 0; transform: perspective(600px) rotateY(95deg); } to { opacity: 1; transform: none; } }
+@keyframes ani-bounce    { 0% { opacity: 0; transform: translateY(-60px); } 60% { opacity: 1; transform: translateY(12px); } 80% { transform: translateY(-6px); } 100% { transform: none; } }
+@keyframes ani-glitch    { 0% { opacity: 0; transform: translate(-12px, 6px) skewX(12deg); } 30% { opacity: 1; transform: translate(10px, -4px) skewX(-10deg); } 60% { transform: translate(-5px, 2px) skewX(5deg); } 100% { transform: none; } }
+@keyframes ani-pop       { 0% { opacity: 0; transform: scale(.2) rotate(8deg); } 70% { opacity: 1; transform: scale(1.12) rotate(-3deg); } 100% { transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  /* AnimateIn already no-ops in JS; this is a CSS belt-and-braces guard. */
+  [style*="ani-"] { animation: none !important; }
+}
+
 .viz-intensity { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-soft); }
 .viz-intensity input { width: 70px; }
 
@@ -560,7 +577,36 @@ html[data-theme="dark"] .wr-nav { background: #4a4550; color: #eee; }
     2px 2px 0 rgba(0, 0, 0, .25);
 }
 
+/* ── Admin edit mode (EditModeBar + Editable + drag-reorder/resize) ────────── */
+.edit-toolbar {
+  position: fixed; top: 64px; right: 14px; z-index: 62;
+  display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+}
+.edit-toolbar .tbtn.edit-on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.edit-panel {
+  position: fixed; top: 104px; right: 14px; z-index: 62;
+  width: 248px; max-height: 76vh; overflow: auto;
+}
+.edit-panel .win-body { padding: 10px 12px; }
+.edit-panel h4 { margin: 4px 0 6px; font-family: var(--orn-font); font-size: 1em; }
+.edit-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 4px 0; font-size: 12px; }
+.edit-row span { color: var(--text-soft); }
+.edit-row select { max-width: 130px; }
+.edit-row input[type="color"] { width: 38px; height: 24px; padding: 0; border: 1px solid var(--panel-edge); background: none; cursor: pointer; }
+
+.corner.editing { cursor: grab; }
+.corner.editing:active { cursor: grabbing; }
+.widget.editing { cursor: grab; outline: 1px dashed var(--accent); outline-offset: -1px; }
+.widget-resize {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 10px;
+  cursor: ns-resize; background:
+    repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 10px);
+  opacity: .5;
+}
+.widget-resize:hover { opacity: .9; }
+
 @media (max-width: 768px) {
+  .edit-toolbar, .edit-panel { right: 8px; }
   .hamburger { display: inline-flex; }
   .sidebar {
     position: fixed; top: 0; left: 0; height: 100%; width: 270px; max-width: 82vw; z-index: 38;

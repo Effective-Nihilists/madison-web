@@ -14,6 +14,8 @@ import type {
   Entry,
 } from '../shared/collections';
 import type { Wheel } from '../shared/wheel';
+import type { SiteStat, SiteConfig } from '../shared/site';
+import { VISIT_DOC_ID, VISIT_SEED, SITE_DOC_ID, SiteConfigSchema } from '../shared/site';
 import { isAdmin } from './admin';
 
 // The blog/CMS subset of request names this module implements. The other
@@ -45,7 +47,11 @@ type BlogRequestKey =
   | 'adminListEntries'
   | 'listWheels'
   | 'saveWheel'
-  | 'deleteWheel';
+  | 'deleteWheel'
+  | 'getVisitCount'
+  | 'recordVisit'
+  | 'getSiteConfig'
+  | 'saveSiteConfig';
 
 export type BlogHandlers = Pick<RequestHandlers<typeof requests>, BlogRequestKey>;
 
@@ -79,6 +85,27 @@ const CONTENT_TYPE: Record<MediaAsset['kind'], string> = {
   audio: 'audio/wav',
   video: 'video/mp4',
 };
+
+// Per-extension MIME overrides so uploads keep the right Content-Type (R2/S3
+// won't sniff it). Falls back to the broad-kind default in CONTENT_TYPE.
+const EXT_CONTENT_TYPE: Record<string, string> = {
+  mp3: 'audio/mpeg',
+  wav: 'audio/wav',
+  ogg: 'audio/ogg',
+  m4a: 'audio/mp4',
+  mp4: 'video/mp4',
+  webm: 'video/webm',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  webp: 'image/webp',
+};
+
+function contentTypeFor(name: string, kind: MediaAsset['kind']): string {
+  const ext = name.split('.').pop()?.toLowerCase() ?? '';
+  return EXT_CONTENT_TYPE[ext] ?? CONTENT_TYPE[kind];
+}
 
 /**
  * The single source of truth for blog/CMS request handlers, imported by BOTH
@@ -249,7 +276,7 @@ export function makeHandlers(
       await requireAdmin(db, userId);
       const body = decodeBase64(dataBase64);
       const key = `media/${Date.now()}-${nanoid(8)}-${name}`;
-      const url = await storagePut('public', key, body, CONTENT_TYPE[kind]);
+      const url = await storagePut('public', key, body, contentTypeFor(name, kind));
       const asset: MediaAsset = { _id: nanoid(), url, kind, name, ownerId: userId, ...dbDefaults() };
       await db.setDoc(collections.mediaAsset, asset);
       return { url };
@@ -356,6 +383,38 @@ export function makeHandlers(
     deleteWheel: async (userId, { id }) => {
       await requireAdmin(db, userId);
       await db.deleteDoc(collections.wheel, id);
+      return { ok: true };
+    },
+
+    // ── Visitor counter ─────────────────────────────────────────────────────
+    getVisitCount: async () => {
+      const doc = await db.getDoc<SiteStat>(collections.siteStat, VISIT_DOC_ID);
+      return { count: doc?.count ?? VISIT_SEED };
+    },
+
+    // Read-modify-write increment. A visitor counter tolerates the rare lost
+    // increment under concurrent writes; the client only calls this once per
+    // browser session so contention is minimal.
+    recordVisit: async () => {
+      const existing = await db.getDoc<SiteStat>(collections.siteStat, VISIT_DOC_ID);
+      const count = (existing?.count ?? VISIT_SEED) + 1;
+      await db.setDoc(collections.siteStat, { _id: VISIT_DOC_ID, count, ...dbDefaults() });
+      return { count };
+    },
+
+    // ── Site customization ──────────────────────────────────────────────────
+    getSiteConfig: async () => {
+      const doc = await db.getDoc<SiteConfig>(collections.siteConfig, SITE_DOC_ID);
+      // Parse strips the framework DBObject fields and fills schema defaults, so
+      // an absent doc yields the stock look (empty overrides).
+      return { config: SiteConfigSchema.parse(doc ?? {}) };
+    },
+
+    saveSiteConfig: async (userId, { patch }) => {
+      await requireAdmin(db, userId);
+      const existing = await db.getDoc<SiteConfig>(collections.siteConfig, SITE_DOC_ID);
+      const merged = SiteConfigSchema.parse({ ...(existing ?? {}), ...patch });
+      await db.setDoc(collections.siteConfig, { _id: SITE_DOC_ID, ...merged, ...dbDefaults() });
       return { ok: true };
     },
   };

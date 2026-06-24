@@ -246,6 +246,11 @@ export default function WheelPage(): ReactElement {
             >
               {/* Slice labels, each centred on its segment */}
               {slices.map((label, i) => {
+                // Conic wedges are measured clockwise from the top (12 o'clock),
+                // but CSS rotate() measures from the East (3 o'clock) axis — so a
+                // label must be rotated `mid - 90` to sit on top of its own wedge.
+                // (Without the -90 the label lands 90° off, making the pointer
+                // appear to land on a different phrase than the result reports.)
                 const mid = i * seg + seg / 2;
                 return (
                   <div
@@ -255,7 +260,7 @@ export default function WheelPage(): ReactElement {
                       top: '50%',
                       left: '50%',
                       transformOrigin: '0 0',
-                      transform: `rotate(${mid}deg) translate(8px, -0.7em)`,
+                      transform: `rotate(${mid - 90}deg) translate(8px, -0.7em)`,
                       width: '44%',
                       textAlign: 'right',
                       paddingRight: 10,
