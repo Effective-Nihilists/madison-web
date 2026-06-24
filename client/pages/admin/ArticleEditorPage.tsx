@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type ChangeEvent, type ReactElement } from 'react';
+import { MarkdownEditor } from 'ugly-app/markdown/client';
 import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
-import Markdown from '../../components/Markdown';
 import { Link, useRouter } from '../../router';
+import { useTheme } from '../../theme';
 import { CORNERS, CORNER_KEYS, type Article } from '../../../shared/blog';
 import { uploadMedia } from '../../admin/upload';
 
@@ -16,10 +17,23 @@ function slugify(input: string): string {
     .slice(0, 80);
 }
 
+// Natural aspect ratio of an image file (width / height), for the WYSIWYG
+// editor's image node. Falls back to 1 if it can't be read.
+function imageAspectRatio(file: File): Promise<number> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => { resolve(img.naturalWidth / img.naturalHeight || 1); URL.revokeObjectURL(url); };
+    img.onerror = () => { resolve(1); URL.revokeObjectURL(url); };
+    img.src = url;
+  });
+}
+
 type Status = 'draft' | 'published';
 
 function EditorInner({ id }: { id?: string }): ReactElement {
   const router = useRouter();
+  const { theme } = useTheme();
 
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -33,9 +47,32 @@ function EditorInner({ id }: { id?: string }): ReactElement {
   const [loaded, setLoaded] = useState(!id);
   const [saving, setSaving] = useState(false);
   const [uploadingCover, setUploadingCover] = useState(false);
-  const [uploadingInline, setUploadingInline] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const bodyRef = useRef<HTMLTextAreaElement>(null);
+
+  // The WYSIWYG editor needs a numeric width; measure its container.
+  const bodyWrapRef = useRef<HTMLDivElement>(null);
+  const [editorWidth, setEditorWidth] = useState(680);
+  useEffect(() => {
+    const el = bodyWrapRef.current;
+    if (!el) return;
+    const measure = (): void => { const w = el.clientWidth; if (w > 0) setEditorWidth(w); };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => { ro.disconnect(); };
+  }, [loaded]);
+
+  // Upload an image dropped/pasted/picked inside the editor and return the node
+  // descriptor the editor expects.
+  async function onImageUpload(file: File): Promise<{ src: string; widthPercent: number; aspectRatio: number } | null> {
+    try {
+      const [src, aspectRatio] = await Promise.all([uploadMedia('image', file), imageAspectRatio(file)]);
+      return { src, widthPercent: 100, aspectRatio };
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'image upload failed');
+      return null;
+    }
+  }
 
   useEffect(() => {
     if (!id) return;
@@ -79,30 +116,6 @@ function EditorInner({ id }: { id?: string }): ReactElement {
       setError(err instanceof Error ? err.message : 'cover upload failed');
     } finally {
       setUploadingCover(false);
-    }
-  }
-
-  async function handleInlineImage(e: ChangeEvent<HTMLInputElement>): Promise<void> {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
-    setUploadingInline(true);
-    setError(null);
-    try {
-      const url = await uploadMedia('image', file);
-      const snippet = `\n![](${url})\n`;
-      const el = bodyRef.current;
-      if (el) {
-        const start = el.selectionStart;
-        const end = el.selectionEnd;
-        setBodyMarkdown((prev) => prev.slice(0, start) + snippet + prev.slice(end));
-      } else {
-        setBodyMarkdown((prev) => prev + snippet);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'image upload failed');
-    } finally {
-      setUploadingInline(false);
     }
   }
 
@@ -214,19 +227,33 @@ function EditorInner({ id }: { id?: string }): ReactElement {
           )}
         </div>
 
-        <label className="note">body (markdown)</label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '6px 0' }}>
-          <input type="file" accept="image/*" onChange={(e) => void handleInlineImage(e)} disabled={uploadingInline} />
-          <span className="note">{uploadingInline ? 'uploading…' : 'insert image at cursor'}</span>
+        <label className="note">body</label>
+        <div
+          ref={bodyWrapRef}
+          className="wysiwyg-body"
+          style={{
+            margin: '6px 0',
+            border: '2px solid var(--panel-edge)',
+            borderRadius: 9,
+            background: 'var(--surface-solid)',
+            minHeight: 280,
+            overflow: 'hidden',
+          }}
+        >
+          <MarkdownEditor
+            value={bodyMarkdown}
+            onValueChanged={setBodyMarkdown}
+            width={editorWidth}
+            fileId={null}
+            menuAbove={false}
+            limitedToolbar={false}
+            showToolbar
+            isLoggedIn
+            isDark={theme === 'dark'}
+            placeholder="Write your article — format with the toolbar, drag or paste images…"
+            onImageUpload={onImageUpload}
+          />
         </div>
-        <textarea
-          ref={bodyRef}
-          value={bodyMarkdown}
-          rows={14}
-          onChange={(e) => setBodyMarkdown(e.target.value)}
-          placeholder="# Heading&#10;&#10;Write in markdown…"
-          style={{ fontFamily: 'var(--pixel-font, monospace)' }}
-        />
 
         <fieldset style={{ border: '2px solid var(--panel-edge)', borderRadius: 9, padding: '8px 12px', margin: '6px 0' }}>
           <legend className="note">status</legend>
@@ -242,15 +269,6 @@ function EditorInner({ id }: { id?: string }): ReactElement {
           {saving ? 'saving…' : 'save article'}
         </button>
       </div>
-
-      <hr style={{ margin: '24px 0', border: 0, borderTop: '3px double var(--panel-edge)' }} />
-
-      <h2 style={{ fontFamily: 'var(--orn-font)' }}>Live preview</h2>
-      {bodyMarkdown.trim() ? (
-        <Markdown source={bodyMarkdown} />
-      ) : (
-        <p className="note">nothing to preview yet.</p>
-      )}
     </Win9xWindow>
   );
 }
