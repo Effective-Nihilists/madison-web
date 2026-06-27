@@ -15,7 +15,7 @@ import WidgetRail from './WidgetRail';
 import SecretEggs, { type SecretEggsHandle } from './SecretEggs';
 import { ShellProvider } from './shellContext';
 import { SiteConfigProvider, useSiteConfig } from './siteConfigContext';
-import EditModeBar from './EditModeBar';
+import { EditBar, EditEntryButton } from './EditBar';
 
 // ─── AppShell ─────────────────────────────────────────────────────────────────
 // Composition root for the 317010.xyz retro shell. Wraps every routed page in:
@@ -94,6 +94,10 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
     <>
       <RetroFilters />
 
+      {/* unified edit mode: floating entry button + top bar (admin-only) */}
+      <EditEntryButton />
+      <EditBar />
+
       {/* fixed FX layers (low z-index fractal bg, high z-index ribbon) */}
       <FractalBackground ref={fractal} cycleSeconds={config.background.cycleSeconds} speed={config.background.speed} />
       <div className="star-field" aria-hidden="true" />
@@ -159,9 +163,6 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
 
       {/* the five secret eggs */}
       <SecretEggs ref={eggs} milkdrop={fractal} />
-
-      {/* admin-only customizer (edit mode + colors/fonts) */}
-      <EditModeBar />
     </>
   );
 }

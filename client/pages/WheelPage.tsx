@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import { Link } from '../router';
+import EditLink from '../components/shell/EditLink';
 import { WHEEL_PRESETS, type Wheel } from '../../shared/wheel';
 
 // Muted-rainbow palette (matches the `--mr-*` CSS vars). Segments cycle through
@@ -177,6 +178,9 @@ export default function WheelPage(): ReactElement {
       </h1>
       <p className="note" style={{ textAlign: 'center' }}>
         Pick a wheel, give it a spin, and let fate decide.
+      </p>
+      <p style={{ textAlign: 'center', margin: '4px 0 0' }}>
+        <EditLink to="admin/wheels" params={{}} label="edit wheels" />
       </p>
 
       {/* Wheel picker */}

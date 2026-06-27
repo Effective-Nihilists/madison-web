@@ -20,4 +20,22 @@ describe('Page definitions', () => {
       expect(pages[key].auth, `${key} should require auth`).toBe(true);
     }
   });
+
+  it('admin routes (incl. the redirect entry) exist and require auth', () => {
+    // `admin` no longer renders a dashboard — it redirects to admin/articles —
+    // but the route must remain so old links keep working, and every admin
+    // surface the unified edit bar links to must stay auth-gated.
+    const adminPages = [
+      'admin',
+      'admin/articles',
+      'admin/comments',
+      'admin/media',
+      'admin/wheels',
+      'admin/entries/:corner',
+    ] as const;
+    for (const key of adminPages) {
+      expect(pages[key], `${key} should be defined`).toBeDefined();
+      expect(pages[key].auth, `${key} should require auth`).toBe(true);
+    }
+  });
 });

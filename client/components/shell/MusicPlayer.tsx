@@ -9,6 +9,7 @@ import { apiPost } from '../../api';
 import type { MusicTrack } from '../../../shared/blog';
 import type { FractalHandle } from './FractalBackground';
 import { useShell } from './shellContext';
+import EditLink from './EditLink';
 
 // ─── MusicPlayer ──────────────────────────────────────────────────────────────
 // Floating bottom-left Win9x player. Loads real tracks via listMusicTracks() and
@@ -150,6 +151,9 @@ export default function MusicPlayer({
         {!hasTracks && (
           <div className="note">no tracks yet — add some in the CMS.</div>
         )}
+        <div style={{ marginTop: 6 }}>
+          <EditLink to="admin/media" params={{}} label="manage tracks" />
+        </div>
       </div>
     </div>
   );

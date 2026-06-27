@@ -577,14 +577,73 @@ html[data-theme="dark"] .wr-nav { background: #4a4550; color: #eee; }
     2px 2px 0 rgba(0, 0, 0, .25);
 }
 
-/* ── Admin edit mode (EditModeBar + Editable + drag-reorder/resize) ────────── */
-.edit-toolbar {
-  position: fixed; top: 64px; right: 14px; z-index: 62;
-  display: flex; flex-direction: column; gap: 6px; align-items: flex-end;
+/* ── Unified edit mode (EditBar + EditEntryButton + EditLink + Editable) ────── */
+:root { --edit-bar-h: 46px; }
+
+/* floating admin-only entry point (hidden while editing) */
+.edit-entry-btn {
+  position: fixed; top: 70px; right: 14px; z-index: 60;
+  font-family: var(--display-font); font-size: 12px; letter-spacing: .5px;
+  padding: 8px 14px; border-radius: 999px; cursor: pointer;
+  background: var(--accent); color: #fff8ec; border: 3px solid var(--panel-edge);
+  box-shadow: var(--shadow);
 }
-.edit-toolbar .tbtn.edit-on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.edit-entry-btn:hover { filter: brightness(1.06); }
+
+/* the unified top edit bar */
+.edit-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: var(--edit-bar-h); z-index: 64;
+  display: flex; align-items: center; gap: 8px; padding: 0 12px;
+  background: var(--aubergine); color: #f3e7cf;
+  border-bottom: 3px solid var(--gold); box-shadow: var(--shadow);
+  overflow-x: auto; white-space: nowrap;
+  font-family: var(--display-font); font-size: 12px; letter-spacing: .5px;
+}
+.eb-label { color: var(--gold); font-weight: 700; flex: 0 0 auto; }
+.eb-links { display: flex; align-items: center; gap: 4px; flex: 0 0 auto; }
+.eb-spacer { flex: 1 1 auto; min-width: 8px; }
+.eb-link {
+  font: inherit; color: #f3e7cf; background: transparent;
+  border: 1px solid transparent; border-radius: 7px; padding: 5px 9px; cursor: pointer;
+}
+.eb-link:hover { background: rgba(255, 255, 255, .12); }
+.eb-link.on { background: rgba(255, 255, 255, .18); border-color: var(--gold); }
+.eb-done {
+  font: inherit; flex: 0 0 auto; cursor: pointer; font-weight: 700;
+  background: var(--gold); color: var(--near-black);
+  border: 0; border-radius: 7px; padding: 5px 12px;
+}
+.eb-done:hover { filter: brightness(1.06); }
+.eb-dropdown { position: relative; display: inline-flex; }
+.eb-menu {
+  position: absolute; top: calc(100% + 4px); left: 0; z-index: 65;
+  display: flex; flex-direction: column; min-width: 160px; padding: 4px;
+  background: var(--surface-solid); color: var(--text);
+  border: 2px solid var(--gold); border-radius: 10px; box-shadow: var(--shadow);
+}
+.eb-menu-item {
+  font: inherit; text-align: left; color: var(--text); background: transparent;
+  border: 0; border-radius: 6px; padding: 6px 9px; cursor: pointer; white-space: nowrap;
+}
+.eb-menu-item:hover { background: var(--accent2); }
+
+/* shift the whole page (incl. the sticky topbar) below the fixed bar */
+body.is-editing { padding-top: var(--edit-bar-h); }
+body.is-editing .topbar { top: var(--edit-bar-h); }
+
+/* contextual deep-link pill shown on live pages while editing */
+.edit-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--display-font); font-size: 11px; letter-spacing: .4px;
+  padding: 2px 9px; border-radius: 999px; cursor: pointer; text-decoration: none;
+  color: var(--near-black); background: var(--gold); border: 2px solid var(--panel-edge);
+  vertical-align: middle;
+}
+.edit-link:hover { filter: brightness(1.06); }
+
+/* colors & fonts customizer, opened from the edit bar */
 .edit-panel {
-  position: fixed; top: 104px; right: 14px; z-index: 62;
+  position: fixed; top: calc(var(--edit-bar-h) + 12px); right: 14px; z-index: 62;
   width: 248px; max-height: 76vh; overflow: auto;
 }
 .edit-panel .win-body { padding: 10px 12px; }
@@ -606,7 +665,7 @@ html[data-theme="dark"] .wr-nav { background: #4a4550; color: #eee; }
 .widget-resize:hover { opacity: .9; }
 
 @media (max-width: 768px) {
-  .edit-toolbar, .edit-panel { right: 8px; }
+  .edit-entry-btn, .edit-panel { right: 8px; }
   .hamburger { display: inline-flex; }
   .sidebar {
     position: fixed; top: 0; left: 0; height: 100%; width: 270px; max-width: 82vw; z-index: 38;

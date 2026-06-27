@@ -3,6 +3,7 @@ import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import Markdown from '../components/Markdown';
 import { Link } from '../router';
+import EditLink from '../components/shell/EditLink';
 import { CORNERS, type Article, type Comment } from '../../shared/blog';
 
 function cornerLabel(key: string): string {
@@ -119,6 +120,8 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
           <div className="byline">
             in {cornerLabel(article.corner)}
             {article.publishedAt ? ` · ${new Date(article.publishedAt).toLocaleDateString()}` : ''}
+            {' '}
+            <EditLink to="admin/articles/:id" params={{ id: article._id }} label="edit this article" />
           </div>
 
           <Markdown source={article.bodyMarkdown} />
@@ -126,7 +129,10 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
           <hr style={{ margin: '24px 0', border: 0, borderTop: '3px double var(--panel-edge)' }} />
 
           <section className="comments">
-            <h2 style={{ fontFamily: 'var(--orn-font)' }}>Comments</h2>
+            <h2 style={{ fontFamily: 'var(--orn-font)' }}>
+              Comments{' '}
+              <EditLink to="admin/comments" params={{}} label="moderate" />
+            </h2>
             {comments.length === 0 && <p className="note">no comments yet — be the first.</p>}
             {comments.map((c) => (
               <div key={c._id} className="cmt">

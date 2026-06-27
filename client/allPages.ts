@@ -31,7 +31,7 @@ export const allPages = {
   ['health/breathing']: lazyPage(() => import('./pages/health/GuidedBreathingPage')),
   ['health/plants']: lazyPage(() => import('./pages/health/MedPlantsPage')),
 
-  ['admin']: lazyPage(() => import('./pages/admin/AdminDashboard')),
+  ['admin']: lazyPage(() => import('./pages/admin/AdminRedirect')),
   ['admin/articles']: lazyPage(() => import('./pages/admin/ArticleListPage')),
   ['admin/articles/new']: lazyPage(() => import('./pages/admin/ArticleEditorPage')),
   ['admin/articles/:id']: lazyPage(() => import('./pages/admin/ArticleEditorPage')),

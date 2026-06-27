@@ -3,6 +3,7 @@ import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import Markdown from '../components/Markdown';
 import { Link } from '../router';
+import EditLink from '../components/shell/EditLink';
 import { CORNERS } from '../../shared/blog';
 import { CORNER_CONFIG, ENTRY_CORNER_LABELS, type CornerConfig, type Entry } from '../../shared/entries';
 
@@ -167,7 +168,10 @@ export default function GalleryPage({ corner, config }: { corner: string; config
         </b>{' '}
         › {label}
       </div>
-      <h1 className="article">{label}</h1>
+      <h1 className="article">
+        {label}{' '}
+        <EditLink to="admin/entries/:corner" params={{ corner }} label="manage entries" />
+      </h1>
 
       {config.search && (
         <input
