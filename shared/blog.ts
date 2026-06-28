@@ -71,5 +71,15 @@ export const ButtonImageSchema = z.object({
 });
 export type ButtonImage = InferDocType<typeof ButtonImageSchema>;
 
+// A custom 88×31 button on the "buttons.gif" wall: an uploaded image that links
+// out to another site (classic webring/button-wall style). Admin-managed.
+export const ButtonLinkSchema = z.object({
+  imageUrl: z.string(),
+  linkUrl: z.string(),
+  title: z.string().default(''),
+  order: z.number().default(0),
+});
+export type ButtonLink = InferDocType<typeof ButtonLinkSchema>;
+
 export const AdminUserSchema = z.object({ email: z.string() });
 export type AdminUser = InferDocType<typeof AdminUserSchema>;

@@ -553,15 +553,15 @@ html[data-theme="dark"] .wr-nav { background: #4a4550; color: #eee; }
 
 /* 88x31 button wall */
 .btn-wall { display: grid; grid-template-columns: repeat(2, 88px); gap: 6px; justify-content: center; }
-.b8831 {
-  width: 88px; height: 31px; display: flex; align-items: center; justify-content: center; text-align: center;
-  font-family: var(--pixel-font); font-size: 9px; line-height: 1.05; letter-spacing: .3px;
-  color: #fff; text-shadow: 1px 1px 0 rgba(0, 0, 0, .55); cursor: pointer; overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, .5); box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .35), inset -1px -1px 0 rgba(0, 0, 0, .35);
-  position: relative; image-rendering: pixelated;
+/* admin-managed 88×31 image buttons that link out (the buttons.gif wall) */
+.b8831-link {
+  display: block; width: 88px; height: 31px; line-height: 0;
+  border: 1px solid rgba(0, 0, 0, .5);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .35), inset -1px -1px 0 rgba(0, 0, 0, .35);
 }
-.b8831:hover { filter: invert(1) hue-rotate(180deg); }
-.b8831:active { transform: translate(1px, 1px); }
+.b8831-img { width: 88px; height: 31px; object-fit: cover; image-rendering: pixelated; display: block; }
+.b8831-link:hover { filter: brightness(1.08) saturate(1.1); }
+.b8831-link:active { transform: translate(1px, 1px); }
 
 /* tagboard / guestbook teaser */
 .tagboard .tb-msg { border-bottom: 1px dotted var(--win-dark); padding: 4px 2px; font-size: 12px; }

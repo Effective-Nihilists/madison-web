@@ -7,9 +7,11 @@ import {
   type ReactNode,
 } from 'react';
 import { apiPost } from '../../api';
+import type { ButtonLink } from '../../../shared/blog';
 import { useShell } from './shellContext';
 import AnimateIn from '../AnimateIn';
 import Editable from './Editable';
+import EditLink from './EditLink';
 import { useSiteConfig, applyOrder } from './siteConfigContext';
 import { useDragReorder, type DragItemProps } from './useDragReorder';
 
@@ -20,23 +22,6 @@ import { useDragReorder, type DragItemProps } from './useDragReorder';
 // (persisted as widgetOrder) and resizable (persisted as boxSizes).
 
 const VISIT_SESSION_KEY = 'madison-visit-counted';
-
-interface Badge { t: string; a: string; b: string; }
-
-const BADGES: Badge[] = [
-  { t: '317010·xyz', a: '--mr-indigo', b: '--mr-purple' },
-  { t: 'COSMOO\nFANCLUB', a: '--mr-orange', b: '--mr-red' },
-  { t: 'TEA\nDRINKER', a: '--mr-green', b: '--mr-teal' },
-  { t: 'NETSCAPE\nNOW', a: '--mr-blue', b: '--mr-cyan' },
-  { t: 'NO AI ✦', a: '--mr-magenta', b: '--mr-pink' },
-  { t: 'MADE BY\nHAND', a: '--mr-lime', b: '--mr-green' },
-  { t: 'BEST IN\n1024×768', a: '--mr-teal', b: '--mr-blue' },
-  { t: 'STAR\nGAZER', a: '--mr-purple', b: '--mr-indigo' },
-  { t: 'WITCH\nCORNER', a: '--mr-purple', b: '--mr-magenta' },
-  { t: '★ LINK\nME ★', a: '--mr-yellow', b: '--mr-orange' },
-  { t: 'POWERED\nBY MOSS', a: '--mr-lime', b: '--mr-teal' },
-  { t: 'CRT\nFOREVER', a: '--mr-cyan', b: '--mr-lilac' },
-];
 
 const WEBRING_SITES = [
   'mossgarden.neocities', 'tea-and-tarot.xyz', 'loaf-knight.cat',
@@ -126,6 +111,16 @@ export default function WidgetRail({
   const { config, editMode, save } = useSiteConfig();
   const [visitors, setVisitors] = useState<number | null>(null);
   const [wrIdx, setWrIdx] = useState(14);
+  const [buttons, setButtons] = useState<ButtonLink[]>([]);
+
+  // Load the admin-managed 88×31 button wall once.
+  useEffect(() => {
+    let alive = true;
+    void apiPost<{ buttons: ButtonLink[] }>('listButtonLinks', {}).then((res) => {
+      if (alive) setButtons(res.buttons.slice().sort((a, b) => a.order - b.order));
+    }).catch(() => { /* offline / none */ });
+    return () => { alive = false; };
+  }, []);
 
   // Real DB-backed visitor counter: count this browser session once, then show
   // the live total.
@@ -211,21 +206,26 @@ export default function WidgetRail({
         <>
           <div className="win-title"><span className="wt-label">buttons.gif</span><span className="win-btns"><b>×</b></span></div>
           <div className="win-body">
-            <div className="btn-wall">
-              {BADGES.map((bd, i) => (
-                <div
-                  key={i}
-                  className="b8831"
-                  title="88×31 button"
-                  role="button"
-                  onClick={() => { toast(`☆ ${bd.t.replace(/\n/g, ' ')}`); }}
-                  style={{ background: `linear-gradient(135deg, var(${bd.a}) 0 48%, var(${bd.b}) 52% 100%)` }}
-                >
-                  {bd.t.split('\n').map((line, j, arr) => (
-                    <span key={j}>{line}{j < arr.length - 1 ? <br /> : null}</span>
-                  ))}
-                </div>
-              ))}
+            {buttons.length > 0 ? (
+              <div className="btn-wall">
+                {buttons.map((b) => (
+                  <a
+                    key={b._id}
+                    className="b8831-link"
+                    href={b.linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={b.title || b.linkUrl}
+                  >
+                    <img className="b8831-img" src={b.imageUrl} alt={b.title || 'button'} width={88} height={31} />
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="note">no buttons yet.</div>
+            )}
+            <div style={{ marginTop: 8 }}>
+              <EditLink to="admin/media" params={{}} label="manage buttons" />
             </div>
           </div>
         </>

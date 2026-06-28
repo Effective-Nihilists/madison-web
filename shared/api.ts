@@ -4,6 +4,7 @@ import {
   CommentSchema,
   MusicTrackSchema,
   ButtonImageSchema,
+  ButtonLinkSchema,
   RandomThoughtSchema,
   CORNER_KEYS,
 } from './blog';
@@ -39,6 +40,7 @@ const CommentDoc = CommentSchema.extend(dbFields);
 const RandomThoughtDoc = RandomThoughtSchema.extend(dbFields);
 const MusicTrackDoc = MusicTrackSchema.extend(dbFields);
 const ButtonImageDoc = ButtonImageSchema.extend(dbFields);
+const ButtonLinkDoc = ButtonLinkSchema.extend(dbFields);
 const EntryDoc = EntrySchema.extend(dbFields);
 const WheelDoc = WheelSchema.extend(dbFields);
 
@@ -185,6 +187,10 @@ export const requests = defineRequests({
     input: z.object({}),
     output: z.object({ images: z.array(ButtonImageDoc) }),
   }),
+  listButtonLinks: req({
+    input: z.object({}),
+    output: z.object({ buttons: z.array(ButtonLinkDoc) }),
+  }),
 
   // ── Blog / CMS — admin (authenticated + admin-gated) ───────────────────────
   whoAmI: authReq({
@@ -249,6 +255,26 @@ export const requests = defineRequests({
   }),
   setButtonImage: authReq({
     input: z.object({ key: z.string().min(1), url: z.string().min(1) }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+  addButtonLink: authReq({
+    input: z.object({
+      imageUrl: z.string().min(1),
+      linkUrl: z.string().min(1),
+      title: z.string().max(200).optional(),
+    }),
+    output: z.object({ id: z.string() }),
+  }),
+  updateButtonLink: authReq({
+    input: z.object({
+      id: z.string().min(1),
+      linkUrl: z.string().min(1).optional(),
+      title: z.string().max(200).optional(),
+    }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+  deleteButtonLink: authReq({
+    input: z.object({ id: z.string().min(1) }),
     output: z.object({ ok: z.boolean() }),
   }),
 

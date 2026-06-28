@@ -8,6 +8,7 @@ import {
   MediaAssetSchema,
   MusicTrackSchema,
   ButtonImageSchema,
+  ButtonLinkSchema,
   AdminUserSchema,
 } from './blog';
 import { EntrySchema } from './entries';
@@ -21,6 +22,7 @@ export type {
   MediaAsset,
   MusicTrack,
   ButtonImage,
+  ButtonLink,
   AdminUser,
 } from './blog';
 export type { Entry } from './entries';
@@ -106,6 +108,10 @@ export const collections = defineCollections({
   },
   buttonImage: {
     schema: ButtonImageSchema,
+    meta: { cache: false, trackable: true, public: true, cascadeFrom: null },
+  },
+  buttonLink: {
+    schema: ButtonLinkSchema,
     meta: { cache: false, trackable: true, public: true, cascadeFrom: null },
   },
   adminUser: {

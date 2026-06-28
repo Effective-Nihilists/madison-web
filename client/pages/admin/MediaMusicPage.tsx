@@ -4,7 +4,7 @@ import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import { Link } from '../../router';
 import { uploadMedia } from '../../admin/upload';
-import { CORNERS, type ButtonImage, type MusicTrack } from '../../../shared/blog';
+import { CORNERS, type ButtonImage, type ButtonLink, type MusicTrack } from '../../../shared/blog';
 
 type TrackKind = 'mp3' | 'wav' | 'mp4';
 
@@ -173,7 +173,133 @@ function ButtonImageManager(): ReactElement {
   );
 }
 
-// MediaMusicPage — music upload/list/delete + corner button-image manager (Task 14).
+// The "buttons.gif" 88×31 button wall: upload a button image, give it a link
+// (and optional title), and it shows in the widget rail. Supports add, inline
+// edit of link/title, and delete.
+function ButtonLinkManager(): ReactElement {
+  const [buttons, setButtons] = useState<ButtonLink[]>([]);
+  const [pendingUrl, setPendingUrl] = useState<string | null>(null);
+  const [linkUrl, setLinkUrl] = useState('');
+  const [title, setTitle] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const refresh = useCallback(async () => {
+    const { buttons: bs } = await apiPost<{ buttons: ButtonLink[] }>('listButtonLinks', {});
+    setButtons(bs);
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  async function handleFile(e: ChangeEvent<HTMLInputElement>): Promise<void> {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const url = await uploadMedia('image', file);
+      setPendingUrl(url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'upload failed');
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleAdd(): Promise<void> {
+    if (!pendingUrl || !linkUrl.trim()) {
+      setError('upload an image and enter a link first');
+      return;
+    }
+    await apiPost('addButtonLink', { imageUrl: pendingUrl, linkUrl: linkUrl.trim(), title: title.trim() });
+    setPendingUrl(null);
+    setLinkUrl('');
+    setTitle('');
+    await refresh();
+  }
+
+  async function handleSave(b: ButtonLink): Promise<void> {
+    await apiPost('updateButtonLink', { id: b._id, linkUrl: b.linkUrl, title: b.title });
+    await refresh();
+  }
+
+  async function handleDelete(id: string): Promise<void> {
+    await apiPost('deleteButtonLink', { id });
+    await refresh();
+  }
+
+  function patchLocal(id: string, patch: Partial<ButtonLink>): void {
+    setButtons((bs) => bs.map((b) => (b._id === id ? { ...b, ...patch } : b)));
+  }
+
+  return (
+    <Win9xWindow title="buttons.gif — 88×31 Button Wall" className="article-win" bodyClassName="doc-body">
+      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 0 }}>Button wall</h2>
+      <p className="note">Upload an 88×31 button image, give it a link, and it appears in the widget rail.</p>
+      {error && (
+        <p className="note" style={{ color: 'crimson' }}>
+          {error}
+        </p>
+      )}
+      <div className="cform">
+        <label className="note">button image (88×31 works best)</label>
+        <input type="file" accept="image/*" onChange={(e) => void handleFile(e)} disabled={uploading} />
+        {uploading && <p className="note">uploading…</p>}
+        {pendingUrl && (
+          <img
+            src={pendingUrl}
+            alt="pending button"
+            style={{ width: 88, height: 31, objectFit: 'cover', border: '2px solid var(--panel-edge)' }}
+          />
+        )}
+        <input type="url" placeholder="link URL (https://…)" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} />
+        <input type="text" placeholder="title / alt (optional)" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl}>
+          add button
+        </button>
+      </div>
+
+      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {buttons.length === 0 && <p className="note">no buttons yet.</p>}
+        {buttons.map((b) => (
+          <div key={b._id} className="cmt" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <img
+              src={b.imageUrl}
+              alt={b.title}
+              style={{ width: 88, height: 31, objectFit: 'cover', border: '2px solid var(--panel-edge)' }}
+            />
+            <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <input
+                type="url"
+                value={b.linkUrl}
+                onChange={(e) => patchLocal(b._id, { linkUrl: e.target.value })}
+                placeholder="link URL"
+              />
+              <input
+                type="text"
+                value={b.title}
+                onChange={(e) => patchLocal(b._id, { title: e.target.value })}
+                placeholder="title / alt"
+              />
+            </div>
+            <button className="tbtn" type="button" onClick={() => void handleSave(b)}>
+              save
+            </button>
+            <button className="tbtn" type="button" onClick={() => void handleDelete(b._id)}>
+              delete
+            </button>
+          </div>
+        ))}
+      </div>
+    </Win9xWindow>
+  );
+}
+
+// MediaMusicPage — music upload/list/delete + corner button-image manager +
+// the buttons.gif 88×31 button wall (Task 14).
 export default function MediaMusicPage(): ReactElement {
   return (
     <AdminGate>
@@ -187,6 +313,7 @@ export default function MediaMusicPage(): ReactElement {
       </div>
       <MusicManager />
       <ButtonImageManager />
+      <ButtonLinkManager />
     </AdminGate>
   );
 }

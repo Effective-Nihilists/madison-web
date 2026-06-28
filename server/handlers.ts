@@ -11,6 +11,7 @@ import type {
   MediaAsset,
   MusicTrack,
   ButtonImage,
+  ButtonLink,
   Entry,
 } from '../shared/collections';
 import type { Wheel } from '../shared/wheel';
@@ -28,6 +29,7 @@ type BlogRequestKey =
   | 'submitComment'
   | 'listMusicTracks'
   | 'listButtonImages'
+  | 'listButtonLinks'
   | 'whoAmI'
   | 'adminListArticles'
   | 'adminGetArticle'
@@ -41,6 +43,9 @@ type BlogRequestKey =
   | 'addMusicTrack'
   | 'deleteMusicTrack'
   | 'setButtonImage'
+  | 'addButtonLink'
+  | 'updateButtonLink'
+  | 'deleteButtonLink'
   | 'listEntries'
   | 'saveEntry'
   | 'deleteEntry'
@@ -189,6 +194,13 @@ export function makeHandlers(
       return { images };
     },
 
+    listButtonLinks: async () => {
+      const buttons = await db.getDocs<ButtonLink>(collections.buttonLink, {}, {
+        sort: { order: 1 },
+      });
+      return { buttons };
+    },
+
     // ── Admin ─────────────────────────────────────────────────────────────────
     whoAmI: async (userId) => ({ admin: await isAdmin(db, userId) }),
 
@@ -301,6 +313,42 @@ export function makeHandlers(
       await requireAdmin(db, userId);
       const doc: ButtonImage = { _id: key, key, url, ...dbDefaults() };
       await db.setDoc(collections.buttonImage, doc);
+      return { ok: true };
+    },
+
+    addButtonLink: async (userId, { imageUrl, linkUrl, title }) => {
+      await requireAdmin(db, userId);
+      const existing = await db.getDocs<ButtonLink>(collections.buttonLink, {});
+      const order = existing.length;
+      const doc: ButtonLink = {
+        _id: nanoid(),
+        imageUrl,
+        linkUrl,
+        title: title ?? '',
+        order,
+        ...dbDefaults(),
+      };
+      await db.setDoc(collections.buttonLink, doc);
+      return { id: doc._id };
+    },
+
+    updateButtonLink: async (userId, { id, linkUrl, title }) => {
+      await requireAdmin(db, userId);
+      const existing = await db.getDoc<ButtonLink>(collections.buttonLink, id);
+      if (!existing) throw new Error('Button not found');
+      const doc: ButtonLink = {
+        ...existing,
+        linkUrl: linkUrl ?? existing.linkUrl,
+        title: title ?? existing.title,
+        ...dbDefaults(),
+      };
+      await db.setDoc(collections.buttonLink, doc);
+      return { ok: true };
+    },
+
+    deleteButtonLink: async (userId, { id }) => {
+      await requireAdmin(db, userId);
+      await db.deleteDoc(collections.buttonLink, id);
       return { ok: true };
     },
 
