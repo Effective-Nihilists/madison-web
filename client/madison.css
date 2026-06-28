@@ -274,6 +274,14 @@ html[data-theme="dark"] .sidebar .sidebar-inner { background: #221d30; }
 
 /* ============ CONTENT / CARDS ============ */
 .content { min-width: 0; }
+/* ugly-app's RouterView wraps each routed page in an inline-styled
+   `position:relative; width:100%; height:100%; overflow:hidden` div (for view
+   transitions). In this normal-flow grid layout that wrapper's `height:100%`
+   collapses against the grid row (sized by the sidebar/widget-rail, ~885px) and
+   `overflow:hidden` then clips any taller page — trapping its content and making
+   the page un-scrollable. Let the wrapper grow with its content so the document
+   scrolls normally. (!important overrides the framework's inline style.) */
+.content > div { height: auto !important; overflow: visible !important; }
 .card {
   background: var(--surface); border: 3px solid var(--panel-edge); border-radius: 14px;
   padding: 18px 20px; margin-bottom: 18px; box-shadow: var(--shadow); backdrop-filter: blur(6px);

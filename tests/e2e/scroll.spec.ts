@@ -104,6 +104,39 @@ test.beforeEach(async ({ page }) => {
   await expect(page.locator('[data-id="scrollview-large"]')).toBeVisible();
 });
 
+// ─── Page-level document scroll ─────────────────────────────────────────────────
+// Regression guard: ugly-app's RouterView wraps each page in an inline-styled
+// `height:100%; overflow:hidden` div. In this site's normal-flow grid layout that
+// collapsed and clipped any page taller than the viewport, trapping its content
+// and making the whole page un-scrollable (the Tarot Guide / admin lists). The
+// `.content > div { height:auto !important; overflow:visible !important }` rule in
+// madison.css fixes it. The Tarot Guide renders 78 cards from a static constant
+// (no API/auth), so it's a reliable always-tall page.
+
+test.describe('Page document scroll', () => {
+  test('a tall page (Tarot Guide) scrolls the document past the fold', async ({ page }) => {
+    await page.goto('/witchcraft/tarot');
+    await expect(page.getByRole('heading', { name: /Tarot Guide/i })).toBeVisible();
+    await page.waitForTimeout(400); // let the 78-card grid lay out
+
+    const m = await page.evaluate(async () => {
+      window.scrollTo(0, 0);
+      const innerH = window.innerHeight;
+      const scrollH = document.body.scrollHeight;
+      window.scrollTo(0, 99999);
+      await new Promise<void>((r) => requestAnimationFrame(() => r()));
+      const maxY = window.scrollY;
+      window.scrollTo(0, 0);
+      return { innerH, scrollH, maxY };
+    });
+
+    // The page is far taller than the viewport…
+    expect(m.scrollH).toBeGreaterThan(m.innerH * 1.5);
+    // …and the document actually scrolls (the RouterView wrapper isn't clipping).
+    expect(m.maxY).toBeGreaterThan(m.innerH);
+  });
+});
+
 // ─── ScrollView ───────────────────────────────────────────────────────────────
 
 test.describe('ScrollView', () => {
