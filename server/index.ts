@@ -3,13 +3,13 @@ import {
   pgQuery,
   emailSend,
   flushPerf,
-  pushSend,
   recordFeedback,
   recordPerf,
   uglyBotRequest,
   type AppConfigurator,
   type InboundEmail,
   type RequestHandlers,
+  type TypedPushSendInput,
 } from 'ugly-app';
 import { createStorageClient } from 'ugly-app/server';
 import { nanoid } from 'nanoid';
@@ -69,9 +69,16 @@ const app = createApp(
       return { ok: true };
     },
 
-    sendPush: async (_userId, { targetUserId, title, body, path, query, imageUrl }) => {
+    sendPush: async (_userId, { targetUserId, title, body, page, query, imageUrl }): Promise<{ sent: boolean }> => {
       try {
-        const result = await pushSend({ targetUserId, title, body, path, ...(query ? { query } : {}), ...(imageUrl ? { imageUrl } : {}) });
+        const result = await app.pushSend({
+          targetUserId,
+          title,
+          body,
+          page,
+          query: query ?? {},
+          ...(imageUrl ? { imageUrl } : {}),
+        } as TypedPushSendInput<typeof pages, keyof typeof pages & string>);
         return { sent: result.sent };
       } catch (e) {
         console.error(e);
