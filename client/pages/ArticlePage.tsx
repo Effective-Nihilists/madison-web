@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type ReactElement } from 'react';
+import { useEffect, useState, type ReactElement, type SyntheticEvent } from 'react';
 import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import Markdown from '../components/Markdown';
@@ -28,31 +28,36 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let active = true;
+    // Mutable holder read through a getter so TS doesn't narrow the flag to a
+    // constant across the `await` boundaries — each post-await guard is a real
+    // unmount check that must survive lint's control-flow narrowing.
+    const live = { active: true };
+    const isLive = (): boolean => live.active;
     setLoaded(false);
     setArticle(null);
     setComments([]);
     setSubmitted(false);
-    void (async () => {
+    const run = async () => {
       try {
         const { article: a } = await apiPost<{ article: Article | null }>('getArticle', { slug });
-        if (!active) return;
+        if (!isLive()) return;
         setArticle(a);
         if (a) {
           const { comments: cs } = await apiPost<{ comments: Comment[] }>('listApprovedComments', { articleId: a._id });
-          if (!active) return;
+          if (!isLive()) return;
           setComments(cs);
         }
       } finally {
-        if (active) setLoaded(true);
+        if (isLive()) setLoaded(true);
       }
-    })();
+    };
+    void run();
     return () => {
-      active = false;
+      live.active = false;
     };
   }, [slug]);
 
-  async function handleSubmit(e: FormEvent): Promise<void> {
+  async function handleSubmit(e: SyntheticEvent): Promise<void> {
     e.preventDefault();
     if (!article) return;
     const trimmedName = name.trim();
@@ -160,14 +165,14 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
                 placeholder="your name"
                 value={name}
                 maxLength={60}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => { setName(e.target.value); }}
               />
               <textarea
                 placeholder="leave a comment…"
                 value={body}
                 rows={4}
                 maxLength={2000}
-                onChange={(e) => setBody(e.target.value)}
+                onChange={(e) => { setBody(e.target.value); }}
               />
               <button className="tbtn" type="submit" disabled={submitting}>
                 {submitting ? 'submitting…' : 'submit comment'}

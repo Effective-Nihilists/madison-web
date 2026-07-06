@@ -327,7 +327,7 @@ export default function GuidedBreathingPage(): ReactElement {
         <button
           type="button"
           className="tbtn"
-          onClick={() => setRunning((r) => !r)}
+          onClick={() => { setRunning((r) => !r); }}
           style={{ fontSize: '1.05em', padding: '6px 22px' }}
         >
           {running ? 'Stop' : 'Start'}

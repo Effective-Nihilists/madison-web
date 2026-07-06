@@ -129,7 +129,7 @@ export function makeHandlers(
     typeof dbOrGetter === 'function'
       ? new Proxy({} as TypedDB, {
           get: (_t, prop) => {
-            const real = (dbOrGetter as () => TypedDB)();
+            const real = (dbOrGetter)();
             const value = real[prop as keyof TypedDB];
             return typeof value === 'function' ? (value as (...a: unknown[]) => unknown).bind(real) : value;
           },
@@ -139,7 +139,7 @@ export function makeHandlers(
     // ── Public reads ────────────────────────────────────────────────────────
     listArticles: async (_userId, { corner }) => {
       const filter: Record<string, unknown> = { status: 'published' };
-      if (corner) filter['corner'] = corner;
+      if (corner) filter.corner = corner;
       const articles = await db.getDocs<Article>(collections.article, filter, {
         sort: { publishedAt: -1 },
       });
@@ -229,7 +229,9 @@ export function makeHandlers(
       const publishedAt =
         status === 'published'
           ? (existing?.publishedAt ?? Date.now())
-          : (wasPublished ? existing?.publishedAt ?? null : null);
+          : wasPublished
+            ? (existing.publishedAt ?? null)
+            : null;
 
       const doc: Article = {
         _id,
@@ -357,10 +359,10 @@ export function makeHandlers(
       const entries = await db.getDocs<Entry>(collections.entry, { corner }, {
         sort: { order: 1, created: -1 },
       });
-      if (!q || !q.trim()) return { entries };
+      if (!q?.trim()) return { entries };
       const needle = q.trim().toLowerCase();
       const filtered = entries.filter((e) => {
-        const hay = [e.title, e.body, ...(e.tags ?? [])].join(' ').toLowerCase();
+        const hay = [e.title, e.body, ...e.tags].join(' ').toLowerCase();
         return hay.includes(needle);
       });
       return { entries: filtered };

@@ -33,7 +33,9 @@ import { seedAdminOnCreate } from './admin';
 // The Workers runtime keeps the TypedDB inside the app context rather than on
 // the returned app object; resolve it lazily per request.
 function workersDb(): TypedDB {
-  const db = getAppContext().typedDb;
+  // The framework hands back a `TypedDB<any>`; narrow it to the concrete
+  // default `TypedDB` at this boundary so downstream handlers stay type-safe.
+  const db = getAppContext().typedDb as TypedDB | null;
   if (!db) throw new Error('TypedDB not initialized');
   return db;
 }
@@ -74,7 +76,7 @@ const app = createWorkersApp(
   (cfg) => {
     cfg.setWorkers(cronTasks, cronHandlers);
     // Self-hosted magic-link: seed the admin allowlist on first login.
-    cfg.setOnUserCreate(async (userId, initial, db) => {
+    cfg.setOnUserCreate(async (userId, initial, db: TypedDB) => {
       await seedAdminOnCreate(db, userId, initial.email);
     });
     // Transactional email (magic-link) sends via the Cloudflare Email Service

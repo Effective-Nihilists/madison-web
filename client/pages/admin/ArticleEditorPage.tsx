@@ -77,7 +77,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
   useEffect(() => {
     if (!id) return;
     let active = true;
-    void (async () => {
+    const run = async () => {
       const { article: doc } = await apiPost<{ article: Article | null }>('adminGetArticle', { id });
       if (!active || !doc) {
         if (active) setLoaded(true);
@@ -92,7 +92,8 @@ function EditorInner({ id }: { id?: string }): ReactElement {
       setCoverImageUrl(doc.coverImageUrl);
       setStatus(doc.status);
       setLoaded(true);
-    })();
+    };
+    void run();
     return () => {
       active = false;
     };
@@ -176,7 +177,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
 
       <div className="cform" style={{ marginTop: 16 }}>
         <label className="note">title</label>
-        <input type="text" value={title} onChange={(e) => handleTitleChange(e.target.value)} placeholder="article title" />
+        <input type="text" value={title} onChange={(e) => { handleTitleChange(e.target.value); }} placeholder="article title" />
 
         <label className="note">slug</label>
         <input
@@ -192,7 +193,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
         <label className="note">corner</label>
         <select
           value={corner}
-          onChange={(e) => setCorner(e.target.value)}
+          onChange={(e) => { setCorner(e.target.value); }}
           style={{
             width: '100%',
             padding: '9px 11px',
@@ -211,7 +212,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
         </select>
 
         <label className="note">excerpt</label>
-        <textarea value={excerpt} rows={2} onChange={(e) => setExcerpt(e.target.value)} placeholder="short summary shown on cards" />
+        <textarea value={excerpt} rows={2} onChange={(e) => { setExcerpt(e.target.value); }} placeholder="short summary shown on cards" />
 
         <label className="note">cover image</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', margin: '6px 0' }}>
@@ -220,7 +221,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
           {coverImageUrl && (
             <>
               <img src={coverImageUrl} alt="cover" style={{ maxWidth: 120, borderRadius: 8, border: '2px solid var(--panel-edge)' }} />
-              <button className="tbtn" type="button" onClick={() => setCoverImageUrl(null)}>
+              <button className="tbtn" type="button" onClick={() => { setCoverImageUrl(null); }}>
                 remove
               </button>
             </>
@@ -258,10 +259,10 @@ function EditorInner({ id }: { id?: string }): ReactElement {
         <fieldset style={{ border: '2px solid var(--panel-edge)', borderRadius: 9, padding: '8px 12px', margin: '6px 0' }}>
           <legend className="note">status</legend>
           <label style={{ marginRight: 16 }}>
-            <input type="radio" name="status" checked={status === 'draft'} onChange={() => setStatus('draft')} /> draft
+            <input type="radio" name="status" checked={status === 'draft'} onChange={() => { setStatus('draft'); }} /> draft
           </label>
           <label>
-            <input type="radio" name="status" checked={status === 'published'} onChange={() => setStatus('published')} /> published
+            <input type="radio" name="status" checked={status === 'published'} onChange={() => { setStatus('published'); }} /> published
           </label>
         </fieldset>
 

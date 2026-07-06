@@ -20,7 +20,7 @@ function readFileAsBase64(file: File): Promise<string> {
       const comma = result.indexOf(',');
       resolve(comma >= 0 ? result.slice(comma + 1) : result);
     };
-    reader.onerror = () => reject(reader.error ?? new Error('failed to read file'));
+    reader.onerror = () => { reject(reader.error ?? new Error('failed to read file')); };
     reader.readAsDataURL(file);
   });
 }

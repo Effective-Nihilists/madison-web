@@ -84,14 +84,15 @@ export default function WheelPage(): ReactElement {
 
   useEffect(() => {
     let active = true;
-    void (async () => {
+    const run = async () => {
       try {
         const { wheels } = await apiPost<{ wheels: Wheel[] }>('listWheels', {});
         if (active) setCustomWheels(wheels);
       } catch {
         // Logged-out / offline visitors still get the built-in presets.
       }
-    })();
+    };
+    void run();
     return () => {
       active = false;
       if (spinTimer.current !== null) window.clearTimeout(spinTimer.current);
@@ -192,7 +193,7 @@ export default function WheelPage(): ReactElement {
             className="tbtn"
             aria-pressed={o.id === selectedId}
             disabled={spinning}
-            onClick={() => selectWheel(o.id)}
+            onClick={() => { selectWheel(o.id); }}
             style={o.id === selectedId ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined}
           >
             {o.name}

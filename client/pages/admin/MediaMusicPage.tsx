@@ -79,7 +79,7 @@ function MusicManager(): ReactElement {
         <input type="file" accept=".mp3,.wav,.mp4,audio/*,video/mp4" onChange={(e) => void handleFile(e)} disabled={uploading} />
         {uploading && <p className="note">uploading…</p>}
         {pendingUrl && <p className="note">uploaded ({pendingKind}) — add a title and save.</p>}
-        <input type="text" placeholder="track title" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input type="text" placeholder="track title" value={title} onChange={(e) => { setTitle(e.target.value); }} />
         <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl}>
           add track
         </button>
@@ -255,8 +255,8 @@ function ButtonLinkManager(): ReactElement {
             style={{ width: 88, height: 31, objectFit: 'cover', border: '2px solid var(--panel-edge)' }}
           />
         )}
-        <input type="url" placeholder="link URL (https://…)" value={linkUrl} onChange={(e) => setLinkUrl(e.target.value)} />
-        <input type="text" placeholder="title / alt (optional)" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <input type="url" placeholder="link URL (https://…)" value={linkUrl} onChange={(e) => { setLinkUrl(e.target.value); }} />
+        <input type="text" placeholder="title / alt (optional)" value={title} onChange={(e) => { setTitle(e.target.value); }} />
         <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl}>
           add button
         </button>
@@ -275,13 +275,13 @@ function ButtonLinkManager(): ReactElement {
               <input
                 type="url"
                 value={b.linkUrl}
-                onChange={(e) => patchLocal(b._id, { linkUrl: e.target.value })}
+                onChange={(e) => { patchLocal(b._id, { linkUrl: e.target.value }); }}
                 placeholder="link URL"
               />
               <input
                 type="text"
                 value={b.title}
-                onChange={(e) => patchLocal(b._id, { title: e.target.value })}
+                onChange={(e) => { patchLocal(b._id, { title: e.target.value }); }}
                 placeholder="title / alt"
               />
             </div>

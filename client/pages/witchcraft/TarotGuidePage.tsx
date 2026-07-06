@@ -69,7 +69,7 @@ export default function TarotGuidePage(): ReactElement {
         <span className="note" style={{ marginRight: 4 }}>
           arcana
         </span>
-        <FilterButton active={arcana === 'all'} label="all" onClick={() => setArcana('all')} />
+        <FilterButton active={arcana === 'all'} label="all" onClick={() => { setArcana('all'); }} />
         <FilterButton
           active={arcana === 'major'}
           label="major"
@@ -78,7 +78,7 @@ export default function TarotGuidePage(): ReactElement {
             setSuit('all');
           }}
         />
-        <FilterButton active={arcana === 'minor'} label="minor" onClick={() => setArcana('minor')} />
+        <FilterButton active={arcana === 'minor'} label="minor" onClick={() => { setArcana('minor'); }} />
       </div>
 
       <div
@@ -95,13 +95,13 @@ export default function TarotGuidePage(): ReactElement {
         <span className="note" style={{ marginRight: 4 }}>
           suit
         </span>
-        <FilterButton active={suit === 'all'} label="all" onClick={() => setSuit('all')} />
+        <FilterButton active={suit === 'all'} label="all" onClick={() => { setSuit('all'); }} />
         {TAROT_SUITS.map((s) => (
           <FilterButton
             key={s.key}
             active={suit === s.key}
             label={s.label.toLowerCase()}
-            onClick={() => setSuit(s.key)}
+            onClick={() => { setSuit(s.key); }}
           />
         ))}
       </div>

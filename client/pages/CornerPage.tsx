@@ -41,7 +41,7 @@ function ArticleCorner({ corner }: { corner: string }): ReactElement {
   useEffect(() => {
     let active = true;
     setLoaded(false);
-    void (async () => {
+    const run = async () => {
       try {
         const { articles: all } = await apiPost<{ articles: Article[] }>('listArticles', { corner });
         if (!active) return;
@@ -52,7 +52,8 @@ function ArticleCorner({ corner }: { corner: string }): ReactElement {
       } finally {
         if (active) setLoaded(true);
       }
-    })();
+    };
+    void run();
     return () => {
       active = false;
     };

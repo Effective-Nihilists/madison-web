@@ -141,7 +141,7 @@ export default function GalleryPage({ corner, config }: { corner: string; config
   useEffect(() => {
     let active = true;
     setLoaded(false);
-    void (async () => {
+    const run = async () => {
       try {
         const input: { corner: string; q?: string } = { corner };
         if (config.search && debouncedQ.trim()) input.q = debouncedQ.trim();
@@ -150,7 +150,8 @@ export default function GalleryPage({ corner, config }: { corner: string; config
       } finally {
         if (active) setLoaded(true);
       }
-    })();
+    };
+    void run();
     return () => {
       active = false;
     };
@@ -177,7 +178,7 @@ export default function GalleryPage({ corner, config }: { corner: string; config
         <input
           type="search"
           value={q}
-          onChange={(e) => setQ(e.target.value)}
+          onChange={(e) => { setQ(e.target.value); }}
           placeholder="search…"
           style={{ width: '100%', maxWidth: 360, margin: '8px 0' }}
         />
@@ -214,8 +215,8 @@ export default function GalleryPage({ corner, config }: { corner: string; config
 function useDebounced(value: string, delayMs: number): string {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
-    const t = setTimeout(() => setDebounced(value), delayMs);
-    return () => clearTimeout(t);
+    const t = setTimeout(() => { setDebounced(value); }, delayMs);
+    return () => { clearTimeout(t); };
   }, [value, delayMs]);
   return debounced;
 }

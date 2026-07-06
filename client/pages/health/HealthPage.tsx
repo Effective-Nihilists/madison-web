@@ -70,7 +70,7 @@ export default function HealthPage(): ReactElement {
 
   useEffect(() => {
     let active = true;
-    void (async () => {
+    const run = async () => {
       try {
         const { articles } = await apiPost<{ articles: Article[] }>('listArticles', {
           corner: 'health',
@@ -84,7 +84,8 @@ export default function HealthPage(): ReactElement {
       } finally {
         if (active) setLoaded(true);
       }
-    })();
+    };
+    void run();
     return () => {
       active = false;
     };

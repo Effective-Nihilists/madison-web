@@ -6,7 +6,6 @@ import {
   ButtonImageSchema,
   ButtonLinkSchema,
   RandomThoughtSchema,
-  CORNER_KEYS,
 } from './blog';
 import { EntrySchema, ENTRY_CORNER_ENUM } from './entries';
 import { WheelSchema } from './wheel';

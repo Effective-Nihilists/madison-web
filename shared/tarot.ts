@@ -221,13 +221,13 @@ const MAJOR: TarotCard[] = [
 ];
 
 // ─── Minor Arcana helpers ───────────────────────────────────────────────────
-type PipMeaning = { upright: string; reversed: string; keywords: string[] };
-type SuitData = {
+interface PipMeaning { upright: string; reversed: string; keywords: string[] }
+interface SuitData {
   suit: TarotSuit;
   label: string;
   pips: Record<number, PipMeaning>;
   courts: Record<'page' | 'knight' | 'queen' | 'king', PipMeaning>;
-};
+}
 
 const RANK_NAME: Record<number, string> = {
   1: 'Ace',
@@ -353,7 +353,7 @@ function buildMinor(): TarotCard[] {
       });
     }
     // Court cards
-    const courtOrder: Array<'page' | 'knight' | 'queen' | 'king'> = ['page', 'knight', 'queen', 'king'];
+    const courtOrder: ('page' | 'knight' | 'queen' | 'king')[] = ['page', 'knight', 'queen', 'king'];
     for (const rank of courtOrder) {
       const c = s.courts[rank];
       const rankLabel = rank.charAt(0).toUpperCase() + rank.slice(1);
@@ -381,7 +381,7 @@ export function tarotById(id: string): TarotCard | undefined {
 }
 
 // Roman-numeral helper for Major Arcana display (0 → '0', 21 → 'XXI').
-const ROMAN: Array<[number, string]> = [
+const ROMAN: [number, string][] = [
   [10, 'X'],
   [9, 'IX'],
   [5, 'V'],
@@ -401,7 +401,7 @@ export function toRoman(n: number): string {
   return out;
 }
 
-export const TAROT_SUITS: ReadonlyArray<{ key: TarotSuit; label: string }> = [
+export const TAROT_SUITS: readonly { key: TarotSuit; label: string }[] = [
   { key: 'wands', label: 'Wands' },
   { key: 'cups', label: 'Cups' },
   { key: 'swords', label: 'Swords' },

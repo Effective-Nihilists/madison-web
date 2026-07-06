@@ -138,7 +138,7 @@ export default function OraclePage(): ReactElement {
           type="button"
           className="tbtn"
           aria-pressed={spread === 1}
-          onClick={() => setSpread(1)}
+          onClick={() => { setSpread(1); }}
           style={spread === 1 ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined}
         >
           single card
@@ -147,7 +147,7 @@ export default function OraclePage(): ReactElement {
           type="button"
           className="tbtn"
           aria-pressed={spread === 3}
-          onClick={() => setSpread(3)}
+          onClick={() => { setSpread(3); }}
           style={spread === 3 ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined}
         >
           past · present · future

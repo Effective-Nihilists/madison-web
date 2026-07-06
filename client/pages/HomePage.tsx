@@ -25,7 +25,7 @@ export default function HomePage(): ReactElement {
 
   useEffect(() => {
     let active = true;
-    void (async () => {
+    const run = async () => {
       try {
         const [tRes, aRes] = await Promise.all([
           apiPost<{ thoughts: RandomThought[] }>('listRandomThoughts', { limit: 1 }),
@@ -42,7 +42,8 @@ export default function HomePage(): ReactElement {
       } finally {
         if (active) setLoaded(true);
       }
-    })();
+    };
+    void run();
     return () => {
       active = false;
     };

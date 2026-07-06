@@ -56,7 +56,7 @@ export default function WitchcraftPage(): ReactElement {
 
   useEffect(() => {
     let active = true;
-    void (async () => {
+    const run = async () => {
       try {
         const { articles } = await apiPost<{ articles: Article[] }>('listArticles', {
           corner: 'witchcraft',
@@ -70,7 +70,8 @@ export default function WitchcraftPage(): ReactElement {
       } finally {
         if (active) setLoaded(true);
       }
-    })();
+    };
+    void run();
     return () => {
       active = false;
     };

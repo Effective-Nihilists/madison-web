@@ -78,7 +78,7 @@ const app = createApp(
           page,
           query: query ?? {},
           ...(imageUrl ? { imageUrl } : {}),
-        } as TypedPushSendInput<typeof pages, keyof typeof pages & string>);
+        } as TypedPushSendInput<typeof pages, keyof typeof pages>);
         return { sent: result.sent };
       } catch (e) {
         console.error(e);

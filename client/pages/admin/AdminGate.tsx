@@ -14,7 +14,7 @@ export default function AdminGate({ children }: { children: ReactNode }): ReactE
 
   useEffect(() => {
     let active = true;
-    void (async () => {
+    const run = async () => {
       try {
         const { admin: isAdmin } = await apiPost<{ admin: boolean }>('whoAmI', {});
         if (!active) return;
@@ -22,7 +22,8 @@ export default function AdminGate({ children }: { children: ReactNode }): ReactE
       } catch {
         if (active) setAdmin(false);
       }
-    })();
+    };
+    void run();
     return () => {
       active = false;
     };

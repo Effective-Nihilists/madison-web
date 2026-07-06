@@ -39,7 +39,7 @@ function ArticleListInner(): ReactElement {
         <Link to="admin" params={{}} className="tbtn">
           ← dashboard
         </Link>
-        <button className="tbtn" type="button" onClick={() => router.push('admin/articles/new', {})}>
+        <button className="tbtn" type="button" onClick={() => { router.push('admin/articles/new', {}); }}>
           + new article
         </button>
       </div>
@@ -64,7 +64,7 @@ function ArticleListInner(): ReactElement {
             <button
               className="tbtn"
               type="button"
-              onClick={() => router.push('admin/articles/:id', { id: a._id })}
+              onClick={() => { router.push('admin/articles/:id', { id: a._id }); }}
             >
               edit
             </button>
