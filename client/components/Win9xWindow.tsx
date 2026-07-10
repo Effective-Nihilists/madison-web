@@ -36,7 +36,7 @@ export default function Win9xWindow({
               key={`${c}-${i}`}
               onClick={c === '×' && onClose ? onClose : undefined}
               role={c === '×' && onClose ? 'button' : undefined}
-              aria-label={c === '×' && onClose ? 'close' : undefined}
+              aria-label={c === '×' && onClose ? 'close' : undefined} data-id="b"
             >
               {c}
             </b>

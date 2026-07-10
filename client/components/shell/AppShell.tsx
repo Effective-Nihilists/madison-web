@@ -50,7 +50,7 @@ function ThemeToggle(): ReactElement {
   const { theme, toggleTheme } = useTheme();
   const dark = theme === 'dark';
   return (
-    <button className="icon-btn" aria-label="theme" onClick={toggleTheme}>
+    <button className="icon-btn" aria-label="theme" onClick={toggleTheme} data-id="theme">
       {dark ? (
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
@@ -107,7 +107,7 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
       <div className="shell">
         {/* TOP BAR */}
         <div className="topbar">
-          <button className="icon-btn hamburger" aria-label="menu" onClick={() => { setDrawerOpen(true); }}>
+          <button className="icon-btn hamburger" aria-label="menu" onClick={() => { setDrawerOpen(true); }} data-id="menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
               <line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" />
             </svg>
@@ -116,7 +116,7 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
             to=""
             params={{}}
             className="brand-mini mr-cycle"
-            onClick={onBrandClick}
+            onClick={onBrandClick} data-id="brand"
           >
             <span
               onPointerDown={onBrandPressStart}
@@ -131,7 +131,7 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
             className="icon-btn desk-only"
             title="toggle CRT / scanlines"
             aria-label="toggle scanlines"
-            onClick={() => { setCrt((c) => !c); }}
+            onClick={() => { setCrt((c) => !c); }} data-id="toggle-scanlines"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <rect x="3" y="4" width="18" height="13" rx="2" /><path d="M8 21h8M12 17v4" />
@@ -155,7 +155,7 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
       <div
         className={`drawer-overlay${drawerOpen ? ' show' : ''}`}
         onClick={() => { setDrawerOpen(false); }}
-        aria-hidden="true"
+        aria-hidden="true" data-id="div"
       />
 
       {/* floating music player */}

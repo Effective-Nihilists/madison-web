@@ -161,7 +161,7 @@ export default function WidgetRail({
           <div className="win-body" style={{ textAlign: 'center' }}>
             <Editable as="div" id="widget.counter.label" className="wlabel">VISITORS</Editable>
             <Editable as="div" id="widget.counter.sub" className="counter">since 2003</Editable>
-            <span className="num" title="...try clicking me" onClick={bumpCounter} role="button">{visitors === null ? '#······' : fmtVisitors(visitors)}</span>
+            <span className="num" title="...try clicking me" onClick={bumpCounter} role="button" data-id="bump-counter">{visitors === null ? '#······' : fmtVisitors(visitors)}</span>
           </div>
         </>
       ),
@@ -188,12 +188,12 @@ export default function WidgetRail({
           <div className="win-title"><span className="wt-label">webring.htm</span><span className="win-btns"><b>×</b></span></div>
           <div className="win-body">
             <div className="wr-row">
-              <span className="wr-nav" role="button" onClick={() => { goRing(-1); }}>◄</span>
+              <span className="wr-nav" role="button" onClick={() => { goRing(-1); }} data-id="span">◄</span>
               <Editable as="span" id="widget.webring.title" className="wr-name mr-cycle">~ cozy corners webring ~</Editable>
-              <span className="wr-nav" role="button" onClick={() => { goRing(1); }}>►</span>
+              <span className="wr-nav" role="button" onClick={() => { goRing(1); }} data-id="span-2">►</span>
             </div>
             <div className="wr-row" style={{ justifyContent: 'center' }}>
-              <span className="wr-nav" role="button" onClick={() => { toast(`★ random hop → ${WEBRING_SITES[Math.floor(Math.random() * WEBRING_SITES.length)] ?? ''}`); }}>★ random site ★</span>
+              <span className="wr-nav" role="button" onClick={() => { toast(`★ random hop → ${WEBRING_SITES[Math.floor(Math.random() * WEBRING_SITES.length)] ?? ''}`); }} data-id="random-site">★ random site ★</span>
             </div>
             <div className="wr-row"><span className="wr-name" style={{ color: 'var(--text-soft)' }}>member #{String(wrIdx).padStart(3, '0')} of 88</span></div>
           </div>
@@ -215,7 +215,7 @@ export default function WidgetRail({
                     href={b.linkUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title={b.title || b.linkUrl}
+                    title={b.title || b.linkUrl} data-id="a"
                   >
                     <img className="b8831-img" src={b.imageUrl} alt={b.title || 'button'} width={88} height={31} />
                   </a>
@@ -241,7 +241,7 @@ export default function WidgetRail({
             <div className="tb-msg"><span className="tb-who">griff»</span>love the new chaos!!</div>
             <div className="tb-msg"><span className="tb-who">nyx»</span>the scanlines are perfect</div>
             <div className="tb-msg"><span className="tb-who">mod»</span>pet the loaf knight for me</div>
-            <button className="wr-nav" style={{ marginTop: 7, width: '100%' }} onClick={() => { toast('tagboard is read-only in this demo ✦'); }}>+ leave a tag</button>
+            <button className="wr-nav" style={{ marginTop: 7, width: '100%' }} onClick={() => { toast('tagboard is read-only in this demo ✦'); }} data-id="leave-a-tag">+ leave a tag</button>
           </div>
         </>
       ),

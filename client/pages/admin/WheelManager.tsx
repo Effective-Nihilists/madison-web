@@ -129,28 +129,28 @@ function WheelManagerInner(): ReactElement {
           style={inputStyle}
           value={form.name}
           placeholder="e.g. What's for dinner?"
-          onChange={(e) => { setForm((f) => ({ ...f, name: e.target.value })); }}
+          onChange={(e) => { setForm((f) => ({ ...f, name: e.target.value })); }} data-id="e-g-whats-for"
         />
         <label className="note">slices (one per line)</label>
         <textarea
           style={{ ...inputStyle, minHeight: 140, resize: 'vertical' }}
           value={form.slices}
           placeholder={'pizza\ntacos\nsushi\npasta'}
-          onChange={(e) => { setForm((f) => ({ ...f, slices: e.target.value })); }}
+          onChange={(e) => { setForm((f) => ({ ...f, slices: e.target.value })); }} data-id="pizza-tacos-sushi-pasta"
         />
         <label className="note">order</label>
         <input
           style={inputStyle}
           type="number"
           value={form.order}
-          onChange={(e) => { setForm((f) => ({ ...f, order: e.target.value })); }}
+          onChange={(e) => { setForm((f) => ({ ...f, order: e.target.value })); }} data-id="input"
         />
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-          <button type="button" className="tbtn" onClick={() => void handleSave()} disabled={saving}>
+          <button type="button" className="tbtn" onClick={() => void handleSave()} disabled={saving} data-id="button">
             {saving ? 'saving…' : form.id ? 'save changes' : 'add wheel'}
           </button>
           {form.id && (
-            <button type="button" className="tbtn" onClick={resetForm} disabled={saving}>
+            <button type="button" className="tbtn" onClick={resetForm} disabled={saving} data-id="cancel">
               cancel
             </button>
           )}
@@ -169,10 +169,10 @@ function WheelManagerInner(): ReactElement {
             <div key={w._id} className="card" style={{ marginBottom: 0 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <h3 style={{ flex: 1, margin: 0, fontFamily: 'var(--orn-font)' }}>{w.name}</h3>
-                <button type="button" className="tbtn" onClick={() => { loadIntoForm(w); }}>
+                <button type="button" className="tbtn" onClick={() => { loadIntoForm(w); }} data-id="edit">
                   edit
                 </button>
-                <button type="button" className="tbtn" onClick={() => void handleDelete(w._id)}>
+                <button type="button" className="tbtn" onClick={() => void handleDelete(w._id)} data-id="delete">
                   delete
                 </button>
               </div>

@@ -247,7 +247,7 @@ export default function GuidedBreathingPage(): ReactElement {
               style={{
                 fontWeight: selected ? 700 : 400,
                 outline: selected ? '2px solid var(--panel-edge)' : 'none',
-              }}
+              }} data-id="name"
             >
               {p.name}
             </button>
@@ -328,7 +328,7 @@ export default function GuidedBreathingPage(): ReactElement {
           type="button"
           className="tbtn"
           onClick={() => { setRunning((r) => !r); }}
-          style={{ fontSize: '1.05em', padding: '6px 22px' }}
+          style={{ fontSize: '1.05em', padding: '6px 22px' }} data-id="button"
         >
           {running ? 'Stop' : 'Start'}
         </button>

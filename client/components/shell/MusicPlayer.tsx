@@ -107,7 +107,7 @@ export default function MusicPlayer({
       <button
         className="reopen-tab"
         aria-label="reopen player"
-        onClick={() => { setClosed(false); }}
+        onClick={() => { setClosed(false); }} data-id="reopen-player"
       >
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
           <path d="M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
@@ -124,7 +124,7 @@ export default function MusicPlayer({
 
       <div className="ptop">
         <span className="ptitle">♪ winamp.exe — now playing</span>
-        <button className="win-x" aria-label="close player" onClick={() => { setClosed(true); }}>×</button>
+        <button className="win-x" aria-label="close player" onClick={() => { setClosed(true); }} data-id="close-player">×</button>
       </div>
       <div className="pbody">
         <div className="now">
@@ -132,21 +132,21 @@ export default function MusicPlayer({
           <span>{playing ? trackLabel : `— ${trackLabel} —`}</span>
         </div>
         <div className="transport">
-          <button className="icon-btn" aria-label="prev" onClick={() => { step(-1); }} disabled={!hasTracks}>
+          <button className="icon-btn" aria-label="prev" onClick={() => { step(-1); }} disabled={!hasTracks} data-id="prev">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h2v14H6zM20 5v14l-11-7z" /></svg>
           </button>
-          <button className="icon-btn" aria-label={playing ? 'pause' : 'play'} onClick={() => { if (playing) pause(); else play(); }} disabled={!hasTracks}>
+          <button className="icon-btn" aria-label={playing ? 'pause' : 'play'} onClick={() => { if (playing) pause(); else play(); }} disabled={!hasTracks} data-id="button">
             {playing
               ? <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5h4v14H7zM13 5h4v14h-4z" /></svg>
               : <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l12-7z" /></svg>}
           </button>
-          <button className="icon-btn" aria-label="next" onClick={() => { step(1); }} disabled={!hasTracks}>
+          <button className="icon-btn" aria-label="next" onClick={() => { step(1); }} disabled={!hasTracks} data-id="next">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 5h2v14h-2zM4 5l11 7-11 7z" /></svg>
           </button>
         </div>
         <div className="vol-row">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 9v6h4l5 4V5L7 9zM16 8a5 5 0 0 1 0 8" /></svg>
-          <input type="range" min={0} max={100} value={vol} onChange={(e) => { onVol(Number(e.target.value)); }} aria-label="volume" />
+          <input type="range" min={0} max={100} value={vol} onChange={(e) => { onVol(Number(e.target.value)); }} aria-label="volume" data-id="volume" />
         </div>
         {!hasTracks && (
           <div className="note">no tracks yet — add some in the CMS.</div>

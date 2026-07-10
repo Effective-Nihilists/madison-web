@@ -76,11 +76,11 @@ function MusicManager(): ReactElement {
       )}
       <div className="cform">
         <label className="note">upload .mp3 / .wav / .mp4</label>
-        <input type="file" accept=".mp3,.wav,.mp4,audio/*,video/mp4" onChange={(e) => void handleFile(e)} disabled={uploading} />
+        <input type="file" accept=".mp3,.wav,.mp4,audio/*,video/mp4" onChange={(e) => void handleFile(e)} disabled={uploading} data-id="input" />
         {uploading && <p className="note">uploading…</p>}
         {pendingUrl && <p className="note">uploaded ({pendingKind}) — add a title and save.</p>}
-        <input type="text" placeholder="track title" value={title} onChange={(e) => { setTitle(e.target.value); }} />
-        <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl}>
+        <input type="text" placeholder="track title" value={title} onChange={(e) => { setTitle(e.target.value); }} data-id="track-title" />
+        <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl} data-id="add-track">
           add track
         </button>
       </div>
@@ -93,7 +93,7 @@ function MusicManager(): ReactElement {
               <div style={{ fontWeight: 700 }}>{t.title}</div>
               <div className="note">{t.kind}</div>
             </div>
-            <button className="tbtn" type="button" onClick={() => void handleDelete(t._id)}>
+            <button className="tbtn" type="button" onClick={() => void handleDelete(t._id)} data-id="delete">
               delete
             </button>
           </div>
@@ -164,7 +164,7 @@ function ButtonImageManager(): ReactElement {
               <div style={{ fontWeight: 700 }}>{c.label}</div>
               <div className="note">{c.key}</div>
             </div>
-            <input type="file" accept="image/*" onChange={(e) => void handleFile(c.key, e)} disabled={busyKey === c.key} />
+            <input type="file" accept="image/*" onChange={(e) => void handleFile(c.key, e)} disabled={busyKey === c.key} data-id="input-2" />
             {busyKey === c.key && <span className="note">uploading…</span>}
           </div>
         ))}
@@ -246,7 +246,7 @@ function ButtonLinkManager(): ReactElement {
       )}
       <div className="cform">
         <label className="note">button image (88×31 works best)</label>
-        <input type="file" accept="image/*" onChange={(e) => void handleFile(e)} disabled={uploading} />
+        <input type="file" accept="image/*" onChange={(e) => void handleFile(e)} disabled={uploading} data-id="input-3" />
         {uploading && <p className="note">uploading…</p>}
         {pendingUrl && (
           <img
@@ -255,9 +255,9 @@ function ButtonLinkManager(): ReactElement {
             style={{ width: 88, height: 31, objectFit: 'cover', border: '2px solid var(--panel-edge)' }}
           />
         )}
-        <input type="url" placeholder="link URL (https://…)" value={linkUrl} onChange={(e) => { setLinkUrl(e.target.value); }} />
-        <input type="text" placeholder="title / alt (optional)" value={title} onChange={(e) => { setTitle(e.target.value); }} />
-        <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl}>
+        <input type="url" placeholder="link URL (https://…)" value={linkUrl} onChange={(e) => { setLinkUrl(e.target.value); }} data-id="link-url-https" />
+        <input type="text" placeholder="title / alt (optional)" value={title} onChange={(e) => { setTitle(e.target.value); }} data-id="title-alt-optional" />
+        <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl} data-id="add-button">
           add button
         </button>
       </div>
@@ -276,19 +276,19 @@ function ButtonLinkManager(): ReactElement {
                 type="url"
                 value={b.linkUrl}
                 onChange={(e) => { patchLocal(b._id, { linkUrl: e.target.value }); }}
-                placeholder="link URL"
+                placeholder="link URL" data-id="link-url"
               />
               <input
                 type="text"
                 value={b.title}
                 onChange={(e) => { patchLocal(b._id, { title: e.target.value }); }}
-                placeholder="title / alt"
+                placeholder="title / alt" data-id="title-alt"
               />
             </div>
-            <button className="tbtn" type="button" onClick={() => void handleSave(b)}>
+            <button className="tbtn" type="button" onClick={() => void handleSave(b)} data-id="save">
               save
             </button>
-            <button className="tbtn" type="button" onClick={() => void handleDelete(b._id)}>
+            <button className="tbtn" type="button" onClick={() => void handleDelete(b._id)} data-id="delete-2">
               delete
             </button>
           </div>

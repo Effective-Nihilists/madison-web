@@ -120,9 +120,9 @@ const SecretEggs = forwardRef<SecretEggsHandle, { milkdrop: RefObject<FractalHan
       <>
         <div
           className={`secret-room${roomOpen ? ' open' : ''}`}
-          onClick={() => { setRoomOpen(false); }}
+          onClick={() => { setRoomOpen(false); }} data-id="div"
         >
-          <div className="room" onClick={(e) => { e.stopPropagation(); }}>
+          <div className="room" onClick={(e) => { e.stopPropagation(); }} data-id="div-2">
             <h2>✦ THE SECRET ROOM ✦</h2>
             <p>you found the hidden door behind the wordmark. welcome, ghost. there is tea here, and the cat approves of you. tell no one. (click anywhere to leave)</p>
           </div>

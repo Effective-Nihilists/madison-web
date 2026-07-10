@@ -51,10 +51,10 @@ function ModerationInner(): ReactElement {
               {c.name} · {new Date(toMs(c.created)).toLocaleString()}
             </div>
             <div style={{ margin: '6px 0 10px' }}>{c.body}</div>
-            <button className="tbtn" type="button" onClick={() => void moderate(c._id, 'approve')} style={{ marginRight: 8 }}>
+            <button className="tbtn" type="button" onClick={() => void moderate(c._id, 'approve')} style={{ marginRight: 8 }} data-id="approve">
               approve
             </button>
-            <button className="tbtn" type="button" onClick={() => void moderate(c._id, 'reject')}>
+            <button className="tbtn" type="button" onClick={() => void moderate(c._id, 'reject')} data-id="reject">
               reject
             </button>
           </div>

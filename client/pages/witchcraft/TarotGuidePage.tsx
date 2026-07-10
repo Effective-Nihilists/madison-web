@@ -22,7 +22,7 @@ function FilterButton({
       className="tbtn"
       onClick={onClick}
       style={active ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined}
-      aria-pressed={active}
+      aria-pressed={active} data-id="button"
     >
       {label}
     </button>
@@ -69,16 +69,16 @@ export default function TarotGuidePage(): ReactElement {
         <span className="note" style={{ marginRight: 4 }}>
           arcana
         </span>
-        <FilterButton active={arcana === 'all'} label="all" onClick={() => { setArcana('all'); }} />
+        <FilterButton active={arcana === 'all'} label="all" onClick={() => { setArcana('all'); }} data-id="all" />
         <FilterButton
           active={arcana === 'major'}
           label="major"
           onClick={() => {
             setArcana('major');
             setSuit('all');
-          }}
+          }} data-id="major"
         />
-        <FilterButton active={arcana === 'minor'} label="minor" onClick={() => { setArcana('minor'); }} />
+        <FilterButton active={arcana === 'minor'} label="minor" onClick={() => { setArcana('minor'); }} data-id="minor" />
       </div>
 
       <div
@@ -95,13 +95,13 @@ export default function TarotGuidePage(): ReactElement {
         <span className="note" style={{ marginRight: 4 }}>
           suit
         </span>
-        <FilterButton active={suit === 'all'} label="all" onClick={() => { setSuit('all'); }} />
+        <FilterButton active={suit === 'all'} label="all" onClick={() => { setSuit('all'); }} data-id="all-2" />
         {TAROT_SUITS.map((s) => (
           <FilterButton
             key={s.key}
             active={suit === s.key}
             label={s.label.toLowerCase()}
-            onClick={() => { setSuit(s.key); }}
+            onClick={() => { setSuit(s.key); }} data-id="filter-button"
           />
         ))}
       </div>

@@ -165,16 +165,16 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
                 placeholder="your name"
                 value={name}
                 maxLength={60}
-                onChange={(e) => { setName(e.target.value); }}
+                onChange={(e) => { setName(e.target.value); }} data-id="your-name"
               />
               <textarea
                 placeholder="leave a comment…"
                 value={body}
                 rows={4}
                 maxLength={2000}
-                onChange={(e) => { setBody(e.target.value); }}
+                onChange={(e) => { setBody(e.target.value); }} data-id="leave-a-comment"
               />
-              <button className="tbtn" type="submit" disabled={submitting}>
+              <button className="tbtn" type="submit" disabled={submitting} data-id="submit">
                 {submitting ? 'submitting…' : 'submit comment'}
               </button>
             </form>

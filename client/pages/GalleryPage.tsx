@@ -41,7 +41,7 @@ function StatusPill({ status }: { status: string }): ReactElement {
 
 function ExternalLink({ href }: { href: string }): ReactElement {
   return (
-    <a href={href} target="_blank" rel="noreferrer noopener" className="tbtn" style={{ marginTop: 8, display: 'inline-block' }}>
+    <a href={href} target="_blank" rel="noreferrer noopener" className="tbtn" style={{ marginTop: 8, display: 'inline-block' }} data-id="visit">
       visit ↗
     </a>
   );
@@ -180,7 +180,7 @@ export default function GalleryPage({ corner, config }: { corner: string; config
           value={q}
           onChange={(e) => { setQ(e.target.value); }}
           placeholder="search…"
-          style={{ width: '100%', maxWidth: 360, margin: '8px 0' }}
+          style={{ width: '100%', maxWidth: 360, margin: '8px 0' }} data-id="search"
         />
       )}
 

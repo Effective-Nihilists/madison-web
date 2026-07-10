@@ -194,7 +194,7 @@ export default function WheelPage(): ReactElement {
             aria-pressed={o.id === selectedId}
             disabled={spinning}
             onClick={() => { selectWheel(o.id); }}
-            style={o.id === selectedId ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined}
+            style={o.id === selectedId ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined} data-id="name"
           >
             {o.name}
             {!o.builtin && <span aria-hidden> ✦</span>}
@@ -310,7 +310,7 @@ export default function WheelPage(): ReactElement {
               className="tbtn"
               onClick={handleSpin}
               disabled={spinning}
-              style={{ fontSize: '1.1em', padding: '12px 28px' }}
+              style={{ fontSize: '1.1em', padding: '12px 28px' }} data-id="button"
             >
               {spinning ? 'spinning…' : result ? 'spin again ★' : 'spin the wheel ★'}
             </button>

@@ -54,11 +54,11 @@ export default function Sidebar({
         <span className="wt-label">corners.exe</span>
         <span className="win-btns">
           <b>_</b>
-          <b role="button" aria-label="close" onClick={onClose}>×</b>
+          <b role="button" aria-label="close" onClick={onClose} data-id="close">×</b>
         </span>
       </div>
       <div className="sidebar-inner">
-        <button className="icon-btn drawer-close" aria-label="close menu" onClick={onClose}>
+        <button className="icon-btn drawer-close" aria-label="close menu" onClick={onClose} data-id="close-menu">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" />
           </svg>
@@ -75,7 +75,7 @@ export default function Sidebar({
                 onClick={(e) => {
                   if (editMode) { e.preventDefault(); e.stopPropagation(); return; }
                   onClose();
-                }}
+                }} data-id="link"
               >
                 <span
                   className="thumb retrofx"

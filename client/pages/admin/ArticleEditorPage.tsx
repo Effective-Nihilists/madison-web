@@ -177,7 +177,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
 
       <div className="cform" style={{ marginTop: 16 }}>
         <label className="note">title</label>
-        <input type="text" value={title} onChange={(e) => { handleTitleChange(e.target.value); }} placeholder="article title" />
+        <input type="text" value={title} onChange={(e) => { handleTitleChange(e.target.value); }} placeholder="article title" data-id="article-title" />
 
         <label className="note">slug</label>
         <input
@@ -187,7 +187,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
             setSlug(e.target.value);
             setSlugTouched(true);
           }}
-          placeholder="article-slug"
+          placeholder="article-slug" data-id="article-slug"
         />
 
         <label className="note">corner</label>
@@ -202,7 +202,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
             borderRadius: 9,
             background: 'var(--surface-solid)',
             color: 'var(--text)',
-          }}
+          }} data-id="select"
         >
           {CORNERS.map((c) => (
             <option key={c.key} value={c.key}>
@@ -212,16 +212,16 @@ function EditorInner({ id }: { id?: string }): ReactElement {
         </select>
 
         <label className="note">excerpt</label>
-        <textarea value={excerpt} rows={2} onChange={(e) => { setExcerpt(e.target.value); }} placeholder="short summary shown on cards" />
+        <textarea value={excerpt} rows={2} onChange={(e) => { setExcerpt(e.target.value); }} placeholder="short summary shown on cards" data-id="short-summary-shown-on" />
 
         <label className="note">cover image</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', margin: '6px 0' }}>
-          <input type="file" accept="image/*" onChange={(e) => void handleCover(e)} disabled={uploadingCover} />
+          <input type="file" accept="image/*" onChange={(e) => void handleCover(e)} disabled={uploadingCover} data-id="input" />
           {uploadingCover && <span className="note">uploading…</span>}
           {coverImageUrl && (
             <>
               <img src={coverImageUrl} alt="cover" style={{ maxWidth: 120, borderRadius: 8, border: '2px solid var(--panel-edge)' }} />
-              <button className="tbtn" type="button" onClick={() => { setCoverImageUrl(null); }}>
+              <button className="tbtn" type="button" onClick={() => { setCoverImageUrl(null); }} data-id="remove">
                 remove
               </button>
             </>
@@ -259,14 +259,14 @@ function EditorInner({ id }: { id?: string }): ReactElement {
         <fieldset style={{ border: '2px solid var(--panel-edge)', borderRadius: 9, padding: '8px 12px', margin: '6px 0' }}>
           <legend className="note">status</legend>
           <label style={{ marginRight: 16 }}>
-            <input type="radio" name="status" checked={status === 'draft'} onChange={() => { setStatus('draft'); }} /> draft
+            <input type="radio" name="status" checked={status === 'draft'} onChange={() => { setStatus('draft'); }} data-id="status" /> draft
           </label>
           <label>
-            <input type="radio" name="status" checked={status === 'published'} onChange={() => { setStatus('published'); }} /> published
+            <input type="radio" name="status" checked={status === 'published'} onChange={() => { setStatus('published'); }} data-id="status-2" /> published
           </label>
         </fieldset>
 
-        <button className="tbtn" type="button" onClick={() => void handleSave()} disabled={saving}>
+        <button className="tbtn" type="button" onClick={() => void handleSave()} disabled={saving} data-id="button">
           {saving ? 'saving…' : 'save article'}
         </button>
       </div>

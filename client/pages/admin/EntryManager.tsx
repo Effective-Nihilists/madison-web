@@ -185,18 +185,18 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
         <h2 style={{ fontFamily: 'var(--orn-font)' }}>{form.id ? 'Edit entry' : config.addLabel}</h2>
 
         <label className="note">title</label>
-        <input type="text" value={form.title} onChange={(e) => { setForm((f) => ({ ...f, title: e.target.value })); }} placeholder="title" />
+        <input type="text" value={form.title} onChange={(e) => { setForm((f) => ({ ...f, title: e.target.value })); }} placeholder="title" data-id="title" />
 
         {has('image') && (
           <>
             <label className="note">image</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', margin: '6px 0' }}>
-              <input type="file" accept="image/*" onChange={(e) => void handleImage(e)} disabled={uploading} />
+              <input type="file" accept="image/*" onChange={(e) => void handleImage(e)} disabled={uploading} data-id="input" />
               {uploading && <span className="note">uploading…</span>}
               {form.imageUrl && (
                 <>
                   <img src={form.imageUrl} alt="entry" style={{ maxWidth: 120, borderRadius: 8, border: '2px solid var(--panel-edge)' }} />
-                  <button className="tbtn" type="button" onClick={() => { setForm((f) => ({ ...f, imageUrl: null })); }}>
+                  <button className="tbtn" type="button" onClick={() => { setForm((f) => ({ ...f, imageUrl: null })); }} data-id="remove">
                     remove
                   </button>
                 </>
@@ -208,7 +208,7 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
         {has('status') && statusOpts.length > 0 && (
           <>
             <label className="note">status</label>
-            <select value={form.status} onChange={(e) => { setForm((f) => ({ ...f, status: e.target.value })); }} style={selectStyle}>
+            <select value={form.status} onChange={(e) => { setForm((f) => ({ ...f, status: e.target.value })); }} style={selectStyle} data-id="select">
               {statusOpts.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -228,7 +228,7 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
               step={0.5}
               value={form.rating}
               onChange={(e) => { setForm((f) => ({ ...f, rating: e.target.value })); }}
-              placeholder="e.g. 4.5"
+              placeholder="e.g. 4.5" data-id="e-g-4-5"
             />
           </>
         )}
@@ -236,21 +236,21 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
         {has('tags') && (
           <>
             <label className="note">tags (comma-separated)</label>
-            <input type="text" value={form.tags} onChange={(e) => { setForm((f) => ({ ...f, tags: e.target.value })); }} placeholder="funny, cat, classic" />
+            <input type="text" value={form.tags} onChange={(e) => { setForm((f) => ({ ...f, tags: e.target.value })); }} placeholder="funny, cat, classic" data-id="funny-cat-classic" />
           </>
         )}
 
         {has('link') && (
           <>
             <label className="note">link</label>
-            <input type="url" value={form.link} onChange={(e) => { setForm((f) => ({ ...f, link: e.target.value })); }} placeholder="https://…" />
+            <input type="url" value={form.link} onChange={(e) => { setForm((f) => ({ ...f, link: e.target.value })); }} placeholder="https://…" data-id="https" />
           </>
         )}
 
         {has('funFact') && (
           <>
             <label className="note">fun fact</label>
-            <input type="text" value={form.funFact} onChange={(e) => { setForm((f) => ({ ...f, funFact: e.target.value })); }} placeholder="a fun fact" />
+            <input type="text" value={form.funFact} onChange={(e) => { setForm((f) => ({ ...f, funFact: e.target.value })); }} placeholder="a fun fact" data-id="a-fun-fact" />
           </>
         )}
 
@@ -262,20 +262,20 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
               rows={config.layout === 'list' ? 10 : 4}
               onChange={(e) => { setForm((f) => ({ ...f, body: e.target.value })); }}
               placeholder={config.layout === 'list' ? '## Ingredients\n- …\n\n## Steps\n1. …' : 'notes / recommendation…'}
-              style={{ fontFamily: 'var(--pixel-font, monospace)' }}
+              style={{ fontFamily: 'var(--pixel-font, monospace)' }} data-id="textarea"
             />
           </>
         )}
 
         <label className="note">order (lower shows first)</label>
-        <input type="number" value={form.order} onChange={(e) => { setForm((f) => ({ ...f, order: e.target.value })); }} />
+        <input type="number" value={form.order} onChange={(e) => { setForm((f) => ({ ...f, order: e.target.value })); }} data-id="input-2" />
 
         <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-          <button className="tbtn" type="button" onClick={() => void handleSave()} disabled={saving}>
+          <button className="tbtn" type="button" onClick={() => void handleSave()} disabled={saving} data-id="button">
             {saving ? 'saving…' : form.id ? 'save changes' : config.addLabel}
           </button>
           {form.id && (
-            <button className="tbtn" type="button" onClick={resetForm}>
+            <button className="tbtn" type="button" onClick={resetForm} data-id="cancel-edit">
               cancel edit
             </button>
           )}
@@ -300,10 +300,10 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
                 {[e.status, e.rating !== null ? `${e.rating}★` : '', e.tags.join(' ')].filter(Boolean).join(' · ')}
               </div>
             </div>
-            <button className="tbtn" type="button" onClick={() => { loadIntoForm(e); }}>
+            <button className="tbtn" type="button" onClick={() => { loadIntoForm(e); }} data-id="edit">
               edit
             </button>
-            <button className="tbtn" type="button" onClick={() => void handleDelete(e._id)}>
+            <button className="tbtn" type="button" onClick={() => void handleDelete(e._id)} data-id="delete">
               delete
             </button>
           </div>

@@ -139,7 +139,7 @@ export default function OraclePage(): ReactElement {
           className="tbtn"
           aria-pressed={spread === 1}
           onClick={() => { setSpread(1); }}
-          style={spread === 1 ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined}
+          style={spread === 1 ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined} data-id="single-card"
         >
           single card
         </button>
@@ -148,14 +148,14 @@ export default function OraclePage(): ReactElement {
           className="tbtn"
           aria-pressed={spread === 3}
           onClick={() => { setSpread(3); }}
-          style={spread === 3 ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined}
+          style={spread === 3 ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined} data-id="past-present-future"
         >
           past · present · future
         </button>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 16px' }}>
-        <button type="button" className="tbtn" onClick={handleDraw} disabled={drawing} style={{ fontSize: '1.05em', padding: '10px 22px' }}>
+        <button type="button" className="tbtn" onClick={handleDraw} disabled={drawing} style={{ fontSize: '1.05em', padding: '10px 22px' }} data-id="button">
           {drawing ? 'shuffling…' : drawn ? 'draw again ✦' : 'draw the cards ✦'}
         </button>
       </div>
