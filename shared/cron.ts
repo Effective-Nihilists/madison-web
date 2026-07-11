@@ -1,8 +1,6 @@
-import { defineWorker, defineWorkers } from 'ugly-app/shared';
+import { defineWorkers } from 'ugly-app/shared';
 
-export const cronTasks = defineWorkers({
-  dailyCleanup: defineWorker({
-    schedule: '0 3 * * *', // 3 AM UTC daily
-    description: 'Delete completed todos older than 30 days',
-  }),
-});
+// No cron workers. The template's `dailyCleanup` Postgres-prune task was removed
+// during the D1-only migration — raw Postgres SQL won't run on D1 and this app
+// doesn't need it.
+export const cronTasks = defineWorkers({});

@@ -1,6 +1,5 @@
 import {
   createApp,
-  pgQuery,
   emailSend,
   flushPerf,
   recordFeedback,
@@ -29,16 +28,8 @@ import es from '../shared/lang/es';
 import { pages } from '../shared/pages';
 import { stringsDef } from '../shared/strings';
 
-const cronHandlers: WorkerHandlers<typeof cronTasks> = {
-  dailyCleanup: async () => {
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const result = await pgQuery(
-      `DELETE FROM docs_todo WHERE (data->>'done')::boolean = true AND (data->'updated')::bigint < $1`,
-      [thirtyDaysAgo.getTime()],
-    );
-    console.log(`[Cron] dailyCleanup: deleted ${result.rowCount} old completed todos`);
-  },
-};
+// No cron workers after the D1-only migration (dailyCleanup removed).
+const cronHandlers: WorkerHandlers<typeof cronTasks> = {};
 
 // S3-backed storage for the Node entry. The Workers entry injects the R2-backed
 // adapter storage instead (see server/workers.ts) so handlers.ts stays node-free.

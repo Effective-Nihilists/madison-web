@@ -22,7 +22,8 @@
       "push": "",
       "search": ""
     },
-    "lastDeployedAt": "2026-07-10T17:58:40.973Z"
+    "lastDeployedAt": "2026-07-11T22:50:51.569Z"
   },
-  "domain": "317010.xyz"
+  "domain": "317010.xyz",
+  "neon": false
 }
