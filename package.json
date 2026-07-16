@@ -3,6 +3,7 @@
   "version": "0.1.18",
   "type": "module",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "dev": "ugly-app dev --watch",
     "typecheck": "tsc --noEmit",
     "build": "ugly-app build",
@@ -33,7 +34,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.183.2",
-    "ugly-app": "^0.1.842",
+    "ugly-app": "^0.1.843",
     "yjs": "^13.6.30",
     "zod": "^4.3.6"
   },
