@@ -140,21 +140,21 @@ export function makeHandlers(
     listArticles: async (_userId, { corner }) => {
       const filter: Record<string, unknown> = { status: 'published' };
       if (corner) filter.corner = corner;
-      const articles = await db.getDocs<Article>(collections.article, filter, {
+      const articles = await db.getDocs(collections.article, filter, {
         sort: { publishedAt: -1 },
       });
       return { articles };
     },
 
     getArticle: async (_userId, { slug }) => {
-      const matches = await db.getDocs<Article>(collections.article, { slug, status: 'published' }, {
+      const matches = await db.getDocs(collections.article, { slug, status: 'published' }, {
         limit: 1,
       });
       return { article: matches[0] ?? null };
     },
 
     listRandomThoughts: async (_userId, { limit }) => {
-      const thoughts = await db.getDocs<RandomThought>(collections.randomThought, {}, {
+      const thoughts = await db.getDocs(collections.randomThought, {}, {
         sort: { created: -1 },
         limit: limit ?? 20,
       });
@@ -162,7 +162,7 @@ export function makeHandlers(
     },
 
     listApprovedComments: async (_userId, { articleId }) => {
-      const comments = await db.getDocs<Comment>(collections.comment, {
+      const comments = await db.getDocs(collections.comment, {
         articleId,
         status: 'approved',
       }, { sort: { created: 1 } });
@@ -183,19 +183,19 @@ export function makeHandlers(
     },
 
     listMusicTracks: async () => {
-      const tracks = await db.getDocs<MusicTrack>(collections.musicTrack, {}, {
+      const tracks = await db.getDocs(collections.musicTrack, {}, {
         sort: { order: 1 },
       });
       return { tracks };
     },
 
     listButtonImages: async () => {
-      const images = await db.getDocs<ButtonImage>(collections.buttonImage, {});
+      const images = await db.getDocs(collections.buttonImage, {});
       return { images };
     },
 
     listButtonLinks: async () => {
-      const buttons = await db.getDocs<ButtonLink>(collections.buttonLink, {}, {
+      const buttons = await db.getDocs(collections.buttonLink, {}, {
         sort: { order: 1 },
       });
       return { buttons };
@@ -206,7 +206,7 @@ export function makeHandlers(
 
     adminListArticles: async (userId) => {
       await requireAdmin(db, userId);
-      const articles = await db.getDocs<Article>(collections.article, {}, {
+      const articles = await db.getDocs(collections.article, {}, {
         sort: { updated: -1 },
       });
       return { articles };
@@ -267,7 +267,7 @@ export function makeHandlers(
     adminListComments: async (userId, { status }) => {
       await requireAdmin(db, userId);
       const filter = status ? { status } : {};
-      const comments = await db.getDocs<Comment>(collections.comment, filter, {
+      const comments = await db.getDocs(collections.comment, filter, {
         sort: { created: -1 },
       });
       return { comments };
@@ -298,7 +298,7 @@ export function makeHandlers(
 
     addMusicTrack: async (userId, { title, url, kind }) => {
       await requireAdmin(db, userId);
-      const existing = await db.getDocs<MusicTrack>(collections.musicTrack, {});
+      const existing = await db.getDocs(collections.musicTrack, {});
       const order = existing.length;
       const doc: MusicTrack = { _id: nanoid(), title, url, kind, order, ...dbDefaults() };
       await db.setDoc(collections.musicTrack, doc);
@@ -320,7 +320,7 @@ export function makeHandlers(
 
     addButtonLink: async (userId, { imageUrl, linkUrl, title }) => {
       await requireAdmin(db, userId);
-      const existing = await db.getDocs<ButtonLink>(collections.buttonLink, {});
+      const existing = await db.getDocs(collections.buttonLink, {});
       const order = existing.length;
       const doc: ButtonLink = {
         _id: nanoid(),
@@ -356,7 +356,7 @@ export function makeHandlers(
 
     // ── Phase 2: generic entry/gallery system ─────────────────────────────────
     listEntries: async (_userId, { corner, q }) => {
-      const entries = await db.getDocs<Entry>(collections.entry, { corner }, {
+      const entries = await db.getDocs(collections.entry, { corner }, {
         sort: { order: 1, created: -1 },
       });
       if (!q?.trim()) return { entries };
@@ -400,7 +400,7 @@ export function makeHandlers(
 
     adminListEntries: async (userId, { corner }) => {
       await requireAdmin(db, userId);
-      const entries = await db.getDocs<Entry>(collections.entry, { corner }, {
+      const entries = await db.getDocs(collections.entry, { corner }, {
         sort: { order: 1, created: -1 },
       });
       return { entries };
@@ -408,7 +408,7 @@ export function makeHandlers(
 
     // ── Phase 2 (Batch 3): Wheel of Fortune ─────────────────────────────────
     listWheels: async () => {
-      const wheels = await db.getDocs<Wheel>(collections.wheel, {}, {
+      const wheels = await db.getDocs(collections.wheel, {}, {
         sort: { order: 1, created: -1 },
       });
       return { wheels };
