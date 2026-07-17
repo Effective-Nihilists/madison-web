@@ -19,7 +19,9 @@ const SUIT_GLYPH: Record<TarotSuit, string> = {
 };
 
 function accentFor(card: TarotCard): string {
-  return card.arcana === 'major' ? SUIT_ACCENT.major : SUIT_ACCENT[card.suit ?? 'major'];
+  return card.arcana === 'major'
+    ? SUIT_ACCENT.major
+    : SUIT_ACCENT[card.suit ?? 'major'];
 }
 
 // The big centred sigil: roman numeral for majors, suit glyph + rank for minors.
@@ -59,7 +61,8 @@ export default function TarotCardFace({
         borderRadius: 12,
         border: `3px solid ${accent}`,
         background: `linear-gradient(160deg, color-mix(in srgb, ${accent} 16%, var(--surface-solid)), var(--surface-solid))`,
-        boxShadow: 'inset 0 0 0 2px var(--surface-solid), inset 0 0 0 4px var(--panel-edge)',
+        boxShadow:
+          'inset 0 0 0 2px var(--surface-solid), inset 0 0 0 4px var(--panel-edge)',
         display: 'grid',
         gridTemplateRows: 'auto 1fr auto',
         padding: 10,
@@ -68,15 +71,46 @@ export default function TarotCardFace({
         overflow: 'hidden',
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'var(--orn-font)', color: accent, fontWeight: 700 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontFamily: 'var(--orn-font)',
+          color: accent,
+          fontWeight: 700,
+        }}
+      >
         <span>{rankLabel}</span>
-        <span>{card.arcana === 'major' ? '✦' : card.suit ? SUIT_GLYPH[card.suit] : '✦'}</span>
+        <span>
+          {card.arcana === 'major'
+            ? '✦'
+            : card.suit
+              ? SUIT_GLYPH[card.suit]
+              : '✦'}
+        </span>
       </div>
 
       <div style={{ display: 'grid', placeItems: 'center' }}>
         <svg width="60%" height="60%" viewBox="0 0 100 100" role="presentation">
-          <circle cx="50" cy="50" r="40" fill="none" stroke={accent} strokeWidth="2" opacity="0.5" />
-          <circle cx="50" cy="50" r="30" fill="none" stroke={accent} strokeWidth="1.5" opacity="0.35" />
+          <circle
+            cx="50"
+            cy="50"
+            r="40"
+            fill="none"
+            stroke={accent}
+            strokeWidth="2"
+            opacity="0.5"
+          />
+          <circle
+            cx="50"
+            cy="50"
+            r="30"
+            fill="none"
+            stroke={accent}
+            strokeWidth="1.5"
+            opacity="0.35"
+          />
           <text
             x="50"
             y="50"
@@ -91,9 +125,25 @@ export default function TarotCardFace({
         </svg>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'var(--orn-font)', color: accent, fontWeight: 700, transform: 'rotate(180deg)' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontFamily: 'var(--orn-font)',
+          color: accent,
+          fontWeight: 700,
+          transform: 'rotate(180deg)',
+        }}
+      >
         <span>{rankLabel}</span>
-        <span>{card.arcana === 'major' ? '✦' : card.suit ? SUIT_GLYPH[card.suit] : '✦'}</span>
+        <span>
+          {card.arcana === 'major'
+            ? '✦'
+            : card.suit
+              ? SUIT_GLYPH[card.suit]
+              : '✦'}
+        </span>
       </div>
     </div>
   );

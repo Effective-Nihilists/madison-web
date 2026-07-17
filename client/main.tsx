@@ -19,7 +19,9 @@ bootstrapApp({
     langs: stringsDef.langs,
     defaultTable: en as unknown as Record<string, string>,
     loadTable: async (lang) => {
-      const mod = await import(`../shared/lang/${lang}.ts`) as { default: Record<string, string> };
+      const mod = (await import(`../shared/lang/${lang}.ts`)) as {
+        default: Record<string, string>;
+      };
       return mod.default;
     },
   },

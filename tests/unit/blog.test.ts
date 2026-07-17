@@ -43,7 +43,11 @@ describe('blog schemas', () => {
   });
 
   it('CommentSchema defaults status to pending', () => {
-    const result = CommentSchema.safeParse({ articleId: 'a1', name: 'Jo', body: 'Nice post' });
+    const result = CommentSchema.safeParse({
+      articleId: 'a1',
+      name: 'Jo',
+      body: 'Nice post',
+    });
     expect(result.success).toBe(true);
     if (result.success) expect(result.data.status).toBe('pending');
   });

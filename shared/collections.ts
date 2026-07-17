@@ -100,83 +100,184 @@ const wheelIndexes: IndexDef[] = [{ fields: { order: 1 } }];
 export const collections = defineCollections({
   todo: {
     schema: TodoSchema,
-    meta: { cache: false, trackable: true, public: false, cascadeFrom: null, trackKeys: ['userId'], db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: false,
+      cascadeFrom: null,
+      trackKeys: ['userId'],
+      db: d1,
+    },
     indexes: todoIndexes,
   },
   conversation: {
     schema: ConversationSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: false,
+      public: false,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
   message: {
     schema: MessageSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: 'conversation', trackKeys: ['conversationId'], db: d1 },
+    meta: {
+      cache: false,
+      trackable: false,
+      public: false,
+      cascadeFrom: 'conversation',
+      trackKeys: ['conversationId'],
+      db: d1,
+    },
     indexes: messageIndexes,
   },
   collabDoc: {
     schema: CollabDocSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: false,
+      public: false,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
 
   // ── Blog / CMS ─────────────────────────────────────────────────────────────
   article: {
     schema: ArticleSchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, trackKeys: ['corner'], db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      trackKeys: ['corner'],
+      db: d1,
+    },
     indexes: articleIndexes,
   },
   comment: {
     schema: CommentSchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: 'article', trackKeys: ['articleId'], db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: 'article',
+      trackKeys: ['articleId'],
+      db: d1,
+    },
     indexes: commentIndexes,
   },
   randomThought: {
     schema: RandomThoughtSchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
   mediaAsset: {
     schema: MediaAssetSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: false,
+      public: false,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
   musicTrack: {
     schema: MusicTrackSchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      db: d1,
+    },
     indexes: musicTrackIndexes,
   },
   buttonImage: {
     schema: ButtonImageSchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
   buttonLink: {
     schema: ButtonLinkSchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      db: d1,
+    },
     indexes: buttonLinkIndexes,
   },
   adminUser: {
     schema: AdminUserSchema,
-    meta: { cache: true, trackable: false, public: false, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: true,
+      trackable: false,
+      public: false,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
 
   // ── Phase 2: generic entry/gallery system ───────────────────────────────────
   entry: {
     schema: EntrySchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, trackKeys: ['corner'], db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      trackKeys: ['corner'],
+      db: d1,
+    },
     indexes: entryIndexes,
   },
 
   // ── Phase 2 (Batch 3): Wheel of Fortune custom wheels ───────────────────────
   wheel: {
     schema: WheelSchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      db: d1,
+    },
     indexes: wheelIndexes,
   },
 
   // ── Site: real visitor counter + global customization (admin-only writes) ────
   siteStat: {
     schema: SiteStatSchema,
-    meta: { cache: false, trackable: true, public: true, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
   siteConfig: {
     schema: SiteConfigSchema,
-    meta: { cache: true, trackable: true, public: true, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: true,
+      trackable: true,
+      public: true,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
 });
 

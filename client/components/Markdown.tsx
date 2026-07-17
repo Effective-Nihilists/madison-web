@@ -23,7 +23,9 @@ export default function Markdown({ source }: { source: string }): ReactElement {
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
-    return () => { ro.disconnect(); };
+    return () => {
+      ro.disconnect();
+    };
   }, []);
 
   return (

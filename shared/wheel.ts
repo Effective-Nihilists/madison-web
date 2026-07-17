@@ -25,7 +25,9 @@ export interface WheelPreset {
   slices: string[];
 }
 
-const MAJOR_ARCANA_NAMES = TAROT.filter((c) => c.arcana === 'major').map((c) => c.name);
+const MAJOR_ARCANA_NAMES = TAROT.filter((c) => c.arcana === 'major').map(
+  (c) => c.name,
+);
 
 export const WHEEL_PRESETS: WheelPreset[] = [
   {

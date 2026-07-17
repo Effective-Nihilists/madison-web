@@ -1,4 +1,10 @@
-import { cloneElement, useEffect, useState, type CSSProperties, type ReactElement } from 'react';
+import {
+  cloneElement,
+  useEffect,
+  useState,
+  type CSSProperties,
+  type ReactElement,
+} from 'react';
 
 // ─── AnimateIn ────────────────────────────────────────────────────────────────
 // Wraps a single element and makes it animate in with a RANDOM animation and a
@@ -28,9 +34,11 @@ const ANIMATIONS = [
 let seq = 0;
 
 function prefersReducedMotion(): boolean {
-  return typeof window !== 'undefined'
-    && typeof window.matchMedia === 'function'
-    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 }
 
 export default function AnimateIn({
@@ -52,8 +60,15 @@ export default function AnimateIn({
 
   useEffect(() => {
     if (!anim) return;
-    const t = window.setTimeout(() => { setDone(true); }, anim.delay + anim.duration + 60);
-    return () => { window.clearTimeout(t); };
+    const t = window.setTimeout(
+      () => {
+        setDone(true);
+      },
+      anim.delay + anim.duration + 60,
+    );
+    return () => {
+      window.clearTimeout(t);
+    };
   }, [anim]);
 
   const injected: CSSProperties =

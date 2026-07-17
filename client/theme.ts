@@ -37,7 +37,11 @@ function readStoredTheme(): ThemeName {
   return 'light';
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }): ReactElement {
+export function ThemeProvider({
+  children,
+}: {
+  children: ReactNode;
+}): ReactElement {
   const [theme, setThemeState] = useState<ThemeName>(() => readStoredTheme());
 
   // Reflect the active theme onto the document + persist it.
@@ -52,7 +56,9 @@ export function ThemeProvider({ children }: { children: ReactNode }): ReactEleme
     }
   }, [theme]);
 
-  const setTheme = useCallback((t: ThemeName) => { setThemeState(t); }, []);
+  const setTheme = useCallback((t: ThemeName) => {
+    setThemeState(t);
+  }, []);
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => (prev === 'dark' ? 'light' : 'dark'));
   }, []);

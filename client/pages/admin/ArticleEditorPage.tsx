@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type ChangeEvent, type ReactElement } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ReactElement,
+} from 'react';
 import { MarkdownEditor } from 'ugly-app/markdown/client';
 import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
@@ -23,8 +29,14 @@ function imageAspectRatio(file: File): Promise<number> {
   return new Promise((resolve) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
-    img.onload = () => { resolve(img.naturalWidth / img.naturalHeight || 1); URL.revokeObjectURL(url); };
-    img.onerror = () => { resolve(1); URL.revokeObjectURL(url); };
+    img.onload = () => {
+      resolve(img.naturalWidth / img.naturalHeight || 1);
+      URL.revokeObjectURL(url);
+    };
+    img.onerror = () => {
+      resolve(1);
+      URL.revokeObjectURL(url);
+    };
     img.src = url;
   });
 }
@@ -55,18 +67,32 @@ function EditorInner({ id }: { id?: string }): ReactElement {
   useEffect(() => {
     const el = bodyWrapRef.current;
     if (!el) return;
-    const measure = (): void => { const w = el.clientWidth; if (w > 0) setEditorWidth(w); };
+    const measure = (): void => {
+      const w = el.clientWidth;
+      if (w > 0) setEditorWidth(w);
+    };
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
-    return () => { ro.disconnect(); };
+    return () => {
+      ro.disconnect();
+    };
   }, [loaded]);
 
   // Upload an image dropped/pasted/picked inside the editor and return the node
   // descriptor the editor expects.
-  async function onImageUpload(file: File): Promise<{ src: string; widthPercent: number; aspectRatio: number } | null> {
+  async function onImageUpload(
+    file: File,
+  ): Promise<{
+    src: string;
+    widthPercent: number;
+    aspectRatio: number;
+  } | null> {
     try {
-      const [src, aspectRatio] = await Promise.all([uploadMedia('image', file), imageAspectRatio(file)]);
+      const [src, aspectRatio] = await Promise.all([
+        uploadMedia('image', file),
+        imageAspectRatio(file),
+      ]);
       return { src, widthPercent: 100, aspectRatio };
     } catch (err) {
       setError(err instanceof Error ? err.message : 'image upload failed');
@@ -78,7 +104,10 @@ function EditorInner({ id }: { id?: string }): ReactElement {
     if (!id) return;
     let active = true;
     const run = async () => {
-      const { article: doc } = await apiPost<{ article: Article | null }>('adminGetArticle', { id });
+      const { article: doc } = await apiPost<{ article: Article | null }>(
+        'adminGetArticle',
+        { id },
+      );
       if (!active || !doc) {
         if (active) setLoaded(true);
         return;
@@ -160,7 +189,14 @@ function EditorInner({ id }: { id?: string }): ReactElement {
       title={`editor.exe — ${id ? slug || 'article' : 'new article'}`}
       bodyClassName="doc-body"
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          flexWrap: 'wrap',
+        }}
+      >
         <h1 className="article" style={{ flex: 1, margin: 0 }}>
           {id ? 'Edit article' : 'New article'}
         </h1>
@@ -177,7 +213,15 @@ function EditorInner({ id }: { id?: string }): ReactElement {
 
       <div className="cform" style={{ marginTop: 16 }}>
         <label className="note">title</label>
-        <input type="text" value={title} onChange={(e) => { handleTitleChange(e.target.value); }} placeholder="article title" data-id="article-title" />
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => {
+            handleTitleChange(e.target.value);
+          }}
+          placeholder="article title"
+          data-id="article-title"
+        />
 
         <label className="note">slug</label>
         <input
@@ -187,13 +231,16 @@ function EditorInner({ id }: { id?: string }): ReactElement {
             setSlug(e.target.value);
             setSlugTouched(true);
           }}
-          placeholder="article-slug" data-id="article-slug"
+          placeholder="article-slug"
+          data-id="article-slug"
         />
 
         <label className="note">corner</label>
         <select
           value={corner}
-          onChange={(e) => { setCorner(e.target.value); }}
+          onChange={(e) => {
+            setCorner(e.target.value);
+          }}
           style={{
             width: '100%',
             padding: '9px 11px',
@@ -202,7 +249,8 @@ function EditorInner({ id }: { id?: string }): ReactElement {
             borderRadius: 9,
             background: 'var(--surface-solid)',
             color: 'var(--text)',
-          }} data-id="select"
+          }}
+          data-id="select"
         >
           {CORNERS.map((c) => (
             <option key={c.key} value={c.key}>
@@ -212,16 +260,53 @@ function EditorInner({ id }: { id?: string }): ReactElement {
         </select>
 
         <label className="note">excerpt</label>
-        <textarea value={excerpt} rows={2} onChange={(e) => { setExcerpt(e.target.value); }} placeholder="short summary shown on cards" data-id="short-summary-shown-on" />
+        <textarea
+          value={excerpt}
+          rows={2}
+          onChange={(e) => {
+            setExcerpt(e.target.value);
+          }}
+          placeholder="short summary shown on cards"
+          data-id="short-summary-shown-on"
+        />
 
         <label className="note">cover image</label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', margin: '6px 0' }}>
-          <input type="file" accept="image/*" onChange={(e) => void handleCover(e)} disabled={uploadingCover} data-id="input" />
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            flexWrap: 'wrap',
+            margin: '6px 0',
+          }}
+        >
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => void handleCover(e)}
+            disabled={uploadingCover}
+            data-id="input"
+          />
           {uploadingCover && <span className="note">uploading…</span>}
           {coverImageUrl && (
             <>
-              <img src={coverImageUrl} alt="cover" style={{ maxWidth: 120, borderRadius: 8, border: '2px solid var(--panel-edge)' }} />
-              <button className="tbtn" type="button" onClick={() => { setCoverImageUrl(null); }} data-id="remove">
+              <img
+                src={coverImageUrl}
+                alt="cover"
+                style={{
+                  maxWidth: 120,
+                  borderRadius: 8,
+                  border: '2px solid var(--panel-edge)',
+                }}
+              />
+              <button
+                className="tbtn"
+                type="button"
+                onClick={() => {
+                  setCoverImageUrl(null);
+                }}
+                data-id="remove"
+              >
                 remove
               </button>
             </>
@@ -256,17 +341,48 @@ function EditorInner({ id }: { id?: string }): ReactElement {
           />
         </div>
 
-        <fieldset style={{ border: '2px solid var(--panel-edge)', borderRadius: 9, padding: '8px 12px', margin: '6px 0' }}>
+        <fieldset
+          style={{
+            border: '2px solid var(--panel-edge)',
+            borderRadius: 9,
+            padding: '8px 12px',
+            margin: '6px 0',
+          }}
+        >
           <legend className="note">status</legend>
           <label style={{ marginRight: 16 }}>
-            <input type="radio" name="status" checked={status === 'draft'} onChange={() => { setStatus('draft'); }} data-id="status" /> draft
+            <input
+              type="radio"
+              name="status"
+              checked={status === 'draft'}
+              onChange={() => {
+                setStatus('draft');
+              }}
+              data-id="status"
+            />{' '}
+            draft
           </label>
           <label>
-            <input type="radio" name="status" checked={status === 'published'} onChange={() => { setStatus('published'); }} data-id="status-2" /> published
+            <input
+              type="radio"
+              name="status"
+              checked={status === 'published'}
+              onChange={() => {
+                setStatus('published');
+              }}
+              data-id="status-2"
+            />{' '}
+            published
           </label>
         </fieldset>
 
-        <button className="tbtn" type="button" onClick={() => void handleSave()} disabled={saving} data-id="button">
+        <button
+          className="tbtn"
+          type="button"
+          onClick={() => void handleSave()}
+          disabled={saving}
+          data-id="button"
+        >
           {saving ? 'saving…' : 'save article'}
         </button>
       </div>
@@ -277,7 +393,11 @@ function EditorInner({ id }: { id?: string }): ReactElement {
 // ArticleEditorPage — markdown + image-upload editor for both
 // `admin/articles/new` and `admin/articles/:id` (Task 13). Keyed on `id` so the
 // component remounts (and reloads) when navigating new → edit.
-export default function ArticleEditorPage({ id }: { id?: string }): ReactElement {
+export default function ArticleEditorPage({
+  id,
+}: {
+  id?: string;
+}): ReactElement {
   return (
     <AdminGate>
       <EditorInner key={id ?? 'new'} {...(id ? { id } : {})} />

@@ -16,7 +16,11 @@ function toMs(d: number | Date): number {
 // CornerPage — dispatcher. The 8 entry corners (books/movies/recipes/…)
 // render the generic GalleryPage driven by CORNER_CONFIG; every other corner
 // keeps the original article-list behaviour (sci/health/art/witchcraft essays).
-export default function CornerPage({ corner }: { corner: string }): ReactElement {
+export default function CornerPage({
+  corner,
+}: {
+  corner: string;
+}): ReactElement {
   // The Witchcraft Corner gets a bespoke hub (Tarot, Oracle, Decks, Herbs,
   // Spells) instead of the plain article list.
   if (corner === 'witchcraft') return <WitchcraftPage />;
@@ -43,7 +47,10 @@ function ArticleCorner({ corner }: { corner: string }): ReactElement {
     setLoaded(false);
     const run = async () => {
       try {
-        const { articles: all } = await apiPost<{ articles: Article[] }>('listArticles', { corner });
+        const { articles: all } = await apiPost<{ articles: Article[] }>(
+          'listArticles',
+          { corner },
+        );
         if (!active) return;
         const published = all
           .filter((a) => a.status === 'published')
@@ -60,7 +67,11 @@ function ArticleCorner({ corner }: { corner: string }): ReactElement {
   }, [corner]);
 
   return (
-    <Win9xWindow title={`${corner}.dir — Explorer`} className="article-win" bodyClassName="doc-body">
+    <Win9xWindow
+      title={`${corner}.dir — Explorer`}
+      className="article-win"
+      bodyClassName="doc-body"
+    >
       <div className="breadcrumb">
         <b>
           <Link to="" params={{}} style={{ color: 'inherit' }}>
@@ -76,16 +87,25 @@ function ArticleCorner({ corner }: { corner: string }): ReactElement {
         <p className="note">no published articles in this corner yet.</p>
       )}
       {articles.length > 0 && (
-        <div className="highlight-grid" style={{ gridTemplateColumns: '1fr', gap: 12 }}>
+        <div
+          className="highlight-grid"
+          style={{ gridTemplateColumns: '1fr', gap: 12 }}
+        >
           {articles.map((a) => (
             <Link
               key={a._id}
               to="article/:slug"
               params={{ slug: a.slug }}
               className="card"
-              style={{ display: 'block', marginBottom: 0, textDecoration: 'none' }}
+              style={{
+                display: 'block',
+                marginBottom: 0,
+                textDecoration: 'none',
+              }}
             >
-              <h2 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>{a.title}</h2>
+              <h2 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>
+                {a.title}
+              </h2>
               {a.excerpt && <p style={{ margin: '.4em 0 0' }}>{a.excerpt}</p>}
               <div className="time" style={{ marginTop: 8 }}>
                 {new Date(toMs(a.created)).toLocaleDateString()}

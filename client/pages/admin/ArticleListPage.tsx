@@ -15,7 +15,10 @@ function ArticleListInner(): ReactElement {
   const [loaded, setLoaded] = useState(false);
 
   const refresh = useCallback(async () => {
-    const { articles: all } = await apiPost<{ articles: Article[] }>('adminListArticles', {});
+    const { articles: all } = await apiPost<{ articles: Article[] }>(
+      'adminListArticles',
+      {},
+    );
     setArticles(all);
     setLoaded(true);
   }, []);
@@ -32,28 +35,62 @@ function ArticleListInner(): ReactElement {
 
   return (
     <Win9xWindow title="articles.exe — Admin" bodyClassName="doc-body">
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          flexWrap: 'wrap',
+        }}
+      >
         <h1 className="article" style={{ flex: 1, margin: 0 }}>
           Articles
         </h1>
         <Link to="admin" params={{}} className="tbtn">
           ← dashboard
         </Link>
-        <button className="tbtn" type="button" onClick={() => { router.push('admin/articles/new', {}); }} data-id="new-article">
+        <button
+          className="tbtn"
+          type="button"
+          onClick={() => {
+            router.push('admin/articles/new', {});
+          }}
+          data-id="new-article"
+        >
           + new article
         </button>
       </div>
 
-      {!loaded && <p className="note" style={{ marginTop: 12 }}>loading…</p>}
+      {!loaded && (
+        <p className="note" style={{ marginTop: 12 }}>
+          loading…
+        </p>
+      )}
       {loaded && articles.length === 0 && (
         <p className="note" style={{ marginTop: 12 }}>
           no articles yet — create your first.
         </p>
       )}
 
-      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div
+        style={{
+          marginTop: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+        }}
+      >
         {articles.map((a) => (
-          <div key={a._id} className="cmt" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <div
+            key={a._id}
+            className="cmt"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              flexWrap: 'wrap',
+            }}
+          >
             <div style={{ flex: 1, minWidth: 200 }}>
               <div className="who">
                 {cornerLabel(a.corner)} · {a.status}
@@ -64,11 +101,19 @@ function ArticleListInner(): ReactElement {
             <button
               className="tbtn"
               type="button"
-              onClick={() => { router.push('admin/articles/:id', { id: a._id }); }} data-id="edit"
+              onClick={() => {
+                router.push('admin/articles/:id', { id: a._id });
+              }}
+              data-id="edit"
             >
               edit
             </button>
-            <button className="tbtn" type="button" onClick={() => void handleDelete(a._id)} data-id="delete">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={() => void handleDelete(a._id)}
+              data-id="delete"
+            >
               delete
             </button>
           </div>

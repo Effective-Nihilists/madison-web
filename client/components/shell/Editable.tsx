@@ -37,10 +37,20 @@ export default function Editable({
       contentEditable
       suppressContentEditableWarning
       data-editable-id={id}
-      style={{ outline: '1px dashed var(--accent)', outlineOffset: 2, cursor: 'text', borderRadius: 3 }}
-      onBlur={(e) => { setText(id, e.currentTarget.textContent, children); }}
+      style={{
+        outline: '1px dashed var(--accent)',
+        outlineOffset: 2,
+        cursor: 'text',
+        borderRadius: 3,
+      }}
+      onBlur={(e) => {
+        setText(id, e.currentTarget.textContent, children);
+      }}
       onKeyDown={(e) => {
-        if (e.key === 'Enter') { e.preventDefault(); (e.currentTarget as HTMLElement).blur(); }
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          (e.currentTarget as HTMLElement).blur();
+        }
       }}
     >
       {value}

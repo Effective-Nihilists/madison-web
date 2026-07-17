@@ -44,12 +44,18 @@ function HubTile({
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <span
             aria-hidden
-            style={{ fontSize: '1.8em', lineHeight: 1, fontFamily: 'var(--orn-font)' }}
+            style={{
+              fontSize: '1.8em',
+              lineHeight: 1,
+              fontFamily: 'var(--orn-font)',
+            }}
           >
             {glyph}
           </span>
           <div>
-            <h2 style={{ margin: 0, fontFamily: 'var(--orn-font)' }}>{title}</h2>
+            <h2 style={{ margin: 0, fontFamily: 'var(--orn-font)' }}>
+              {title}
+            </h2>
             <p className="note" style={{ margin: '.2em 0 0' }}>
               {blurb}
             </p>
@@ -64,7 +70,8 @@ function HubTile({
 // `corner/health`. Intro + framed links to Guided Breathing, the Med Plants
 // guide, and the Health essays (articles in the 'health' corner).
 export default function HealthPage(): ReactElement {
-  const label = CORNERS.find((c) => c.key === 'health')?.label ?? 'Health Corner';
+  const label =
+    CORNERS.find((c) => c.key === 'health')?.label ?? 'Health Corner';
   const [essays, setEssays] = useState<Article[]>([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -72,9 +79,12 @@ export default function HealthPage(): ReactElement {
     let active = true;
     const run = async () => {
       try {
-        const { articles } = await apiPost<{ articles: Article[] }>('listArticles', {
-          corner: 'health',
-        });
+        const { articles } = await apiPost<{ articles: Article[] }>(
+          'listArticles',
+          {
+            corner: 'health',
+          },
+        );
         if (!active) return;
         setEssays(
           articles
@@ -92,7 +102,11 @@ export default function HealthPage(): ReactElement {
   }, []);
 
   return (
-    <Win9xWindow title="health.dir — Explorer" className="article-win" bodyClassName="doc-body">
+    <Win9xWindow
+      title="health.dir — Explorer"
+      className="article-win"
+      bodyClassName="doc-body"
+    >
       <div className="breadcrumb">
         <b>
           <Link to="" params={{}} style={{ color: 'inherit' }}>
@@ -105,7 +119,10 @@ export default function HealthPage(): ReactElement {
       <h1 className="article" style={{ textAlign: 'center' }}>
         <span aria-hidden>❀ ✦ ❀</span> {label} <span aria-hidden>❀ ✦ ❀</span>
       </h1>
-      <p className="note" style={{ textAlign: 'center', maxWidth: 540, margin: '0 auto 8px' }}>
+      <p
+        className="note"
+        style={{ textAlign: 'center', maxWidth: 540, margin: '0 auto 8px' }}
+      >
         Breathe, rest, and tend to yourself. A quiet corner for calm — for
         wonder and care, never prescription. ❀
       </p>
@@ -153,9 +170,15 @@ export default function HealthPage(): ReactElement {
               to="article/:slug"
               params={{ slug: a.slug }}
               className="card"
-              style={{ display: 'block', marginBottom: 0, textDecoration: 'none' }}
+              style={{
+                display: 'block',
+                marginBottom: 0,
+                textDecoration: 'none',
+              }}
             >
-              <h3 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>{a.title}</h3>
+              <h3 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>
+                {a.title}
+              </h3>
               {a.excerpt && <p style={{ margin: '.4em 0 0' }}>{a.excerpt}</p>}
               <div className="time" style={{ marginTop: 8 }}>
                 {new Date(toMs(a.created)).toLocaleDateString()}

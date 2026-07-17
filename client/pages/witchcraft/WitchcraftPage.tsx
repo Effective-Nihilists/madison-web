@@ -23,19 +23,39 @@ function HubTile({
   blurb: string;
 }): ReactElement {
   return (
-    <Win9xWindow title={`${title.toLowerCase()}.spell`} className="hub-tile" bodyClassName="doc-body">
+    <Win9xWindow
+      title={`${title.toLowerCase()}.spell`}
+      className="hub-tile"
+      bodyClassName="doc-body"
+    >
       <Link
         to={to}
         params={params}
         className="card"
-        style={{ display: 'block', marginBottom: 0, textDecoration: 'none', border: 0, background: 'transparent', padding: 0 }}
+        style={{
+          display: 'block',
+          marginBottom: 0,
+          textDecoration: 'none',
+          border: 0,
+          background: 'transparent',
+          padding: 0,
+        }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <span aria-hidden style={{ fontSize: '1.8em', lineHeight: 1, fontFamily: 'var(--orn-font)' }}>
+          <span
+            aria-hidden
+            style={{
+              fontSize: '1.8em',
+              lineHeight: 1,
+              fontFamily: 'var(--orn-font)',
+            }}
+          >
             {glyph}
           </span>
           <div>
-            <h2 style={{ margin: 0, fontFamily: 'var(--orn-font)' }}>{title}</h2>
+            <h2 style={{ margin: 0, fontFamily: 'var(--orn-font)' }}>
+              {title}
+            </h2>
             <p className="note" style={{ margin: '.2em 0 0' }}>
               {blurb}
             </p>
@@ -50,7 +70,8 @@ function HubTile({
 // for `corner/witchcraft`. Ornate intro + framed links to the Tarot Guide,
 // Digital Oracle, My Decks, Herbs Guide, and Spells (the witchcraft essays).
 export default function WitchcraftPage(): ReactElement {
-  const label = CORNERS.find((c) => c.key === 'witchcraft')?.label ?? 'Witchcraft Corner';
+  const label =
+    CORNERS.find((c) => c.key === 'witchcraft')?.label ?? 'Witchcraft Corner';
   const [spells, setSpells] = useState<Article[]>([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -58,9 +79,12 @@ export default function WitchcraftPage(): ReactElement {
     let active = true;
     const run = async () => {
       try {
-        const { articles } = await apiPost<{ articles: Article[] }>('listArticles', {
-          corner: 'witchcraft',
-        });
+        const { articles } = await apiPost<{ articles: Article[] }>(
+          'listArticles',
+          {
+            corner: 'witchcraft',
+          },
+        );
         if (!active) return;
         setSpells(
           articles
@@ -78,7 +102,11 @@ export default function WitchcraftPage(): ReactElement {
   }, []);
 
   return (
-    <Win9xWindow title="witchcraft.dir — Explorer" className="article-win" bodyClassName="doc-body">
+    <Win9xWindow
+      title="witchcraft.dir — Explorer"
+      className="article-win"
+      bodyClassName="doc-body"
+    >
       <div className="breadcrumb">
         <b>
           <Link to="" params={{}} style={{ color: 'inherit' }}>
@@ -91,14 +119,21 @@ export default function WitchcraftPage(): ReactElement {
       <h1 className="article" style={{ textAlign: 'center' }}>
         <span aria-hidden>☽ ✦ ☆</span> {label} <span aria-hidden>☆ ✦ ☽</span>
       </h1>
-      <p className="note" style={{ textAlign: 'center', maxWidth: 540, margin: '0 auto 8px' }}>
-        Welcome, seeker. Draw the cards, brew the herbs, and wander the moonlit shelves.
-        Everything here is for wonder, not prescription. ✧
+      <p
+        className="note"
+        style={{ textAlign: 'center', maxWidth: 540, margin: '0 auto 8px' }}
+      >
+        Welcome, seeker. Draw the cards, brew the herbs, and wander the moonlit
+        shelves. Everything here is for wonder, not prescription. ✧
       </p>
 
       <div
         className="highlight-grid"
-        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 14, marginTop: 16 }}
+        style={{
+          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+          gap: 14,
+          marginTop: 16,
+        }}
       >
         <HubTile
           to="witchcraft/tarot"
@@ -136,19 +171,30 @@ export default function WitchcraftPage(): ReactElement {
       </h2>
       {!loaded && <p className="note">loading…</p>}
       {loaded && spells.length === 0 && (
-        <p className="note">no spells written yet — check back under a fuller moon.</p>
+        <p className="note">
+          no spells written yet — check back under a fuller moon.
+        </p>
       )}
       {spells.length > 0 && (
-        <div className="highlight-grid" style={{ gridTemplateColumns: '1fr', gap: 12, marginTop: 8 }}>
+        <div
+          className="highlight-grid"
+          style={{ gridTemplateColumns: '1fr', gap: 12, marginTop: 8 }}
+        >
           {spells.map((a) => (
             <Link
               key={a._id}
               to="article/:slug"
               params={{ slug: a.slug }}
               className="card"
-              style={{ display: 'block', marginBottom: 0, textDecoration: 'none' }}
+              style={{
+                display: 'block',
+                marginBottom: 0,
+                textDecoration: 'none',
+              }}
             >
-              <h3 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>{a.title}</h3>
+              <h3 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>
+                {a.title}
+              </h3>
               {a.excerpt && <p style={{ margin: '.4em 0 0' }}>{a.excerpt}</p>}
               <div className="time" style={{ marginTop: 8 }}>
                 {new Date(toMs(a.created)).toLocaleDateString()}

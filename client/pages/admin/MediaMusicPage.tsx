@@ -1,15 +1,31 @@
-import { useCallback, useEffect, useState, type ChangeEvent, type ReactElement } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type ReactElement,
+} from 'react';
 import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import { Link } from '../../router';
 import { uploadMedia } from '../../admin/upload';
-import { CORNERS, type ButtonImage, type ButtonLink, type MusicTrack } from '../../../shared/blog';
+import {
+  CORNERS,
+  type ButtonImage,
+  type ButtonLink,
+  type MusicTrack,
+} from '../../../shared/blog';
 
 type TrackKind = 'mp3' | 'wav' | 'mp4';
 
 function trackKindFor(file: File): TrackKind {
-  if (/\.mp4$/i.test(file.name) || file.type.includes('mp4') || file.type.startsWith('video/')) return 'mp4';
+  if (
+    /\.mp4$/i.test(file.name) ||
+    file.type.includes('mp4') ||
+    file.type.startsWith('video/')
+  )
+    return 'mp4';
   if (/\.mp3$/i.test(file.name) || file.type.includes('mpeg')) return 'mp3';
   return 'wav';
 }
@@ -23,7 +39,10 @@ function MusicManager(): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const { tracks: ts } = await apiPost<{ tracks: MusicTrack[] }>('listMusicTracks', {});
+    const { tracks: ts } = await apiPost<{ tracks: MusicTrack[] }>(
+      'listMusicTracks',
+      {},
+    );
     setTracks(ts);
   }, []);
 
@@ -55,7 +74,11 @@ function MusicManager(): ReactElement {
       setError('upload a file and enter a title first');
       return;
     }
-    await apiPost('addMusicTrack', { title: title.trim(), url: pendingUrl, kind: pendingKind });
+    await apiPost('addMusicTrack', {
+      title: title.trim(),
+      url: pendingUrl,
+      kind: pendingKind,
+    });
     setTitle('');
     setPendingUrl(null);
     await refresh();
@@ -67,8 +90,14 @@ function MusicManager(): ReactElement {
   }
 
   return (
-    <Win9xWindow title="music.exe — Tracks" className="article-win" bodyClassName="doc-body">
-      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 0 }}>Music tracks</h2>
+    <Win9xWindow
+      title="music.exe — Tracks"
+      className="article-win"
+      bodyClassName="doc-body"
+    >
+      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 0 }}>
+        Music tracks
+      </h2>
       {error && (
         <p className="note" style={{ color: 'crimson' }}>
           {error}
@@ -76,24 +105,64 @@ function MusicManager(): ReactElement {
       )}
       <div className="cform">
         <label className="note">upload .mp3 / .wav / .mp4</label>
-        <input type="file" accept=".mp3,.wav,.mp4,audio/*,video/mp4" onChange={(e) => void handleFile(e)} disabled={uploading} data-id="input" />
+        <input
+          type="file"
+          accept=".mp3,.wav,.mp4,audio/*,video/mp4"
+          onChange={(e) => void handleFile(e)}
+          disabled={uploading}
+          data-id="input"
+        />
         {uploading && <p className="note">uploading…</p>}
-        {pendingUrl && <p className="note">uploaded ({pendingKind}) — add a title and save.</p>}
-        <input type="text" placeholder="track title" value={title} onChange={(e) => { setTitle(e.target.value); }} data-id="track-title" />
-        <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl} data-id="add-track">
+        {pendingUrl && (
+          <p className="note">
+            uploaded ({pendingKind}) — add a title and save.
+          </p>
+        )}
+        <input
+          type="text"
+          placeholder="track title"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+          }}
+          data-id="track-title"
+        />
+        <button
+          className="tbtn"
+          type="button"
+          onClick={() => void handleAdd()}
+          disabled={!pendingUrl}
+          data-id="add-track"
+        >
           add track
         </button>
       </div>
 
-      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div
+        style={{
+          marginTop: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+        }}
+      >
         {tracks.length === 0 && <p className="note">no tracks yet.</p>}
         {tracks.map((t) => (
-          <div key={t._id} className="cmt" style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div
+            key={t._id}
+            className="cmt"
+            style={{ display: 'flex', alignItems: 'center', gap: 12 }}
+          >
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700 }}>{t.title}</div>
               <div className="note">{t.kind}</div>
             </div>
-            <button className="tbtn" type="button" onClick={() => void handleDelete(t._id)} data-id="delete">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={() => void handleDelete(t._id)}
+              data-id="delete"
+            >
               delete
             </button>
           </div>
@@ -109,7 +178,10 @@ function ButtonImageManager(): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const { images: imgs } = await apiPost<{ images: ButtonImage[] }>('listButtonImages', {});
+    const { images: imgs } = await apiPost<{ images: ButtonImage[] }>(
+      'listButtonImages',
+      {},
+    );
     const map: Record<string, string> = {};
     for (const img of imgs) map[img.key] = img.url;
     setImages(map);
@@ -119,7 +191,10 @@ function ButtonImageManager(): ReactElement {
     void refresh();
   }, [refresh]);
 
-  async function handleFile(key: string, e: ChangeEvent<HTMLInputElement>): Promise<void> {
+  async function handleFile(
+    key: string,
+    e: ChangeEvent<HTMLInputElement>,
+  ): Promise<void> {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
@@ -137,25 +212,63 @@ function ButtonImageManager(): ReactElement {
   }
 
   return (
-    <Win9xWindow title="buttons.exe — Corner Images" className="article-win" bodyClassName="doc-body">
-      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 0 }}>Corner button images</h2>
+    <Win9xWindow
+      title="buttons.exe — Corner Images"
+      className="article-win"
+      bodyClassName="doc-body"
+    >
+      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 0 }}>
+        Corner button images
+      </h2>
       {error && (
         <p className="note" style={{ color: 'crimson' }}>
           {error}
         </p>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+          marginTop: 8,
+        }}
+      >
         {CORNERS.map((c) => (
-          <div key={c.key} className="cmt" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <div
+            key={c.key}
+            className="cmt"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              flexWrap: 'wrap',
+            }}
+          >
             {images[c.key] ? (
               <img
                 src={images[c.key]}
                 alt={c.label}
-                style={{ width: 56, height: 42, objectFit: 'cover', borderRadius: 6, border: '2px solid var(--panel-edge)' }}
+                style={{
+                  width: 56,
+                  height: 42,
+                  objectFit: 'cover',
+                  borderRadius: 6,
+                  border: '2px solid var(--panel-edge)',
+                }}
               />
             ) : (
               <div
-                style={{ width: 56, height: 42, borderRadius: 6, border: '2px dashed var(--panel-edge)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, color: 'var(--text-soft)' }}
+                style={{
+                  width: 56,
+                  height: 42,
+                  borderRadius: 6,
+                  border: '2px dashed var(--panel-edge)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 11,
+                  color: 'var(--text-soft)',
+                }}
               >
                 none
               </div>
@@ -164,7 +277,13 @@ function ButtonImageManager(): ReactElement {
               <div style={{ fontWeight: 700 }}>{c.label}</div>
               <div className="note">{c.key}</div>
             </div>
-            <input type="file" accept="image/*" onChange={(e) => void handleFile(c.key, e)} disabled={busyKey === c.key} data-id="input-2" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => void handleFile(c.key, e)}
+              disabled={busyKey === c.key}
+              data-id="input-2"
+            />
             {busyKey === c.key && <span className="note">uploading…</span>}
           </div>
         ))}
@@ -185,7 +304,10 @@ function ButtonLinkManager(): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const { buttons: bs } = await apiPost<{ buttons: ButtonLink[] }>('listButtonLinks', {});
+    const { buttons: bs } = await apiPost<{ buttons: ButtonLink[] }>(
+      'listButtonLinks',
+      {},
+    );
     setButtons(bs);
   }, []);
 
@@ -214,7 +336,11 @@ function ButtonLinkManager(): ReactElement {
       setError('upload an image and enter a link first');
       return;
     }
-    await apiPost('addButtonLink', { imageUrl: pendingUrl, linkUrl: linkUrl.trim(), title: title.trim() });
+    await apiPost('addButtonLink', {
+      imageUrl: pendingUrl,
+      linkUrl: linkUrl.trim(),
+      title: title.trim(),
+    });
     setPendingUrl(null);
     setLinkUrl('');
     setTitle('');
@@ -222,7 +348,11 @@ function ButtonLinkManager(): ReactElement {
   }
 
   async function handleSave(b: ButtonLink): Promise<void> {
-    await apiPost('updateButtonLink', { id: b._id, linkUrl: b.linkUrl, title: b.title });
+    await apiPost('updateButtonLink', {
+      id: b._id,
+      linkUrl: b.linkUrl,
+      title: b.title,
+    });
     await refresh();
   }
 
@@ -236,9 +366,18 @@ function ButtonLinkManager(): ReactElement {
   }
 
   return (
-    <Win9xWindow title="buttons.gif — 88×31 Button Wall" className="article-win" bodyClassName="doc-body">
-      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 0 }}>Button wall</h2>
-      <p className="note">Upload an 88×31 button image, give it a link, and it appears in the widget rail.</p>
+    <Win9xWindow
+      title="buttons.gif — 88×31 Button Wall"
+      className="article-win"
+      bodyClassName="doc-body"
+    >
+      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 0 }}>
+        Button wall
+      </h2>
+      <p className="note">
+        Upload an 88×31 button image, give it a link, and it appears in the
+        widget rail.
+      </p>
       {error && (
         <p className="note" style={{ color: 'crimson' }}>
           {error}
@@ -246,49 +385,127 @@ function ButtonLinkManager(): ReactElement {
       )}
       <div className="cform">
         <label className="note">button image (88×31 works best)</label>
-        <input type="file" accept="image/*" onChange={(e) => void handleFile(e)} disabled={uploading} data-id="input-3" />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => void handleFile(e)}
+          disabled={uploading}
+          data-id="input-3"
+        />
         {uploading && <p className="note">uploading…</p>}
         {pendingUrl && (
           <img
             src={pendingUrl}
             alt="pending button"
-            style={{ width: 88, height: 31, objectFit: 'cover', border: '2px solid var(--panel-edge)' }}
+            style={{
+              width: 88,
+              height: 31,
+              objectFit: 'cover',
+              border: '2px solid var(--panel-edge)',
+            }}
           />
         )}
-        <input type="url" placeholder="link URL (https://…)" value={linkUrl} onChange={(e) => { setLinkUrl(e.target.value); }} data-id="link-url-https" />
-        <input type="text" placeholder="title / alt (optional)" value={title} onChange={(e) => { setTitle(e.target.value); }} data-id="title-alt-optional" />
-        <button className="tbtn" type="button" onClick={() => void handleAdd()} disabled={!pendingUrl} data-id="add-button">
+        <input
+          type="url"
+          placeholder="link URL (https://…)"
+          value={linkUrl}
+          onChange={(e) => {
+            setLinkUrl(e.target.value);
+          }}
+          data-id="link-url-https"
+        />
+        <input
+          type="text"
+          placeholder="title / alt (optional)"
+          value={title}
+          onChange={(e) => {
+            setTitle(e.target.value);
+          }}
+          data-id="title-alt-optional"
+        />
+        <button
+          className="tbtn"
+          type="button"
+          onClick={() => void handleAdd()}
+          disabled={!pendingUrl}
+          data-id="add-button"
+        >
           add button
         </button>
       </div>
 
-      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div
+        style={{
+          marginTop: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+        }}
+      >
         {buttons.length === 0 && <p className="note">no buttons yet.</p>}
         {buttons.map((b) => (
-          <div key={b._id} className="cmt" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <div
+            key={b._id}
+            className="cmt"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              flexWrap: 'wrap',
+            }}
+          >
             <img
               src={b.imageUrl}
               alt={b.title}
-              style={{ width: 88, height: 31, objectFit: 'cover', border: '2px solid var(--panel-edge)' }}
+              style={{
+                width: 88,
+                height: 31,
+                objectFit: 'cover',
+                border: '2px solid var(--panel-edge)',
+              }}
             />
-            <div style={{ flex: 1, minWidth: 200, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div
+              style={{
+                flex: 1,
+                minWidth: 200,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 6,
+              }}
+            >
               <input
                 type="url"
                 value={b.linkUrl}
-                onChange={(e) => { patchLocal(b._id, { linkUrl: e.target.value }); }}
-                placeholder="link URL" data-id="link-url"
+                onChange={(e) => {
+                  patchLocal(b._id, { linkUrl: e.target.value });
+                }}
+                placeholder="link URL"
+                data-id="link-url"
               />
               <input
                 type="text"
                 value={b.title}
-                onChange={(e) => { patchLocal(b._id, { title: e.target.value }); }}
-                placeholder="title / alt" data-id="title-alt"
+                onChange={(e) => {
+                  patchLocal(b._id, { title: e.target.value });
+                }}
+                placeholder="title / alt"
+                data-id="title-alt"
               />
             </div>
-            <button className="tbtn" type="button" onClick={() => void handleSave(b)} data-id="save">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={() => void handleSave(b)}
+              data-id="save"
+            >
               save
             </button>
-            <button className="tbtn" type="button" onClick={() => void handleDelete(b._id)} data-id="delete-2">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={() => void handleDelete(b._id)}
+              data-id="delete-2"
+            >
               delete
             </button>
           </div>
@@ -303,7 +520,14 @@ function ButtonLinkManager(): ReactElement {
 export default function MediaMusicPage(): ReactElement {
   return (
     <AdminGate>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          marginBottom: 12,
+        }}
+      >
         <h1 className="article" style={{ flex: 1, margin: 0 }}>
           Media &amp; Music
         </h1>

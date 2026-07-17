@@ -9,14 +9,21 @@
 //
 // Mirrors the framework's own logged-out failover `postAppRequest` in
 // src/client/AppApi.ts — `POST /api/<name> { input }` → `{ result } | { error }`.
-export async function apiPost<T>(name: string, input: Record<string, unknown> = {}): Promise<T> {
+export async function apiPost<T>(
+  name: string,
+  input: Record<string, unknown> = {},
+): Promise<T> {
   const res = await fetch(`/api/${name}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
     body: JSON.stringify({ input }),
   });
-  const json = (await res.json().catch(() => ({}))) as { result?: unknown; error?: string };
-  if (!res.ok || json.error) throw new Error(json.error ?? `request ${name} failed: HTTP ${res.status}`);
+  const json = (await res.json().catch(() => ({}))) as {
+    result?: unknown;
+    error?: string;
+  };
+  if (!res.ok || json.error)
+    throw new Error(json.error ?? `request ${name} failed: HTTP ${res.status}`);
   return json.result as T;
 }

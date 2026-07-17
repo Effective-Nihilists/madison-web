@@ -14,7 +14,10 @@ function ModerationInner(): ReactElement {
   const [loaded, setLoaded] = useState(false);
 
   const refresh = useCallback(async () => {
-    const { comments: cs } = await apiPost<{ comments: Comment[] }>('adminListComments', { status: 'pending' });
+    const { comments: cs } = await apiPost<{ comments: Comment[] }>(
+      'adminListComments',
+      { status: 'pending' },
+    );
     setComments(cs);
     setLoaded(true);
   }, []);
@@ -23,7 +26,10 @@ function ModerationInner(): ReactElement {
     void refresh();
   }, [refresh]);
 
-  async function moderate(id: string, action: 'approve' | 'reject'): Promise<void> {
+  async function moderate(
+    id: string,
+    action: 'approve' | 'reject',
+  ): Promise<void> {
     await apiPost('moderateComment', { id, action });
     await refresh();
   }
@@ -39,9 +45,15 @@ function ModerationInner(): ReactElement {
         </Link>
       </div>
 
-      {!loaded && <p className="note" style={{ marginTop: 12 }}>loading…</p>}
+      {!loaded && (
+        <p className="note" style={{ marginTop: 12 }}>
+          loading…
+        </p>
+      )}
       {loaded && comments.length === 0 && (
-        <p className="note" style={{ marginTop: 12 }}>no pending comments — all caught up.</p>
+        <p className="note" style={{ marginTop: 12 }}>
+          no pending comments — all caught up.
+        </p>
       )}
 
       <div className="comments" style={{ marginTop: 16 }}>
@@ -51,10 +63,21 @@ function ModerationInner(): ReactElement {
               {c.name} · {new Date(toMs(c.created)).toLocaleString()}
             </div>
             <div style={{ margin: '6px 0 10px' }}>{c.body}</div>
-            <button className="tbtn" type="button" onClick={() => void moderate(c._id, 'approve')} style={{ marginRight: 8 }} data-id="approve">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={() => void moderate(c._id, 'approve')}
+              style={{ marginRight: 8 }}
+              data-id="approve"
+            >
               approve
             </button>
-            <button className="tbtn" type="button" onClick={() => void moderate(c._id, 'reject')} data-id="reject">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={() => void moderate(c._id, 'reject')}
+              data-id="reject"
+            >
               reject
             </button>
           </div>

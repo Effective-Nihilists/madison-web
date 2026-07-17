@@ -16,7 +16,12 @@ import type {
 } from '../shared/collections';
 import type { Wheel } from '../shared/wheel';
 import type { SiteStat, SiteConfig } from '../shared/site';
-import { VISIT_DOC_ID, VISIT_SEED, SITE_DOC_ID, SiteConfigSchema } from '../shared/site';
+import {
+  VISIT_DOC_ID,
+  VISIT_SEED,
+  SITE_DOC_ID,
+  SiteConfigSchema,
+} from '../shared/site';
 import { isAdmin } from './admin';
 
 // The blog/CMS subset of request names this module implements. The other
@@ -58,7 +63,10 @@ type BlogRequestKey =
   | 'getSiteConfig'
   | 'saveSiteConfig';
 
-export type BlogHandlers = Pick<RequestHandlers<typeof requests>, BlogRequestKey>;
+export type BlogHandlers = Pick<
+  RequestHandlers<typeof requests>,
+  BlogRequestKey
+>;
 
 async function requireAdmin(db: TypedDB, userId: string): Promise<void> {
   if (!(await isAdmin(db, userId))) throw new Error('forbidden');
@@ -67,7 +75,10 @@ async function requireAdmin(db: TypedDB, userId: string): Promise<void> {
 // Decode a (possibly data-URL-prefixed) base64 payload into a Buffer.
 function decodeBase64(dataBase64: string): Buffer {
   const comma = dataBase64.indexOf(',');
-  const raw = dataBase64.startsWith('data:') && comma >= 0 ? dataBase64.slice(comma + 1) : dataBase64;
+  const raw =
+    dataBase64.startsWith('data:') && comma >= 0
+      ? dataBase64.slice(comma + 1)
+      : dataBase64;
   return Buffer.from(raw, 'base64');
 }
 
@@ -129,9 +140,11 @@ export function makeHandlers(
     typeof dbOrGetter === 'function'
       ? new Proxy({} as TypedDB, {
           get: (_t, prop) => {
-            const real = (dbOrGetter)();
+            const real = dbOrGetter();
             const value = real[prop as keyof TypedDB];
-            return typeof value === 'function' ? (value as (...a: unknown[]) => unknown).bind(real) : value;
+            return typeof value === 'function'
+              ? (value as (...a: unknown[]) => unknown).bind(real)
+              : value;
           },
         })
       : dbOrGetter;
@@ -147,25 +160,37 @@ export function makeHandlers(
     },
 
     getArticle: async (_userId, { slug }) => {
-      const matches = await db.getDocs(collections.article, { slug, status: 'published' }, {
-        limit: 1,
-      });
+      const matches = await db.getDocs(
+        collections.article,
+        { slug, status: 'published' },
+        {
+          limit: 1,
+        },
+      );
       return { article: matches[0] ?? null };
     },
 
     listRandomThoughts: async (_userId, { limit }) => {
-      const thoughts = await db.getDocs(collections.randomThought, {}, {
-        sort: { created: -1 },
-        limit: limit ?? 20,
-      });
+      const thoughts = await db.getDocs(
+        collections.randomThought,
+        {},
+        {
+          sort: { created: -1 },
+          limit: limit ?? 20,
+        },
+      );
       return { thoughts };
     },
 
     listApprovedComments: async (_userId, { articleId }) => {
-      const comments = await db.getDocs(collections.comment, {
-        articleId,
-        status: 'approved',
-      }, { sort: { created: 1 } });
+      const comments = await db.getDocs(
+        collections.comment,
+        {
+          articleId,
+          status: 'approved',
+        },
+        { sort: { created: 1 } },
+      );
       return { comments };
     },
 
@@ -183,9 +208,13 @@ export function makeHandlers(
     },
 
     listMusicTracks: async () => {
-      const tracks = await db.getDocs(collections.musicTrack, {}, {
-        sort: { order: 1 },
-      });
+      const tracks = await db.getDocs(
+        collections.musicTrack,
+        {},
+        {
+          sort: { order: 1 },
+        },
+      );
       return { tracks };
     },
 
@@ -195,9 +224,13 @@ export function makeHandlers(
     },
 
     listButtonLinks: async () => {
-      const buttons = await db.getDocs(collections.buttonLink, {}, {
-        sort: { order: 1 },
-      });
+      const buttons = await db.getDocs(
+        collections.buttonLink,
+        {},
+        {
+          sort: { order: 1 },
+        },
+      );
       return { buttons };
     },
 
@@ -206,9 +239,13 @@ export function makeHandlers(
 
     adminListArticles: async (userId) => {
       await requireAdmin(db, userId);
-      const articles = await db.getDocs(collections.article, {}, {
-        sort: { updated: -1 },
-      });
+      const articles = await db.getDocs(
+        collections.article,
+        {},
+        {
+          sort: { updated: -1 },
+        },
+      );
       return { articles };
     },
 
@@ -221,7 +258,9 @@ export function makeHandlers(
     saveArticle: async (userId, input) => {
       await requireAdmin(db, userId);
       const { id, status, ...rest } = input;
-      const existing = id ? await db.getDoc<Article>(collections.article, id) : null;
+      const existing = id
+        ? await db.getDoc<Article>(collections.article, id)
+        : null;
       const _id = existing?._id ?? id ?? nanoid();
 
       // Stamp publishedAt the first time an article transitions to published.
@@ -253,7 +292,12 @@ export function makeHandlers(
 
     createRandomThought: async (userId, { body }) => {
       await requireAdmin(db, userId);
-      const doc: RandomThought = { _id: nanoid(), body, authorId: userId, ...dbDefaults() };
+      const doc: RandomThought = {
+        _id: nanoid(),
+        body,
+        authorId: userId,
+        ...dbDefaults(),
+      };
       await db.setDoc(collections.randomThought, doc);
       return { id: doc._id };
     },
@@ -290,8 +334,20 @@ export function makeHandlers(
       await requireAdmin(db, userId);
       const body = decodeBase64(dataBase64);
       const key = `media/${Date.now()}-${nanoid(8)}-${name}`;
-      const url = await storagePut('public', key, body, contentTypeFor(name, kind));
-      const asset: MediaAsset = { _id: nanoid(), url, kind, name, ownerId: userId, ...dbDefaults() };
+      const url = await storagePut(
+        'public',
+        key,
+        body,
+        contentTypeFor(name, kind),
+      );
+      const asset: MediaAsset = {
+        _id: nanoid(),
+        url,
+        kind,
+        name,
+        ownerId: userId,
+        ...dbDefaults(),
+      };
       await db.setDoc(collections.mediaAsset, asset);
       return { url };
     },
@@ -300,7 +356,14 @@ export function makeHandlers(
       await requireAdmin(db, userId);
       const existing = await db.getDocs(collections.musicTrack, {});
       const order = existing.length;
-      const doc: MusicTrack = { _id: nanoid(), title, url, kind, order, ...dbDefaults() };
+      const doc: MusicTrack = {
+        _id: nanoid(),
+        title,
+        url,
+        kind,
+        order,
+        ...dbDefaults(),
+      };
       await db.setDoc(collections.musicTrack, doc);
       return { id: doc._id };
     },
@@ -356,9 +419,13 @@ export function makeHandlers(
 
     // ── Phase 2: generic entry/gallery system ─────────────────────────────────
     listEntries: async (_userId, { corner, q }) => {
-      const entries = await db.getDocs(collections.entry, { corner }, {
-        sort: { order: 1, created: -1 },
-      });
+      const entries = await db.getDocs(
+        collections.entry,
+        { corner },
+        {
+          sort: { order: 1, created: -1 },
+        },
+      );
       if (!q?.trim()) return { entries };
       const needle = q.trim().toLowerCase();
       const filtered = entries.filter((e) => {
@@ -371,7 +438,9 @@ export function makeHandlers(
     saveEntry: async (userId, input) => {
       await requireAdmin(db, userId);
       const { id, corner, title, ...rest } = input;
-      const existing = id ? await db.getDoc<Entry>(collections.entry, id) : null;
+      const existing = id
+        ? await db.getDoc<Entry>(collections.entry, id)
+        : null;
       const _id = existing?._id ?? id ?? nanoid();
       const doc: Entry = {
         _id,
@@ -400,23 +469,33 @@ export function makeHandlers(
 
     adminListEntries: async (userId, { corner }) => {
       await requireAdmin(db, userId);
-      const entries = await db.getDocs(collections.entry, { corner }, {
-        sort: { order: 1, created: -1 },
-      });
+      const entries = await db.getDocs(
+        collections.entry,
+        { corner },
+        {
+          sort: { order: 1, created: -1 },
+        },
+      );
       return { entries };
     },
 
     // ── Phase 2 (Batch 3): Wheel of Fortune ─────────────────────────────────
     listWheels: async () => {
-      const wheels = await db.getDocs(collections.wheel, {}, {
-        sort: { order: 1, created: -1 },
-      });
+      const wheels = await db.getDocs(
+        collections.wheel,
+        {},
+        {
+          sort: { order: 1, created: -1 },
+        },
+      );
       return { wheels };
     },
 
     saveWheel: async (userId, { id, name, slices, order }) => {
       await requireAdmin(db, userId);
-      const existing = id ? await db.getDoc<Wheel>(collections.wheel, id) : null;
+      const existing = id
+        ? await db.getDoc<Wheel>(collections.wheel, id)
+        : null;
       const _id = existing?._id ?? id ?? nanoid();
       const doc: Wheel = {
         _id,
@@ -446,15 +525,25 @@ export function makeHandlers(
     // increment under concurrent writes; the client only calls this once per
     // browser session so contention is minimal.
     recordVisit: async () => {
-      const existing = await db.getDoc<SiteStat>(collections.siteStat, VISIT_DOC_ID);
+      const existing = await db.getDoc<SiteStat>(
+        collections.siteStat,
+        VISIT_DOC_ID,
+      );
       const count = (existing?.count ?? VISIT_SEED) + 1;
-      await db.setDoc(collections.siteStat, { _id: VISIT_DOC_ID, count, ...dbDefaults() });
+      await db.setDoc(collections.siteStat, {
+        _id: VISIT_DOC_ID,
+        count,
+        ...dbDefaults(),
+      });
       return { count };
     },
 
     // ── Site customization ──────────────────────────────────────────────────
     getSiteConfig: async () => {
-      const doc = await db.getDoc<SiteConfig>(collections.siteConfig, SITE_DOC_ID);
+      const doc = await db.getDoc<SiteConfig>(
+        collections.siteConfig,
+        SITE_DOC_ID,
+      );
       // Parse strips the framework DBObject fields and fills schema defaults, so
       // an absent doc yields the stock look (empty overrides).
       return { config: SiteConfigSchema.parse(doc ?? {}) };
@@ -462,9 +551,16 @@ export function makeHandlers(
 
     saveSiteConfig: async (userId, { patch }) => {
       await requireAdmin(db, userId);
-      const existing = await db.getDoc<SiteConfig>(collections.siteConfig, SITE_DOC_ID);
+      const existing = await db.getDoc<SiteConfig>(
+        collections.siteConfig,
+        SITE_DOC_ID,
+      );
       const merged = SiteConfigSchema.parse({ ...(existing ?? {}), ...patch });
-      await db.setDoc(collections.siteConfig, { _id: SITE_DOC_ID, ...merged, ...dbDefaults() });
+      await db.setDoc(collections.siteConfig, {
+        _id: SITE_DOC_ID,
+        ...merged,
+        ...dbDefaults(),
+      });
       return { ok: true };
     },
   };

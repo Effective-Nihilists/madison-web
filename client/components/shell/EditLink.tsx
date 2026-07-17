@@ -14,12 +14,21 @@ type EditLinkProps = Omit<ComponentProps<typeof Link>, 'children'> & {
   children?: ReactNode;
 };
 
-export default function EditLink({ label, className, children, ...linkProps }: EditLinkProps): ReactElement | null {
+export default function EditLink({
+  label,
+  className,
+  children,
+  ...linkProps
+}: EditLinkProps): ReactElement | null {
   const { admin, editMode } = useSiteConfig();
   if (!admin || !editMode) return null;
   return (
-    <Link {...linkProps} className={`edit-link${className ? ` ${className}` : ''}`}>
-      ✎ {label}{children}
+    <Link
+      {...linkProps}
+      className={`edit-link${className ? ` ${className}` : ''}`}
+    >
+      ✎ {label}
+      {children}
     </Link>
   );
 }

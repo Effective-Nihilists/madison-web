@@ -21,8 +21,11 @@ function FilterButton({
       type="button"
       className="tbtn"
       onClick={onClick}
-      style={active ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined}
-      aria-pressed={active} data-id="button"
+      style={
+        active ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined
+      }
+      aria-pressed={active}
+      data-id="button"
     >
       {label}
     </button>
@@ -47,7 +50,11 @@ export default function TarotGuidePage(): ReactElement {
   const suitDisabled = arcana === 'major';
 
   return (
-    <Win9xWindow title="tarot.dir — Explorer" className="article-win" bodyClassName="doc-body">
+    <Win9xWindow
+      title="tarot.dir — Explorer"
+      className="article-win"
+      bodyClassName="doc-body"
+    >
       <div className="breadcrumb">
         <b>
           <Link to="" params={{}} style={{ color: 'inherit' }}>
@@ -55,7 +62,11 @@ export default function TarotGuidePage(): ReactElement {
           </Link>
         </b>{' '}
         ›{' '}
-        <Link to="corner/:corner" params={{ corner: 'witchcraft' }} style={{ color: 'inherit' }}>
+        <Link
+          to="corner/:corner"
+          params={{ corner: 'witchcraft' }}
+          style={{ color: 'inherit' }}
+        >
           Witchcraft Corner
         </Link>{' '}
         › Tarot Guide
@@ -63,22 +74,47 @@ export default function TarotGuidePage(): ReactElement {
       <h1 className="article">
         <span aria-hidden>✦</span> Tarot Guide
       </h1>
-      <p className="note">All 78 cards of the deck — the Major Arcana and the four suits.</p>
+      <p className="note">
+        All 78 cards of the deck — the Major Arcana and the four suits.
+      </p>
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', margin: '12px 0' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          margin: '12px 0',
+        }}
+      >
         <span className="note" style={{ marginRight: 4 }}>
           arcana
         </span>
-        <FilterButton active={arcana === 'all'} label="all" onClick={() => { setArcana('all'); }} data-id="all" />
+        <FilterButton
+          active={arcana === 'all'}
+          label="all"
+          onClick={() => {
+            setArcana('all');
+          }}
+          data-id="all"
+        />
         <FilterButton
           active={arcana === 'major'}
           label="major"
           onClick={() => {
             setArcana('major');
             setSuit('all');
-          }} data-id="major"
+          }}
+          data-id="major"
         />
-        <FilterButton active={arcana === 'minor'} label="minor" onClick={() => { setArcana('minor'); }} data-id="minor" />
+        <FilterButton
+          active={arcana === 'minor'}
+          label="minor"
+          onClick={() => {
+            setArcana('minor');
+          }}
+          data-id="minor"
+        />
       </div>
 
       <div
@@ -95,13 +131,23 @@ export default function TarotGuidePage(): ReactElement {
         <span className="note" style={{ marginRight: 4 }}>
           suit
         </span>
-        <FilterButton active={suit === 'all'} label="all" onClick={() => { setSuit('all'); }} data-id="all-2" />
+        <FilterButton
+          active={suit === 'all'}
+          label="all"
+          onClick={() => {
+            setSuit('all');
+          }}
+          data-id="all-2"
+        />
         {TAROT_SUITS.map((s) => (
           <FilterButton
             key={s.key}
             active={suit === s.key}
             label={s.label.toLowerCase()}
-            onClick={() => { setSuit(s.key); }} data-id="filter-button"
+            onClick={() => {
+              setSuit(s.key);
+            }}
+            data-id="filter-button"
           />
         ))}
       </div>
@@ -110,7 +156,11 @@ export default function TarotGuidePage(): ReactElement {
 
       <div
         className="highlight-grid"
-        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 14, marginTop: 8 }}
+        style={{
+          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+          gap: 14,
+          marginTop: 8,
+        }}
       >
         {cards.map((c) => (
           <Link
@@ -118,10 +168,23 @@ export default function TarotGuidePage(): ReactElement {
             to="witchcraft/tarot/:cardId"
             params={{ cardId: c.id }}
             className="card"
-            style={{ display: 'block', marginBottom: 0, textDecoration: 'none', textAlign: 'center' }}
+            style={{
+              display: 'block',
+              marginBottom: 0,
+              textDecoration: 'none',
+              textAlign: 'center',
+            }}
           >
             <TarotCardFace card={c} height={170} />
-            <div style={{ fontWeight: 700, fontFamily: 'var(--orn-font)', marginTop: 8 }}>{c.name}</div>
+            <div
+              style={{
+                fontWeight: 700,
+                fontFamily: 'var(--orn-font)',
+                marginTop: 8,
+              }}
+            >
+              {c.name}
+            </div>
             <div className="note" style={{ marginTop: 2, fontSize: '.8em' }}>
               {c.keywords.slice(0, 3).join(' · ')}
             </div>

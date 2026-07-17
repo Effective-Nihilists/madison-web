@@ -27,12 +27,21 @@ interface ShellContextValue {
 
 const ShellContext = createContext<ShellContextValue | null>(null);
 
-export function ShellProvider({ children }: { children: ReactNode }): ReactElement {
-  const [nowPlaying, setNowPlaying] = useState<NowPlaying>({ title: '— silence —', playing: false });
+export function ShellProvider({
+  children,
+}: {
+  children: ReactNode;
+}): ReactElement {
+  const [nowPlaying, setNowPlaying] = useState<NowPlaying>({
+    title: '— silence —',
+    playing: false,
+  });
 
   // No-op: the bottom-center toast pill was removed. Kept so the music player,
   // widget rail, etc. can keep calling toast() without changes.
-  const toast = useCallback((_msg: string) => { /* toast pill removed */ }, []);
+  const toast = useCallback((_msg: string) => {
+    /* toast pill removed */
+  }, []);
 
   const value = useMemo<ShellContextValue>(
     () => ({ nowPlaying, setNowPlaying, toast }),
@@ -40,9 +49,7 @@ export function ShellProvider({ children }: { children: ReactNode }): ReactEleme
   );
 
   return (
-    <ShellContext.Provider value={value}>
-      {children}
-    </ShellContext.Provider>
+    <ShellContext.Provider value={value}>{children}</ShellContext.Provider>
   );
 }
 

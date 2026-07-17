@@ -42,7 +42,10 @@ function WheelManagerInner(): ReactElement {
   const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const { wheels: list } = await apiPost<{ wheels: Wheel[] }>('listWheels', {});
+    const { wheels: list } = await apiPost<{ wheels: Wheel[] }>(
+      'listWheels',
+      {},
+    );
     setWheels(list);
     setLoaded(true);
   }, []);
@@ -57,9 +60,15 @@ function WheelManagerInner(): ReactElement {
   }
 
   function loadIntoForm(w: Wheel): void {
-    setForm({ id: w._id, name: w.name, slices: w.slices.join('\n'), order: String(w.order) });
+    setForm({
+      id: w._id,
+      name: w.name,
+      slices: w.slices.join('\n'),
+      order: String(w.order),
+    });
     setError(null);
-    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined')
+      window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function handleSave(): Promise<void> {
@@ -100,7 +109,14 @@ function WheelManagerInner(): ReactElement {
 
   return (
     <Win9xWindow title="wheels.exe — Admin" bodyClassName="doc-body">
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          flexWrap: 'wrap',
+        }}
+      >
         <h1 className="article" style={{ flex: 1, margin: 0 }}>
           Wheels of Fortune
         </h1>
@@ -109,8 +125,8 @@ function WheelManagerInner(): ReactElement {
         </Link>
       </div>
       <p className="note" style={{ marginTop: 6 }}>
-        Custom wheels appear on the public Wheel of Fortune alongside the built-in presets.
-        One slice per line (two or more).
+        Custom wheels appear on the public Wheel of Fortune alongside the
+        built-in presets. One slice per line (two or more).
       </p>
 
       {error && (
@@ -129,28 +145,49 @@ function WheelManagerInner(): ReactElement {
           style={inputStyle}
           value={form.name}
           placeholder="e.g. What's for dinner?"
-          onChange={(e) => { setForm((f) => ({ ...f, name: e.target.value })); }} data-id="e-g-whats-for"
+          onChange={(e) => {
+            setForm((f) => ({ ...f, name: e.target.value }));
+          }}
+          data-id="e-g-whats-for"
         />
         <label className="note">slices (one per line)</label>
         <textarea
           style={{ ...inputStyle, minHeight: 140, resize: 'vertical' }}
           value={form.slices}
           placeholder={'pizza\ntacos\nsushi\npasta'}
-          onChange={(e) => { setForm((f) => ({ ...f, slices: e.target.value })); }} data-id="pizza-tacos-sushi-pasta"
+          onChange={(e) => {
+            setForm((f) => ({ ...f, slices: e.target.value }));
+          }}
+          data-id="pizza-tacos-sushi-pasta"
         />
         <label className="note">order</label>
         <input
           style={inputStyle}
           type="number"
           value={form.order}
-          onChange={(e) => { setForm((f) => ({ ...f, order: e.target.value })); }} data-id="input"
+          onChange={(e) => {
+            setForm((f) => ({ ...f, order: e.target.value }));
+          }}
+          data-id="input"
         />
         <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-          <button type="button" className="tbtn" onClick={() => void handleSave()} disabled={saving} data-id="button">
+          <button
+            type="button"
+            className="tbtn"
+            onClick={() => void handleSave()}
+            disabled={saving}
+            data-id="button"
+          >
             {saving ? 'saving…' : form.id ? 'save changes' : 'add wheel'}
           </button>
           {form.id && (
-            <button type="button" className="tbtn" onClick={resetForm} disabled={saving} data-id="cancel">
+            <button
+              type="button"
+              className="tbtn"
+              onClick={resetForm}
+              disabled={saving}
+              data-id="cancel"
+            >
               cancel
             </button>
           )}
@@ -158,21 +195,49 @@ function WheelManagerInner(): ReactElement {
       </div>
 
       {/* List */}
-      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 24 }}>Saved wheels</h2>
+      <h2 style={{ fontFamily: 'var(--orn-font)', marginTop: 24 }}>
+        Saved wheels
+      </h2>
       {!loaded && <p className="note">loading…</p>}
       {loaded && wheels.length === 0 && (
         <p className="note">no custom wheels yet — add one above.</p>
       )}
       {wheels.length > 0 && (
-        <div className="highlight-grid" style={{ gridTemplateColumns: '1fr', gap: 10, marginTop: 8 }}>
+        <div
+          className="highlight-grid"
+          style={{ gridTemplateColumns: '1fr', gap: 10, marginTop: 8 }}
+        >
           {wheels.map((w) => (
             <div key={w._id} className="card" style={{ marginBottom: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <h3 style={{ flex: 1, margin: 0, fontFamily: 'var(--orn-font)' }}>{w.name}</h3>
-                <button type="button" className="tbtn" onClick={() => { loadIntoForm(w); }} data-id="edit">
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  flexWrap: 'wrap',
+                }}
+              >
+                <h3
+                  style={{ flex: 1, margin: 0, fontFamily: 'var(--orn-font)' }}
+                >
+                  {w.name}
+                </h3>
+                <button
+                  type="button"
+                  className="tbtn"
+                  onClick={() => {
+                    loadIntoForm(w);
+                  }}
+                  data-id="edit"
+                >
                   edit
                 </button>
-                <button type="button" className="tbtn" onClick={() => void handleDelete(w._id)} data-id="delete">
+                <button
+                  type="button"
+                  className="tbtn"
+                  onClick={() => void handleDelete(w._id)}
+                  data-id="delete"
+                >
                   delete
                 </button>
               </div>

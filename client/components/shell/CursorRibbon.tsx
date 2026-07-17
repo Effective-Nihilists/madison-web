@@ -47,7 +47,9 @@ export default function CursorRibbon(): ReactElement {
     let rafId = 0;
 
     function onMove(e: MouseEvent): void {
-      mx = e.clientX; my = e.clientY; have = true;
+      mx = e.clientX;
+      my = e.clientY;
+      have = true;
       const jx = mx + (Math.random() * 1.6 - 0.8);
       const jy = my + (Math.random() * 1.6 - 0.8);
       const p: RibbonPoint = { x: jx, y: jy, t: performance.now() };
@@ -61,12 +63,16 @@ export default function CursorRibbon(): ReactElement {
       const now = performance.now();
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-      while (points.length && now - (points[0]?.t ?? now) > LIFE) points.shift();
+      while (points.length && now - (points[0]?.t ?? now) > LIFE)
+        points.shift();
 
       if (have) {
         const head = points[points.length - 1];
-        if (head && now - head.t < 24) { head.x = mx; head.y = my; head.t = now; }
-        else {
+        if (head && now - head.t < 24) {
+          head.x = mx;
+          head.y = my;
+          head.t = now;
+        } else {
           points.push({ x: mx, y: my, t: now });
           if (points.length > MAX_PTS) points.shift();
         }
@@ -88,7 +94,7 @@ export default function CursorRibbon(): ReactElement {
           const alpha = Math.max(0, 0.8 * (1 - age));
           if (alpha <= 0.01) continue;
           const width = 0.6 + frac * frac * 6.4;
-          const hue = ((frac * 300) + drift * 360) % 360;
+          const hue = (frac * 300 + drift * 360) % 360;
           const col = `hsl(${hue.toFixed(0)},95%,${(58 - frac * 8).toFixed(0)}%)`;
           const m1x = (p0.x + p1.x) / 2;
           const m1y = (p0.y + p1.y) / 2;

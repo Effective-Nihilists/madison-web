@@ -1,9 +1,4 @@
-import {
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from 'react';
+import { useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { ThemeProvider, useTheme } from '../../theme';
 import { Link } from '../../router';
 import FractalBackground, { type FractalHandle } from './FractalBackground';
@@ -32,7 +27,12 @@ import { EditBar, EditEntryButton } from './EditBar';
 // SVG retro filters (posterize) referenced by `.retrofx` thumbnails.
 function RetroFilters(): ReactElement {
   return (
-    <svg width={0} height={0} style={{ position: 'fixed', pointerEvents: 'none' }} aria-hidden="true">
+    <svg
+      width={0}
+      height={0}
+      style={{ position: 'fixed', pointerEvents: 'none' }}
+      aria-hidden="true"
+    >
       <defs>
         <filter id="posterize">
           <feComponentTransfer>
@@ -50,13 +50,34 @@ function ThemeToggle(): ReactElement {
   const { theme, toggleTheme } = useTheme();
   const dark = theme === 'dark';
   return (
-    <button className="icon-btn" aria-label="theme" onClick={toggleTheme} data-id="theme">
+    <button
+      className="icon-btn"
+      aria-label="theme"
+      onClick={toggleTheme}
+      data-id="theme"
+    >
       {dark ? (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
           <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
         </svg>
       ) : (
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
           <circle cx="12" cy="12" r="4" />
           <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4" />
         </svg>
@@ -80,11 +101,18 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
   function onBrandClick(): void {
     clickCount.current += 1;
     if (clickTimer.current) clearTimeout(clickTimer.current);
-    clickTimer.current = setTimeout(() => { clickCount.current = 0; }, 600);
-    if (clickCount.current >= 3) { clickCount.current = 0; eggs.current?.openRoom(); }
+    clickTimer.current = setTimeout(() => {
+      clickCount.current = 0;
+    }, 600);
+    if (clickCount.current >= 3) {
+      clickCount.current = 0;
+      eggs.current?.openRoom();
+    }
   }
   function onBrandPressStart(): void {
-    pressTimer.current = setTimeout(() => { eggs.current?.openRoom(); }, 650);
+    pressTimer.current = setTimeout(() => {
+      eggs.current?.openRoom();
+    }, 650);
   }
   function onBrandPressEnd(): void {
     if (pressTimer.current) clearTimeout(pressTimer.current);
@@ -99,7 +127,11 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
       <EditBar />
 
       {/* fixed FX layers (low z-index fractal bg, high z-index ribbon) */}
-      <FractalBackground ref={fractal} cycleSeconds={config.background.cycleSeconds} speed={config.background.speed} />
+      <FractalBackground
+        ref={fractal}
+        cycleSeconds={config.background.cycleSeconds}
+        speed={config.background.speed}
+      />
       <div className="star-field" aria-hidden="true" />
       <Scanlines enabled={crt} />
       <CursorRibbon />
@@ -107,16 +139,34 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
       <div className="shell">
         {/* TOP BAR */}
         <div className="topbar">
-          <button className="icon-btn hamburger" aria-label="menu" onClick={() => { setDrawerOpen(true); }} data-id="menu">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" />
+          <button
+            className="icon-btn hamburger"
+            aria-label="menu"
+            onClick={() => {
+              setDrawerOpen(true);
+            }}
+            data-id="menu"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            >
+              <line x1="4" y1="7" x2="20" y2="7" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="17" x2="20" y2="17" />
             </svg>
           </button>
           <Link
             to=""
             params={{}}
             className="brand-mini mr-cycle"
-            onClick={onBrandClick} data-id="brand"
+            onClick={onBrandClick}
+            data-id="brand"
           >
             <span
               onPointerDown={onBrandPressStart}
@@ -131,31 +181,53 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
             className="icon-btn desk-only"
             title="toggle CRT / scanlines"
             aria-label="toggle scanlines"
-            onClick={() => { setCrt((c) => !c); }} data-id="toggle-scanlines"
+            onClick={() => {
+              setCrt((c) => !c);
+            }}
+            data-id="toggle-scanlines"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <rect x="3" y="4" width="18" height="13" rx="2" /><path d="M8 21h8M12 17v4" />
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            >
+              <rect x="3" y="4" width="18" height="13" rx="2" />
+              <path d="M8 21h8M12 17v4" />
             </svg>
           </button>
           <ThemeToggle />
         </div>
 
         <div className="layout">
-          <Sidebar open={drawerOpen} onClose={() => { setDrawerOpen(false); }} />
+          <Sidebar
+            open={drawerOpen}
+            onClose={() => {
+              setDrawerOpen(false);
+            }}
+          />
 
-          <main className="content">
-            {children}
-          </main>
+          <main className="content">{children}</main>
 
-          <WidgetRail onCounterClick={() => { eggs.current?.runCosmoo(); }} />
+          <WidgetRail
+            onCounterClick={() => {
+              eggs.current?.runCosmoo();
+            }}
+          />
         </div>
       </div>
 
       {/* mobile drawer overlay */}
       <div
         className={`drawer-overlay${drawerOpen ? ' show' : ''}`}
-        onClick={() => { setDrawerOpen(false); }}
-        aria-hidden="true" data-id="div"
+        onClick={() => {
+          setDrawerOpen(false);
+        }}
+        aria-hidden="true"
+        data-id="div"
       />
 
       {/* floating music player */}
@@ -167,7 +239,11 @@ function ShellInner({ children }: { children: ReactNode }): ReactElement {
   );
 }
 
-export default function AppShell({ children }: { children: ReactNode }): ReactElement {
+export default function AppShell({
+  children,
+}: {
+  children: ReactNode;
+}): ReactElement {
   return (
     <ThemeProvider>
       <SiteConfigProvider>

@@ -21,23 +21,39 @@ export const allPages = {
   ['corner/:corner']: lazyPage(() => import('./pages/CornerPage')),
 
   // ── Witchcraft Corner (Batch 2) ─────────────────────────────────────────────
-  ['witchcraft/tarot']: lazyPage(() => import('./pages/witchcraft/TarotGuidePage')),
-  ['witchcraft/tarot/:cardId']: lazyPage(() => import('./pages/witchcraft/TarotCardPage')),
-  ['witchcraft/oracle']: lazyPage(() => import('./pages/witchcraft/OraclePage')),
+  ['witchcraft/tarot']: lazyPage(
+    () => import('./pages/witchcraft/TarotGuidePage'),
+  ),
+  ['witchcraft/tarot/:cardId']: lazyPage(
+    () => import('./pages/witchcraft/TarotCardPage'),
+  ),
+  ['witchcraft/oracle']: lazyPage(
+    () => import('./pages/witchcraft/OraclePage'),
+  ),
   ['witchcraft/decks']: lazyPage(() => import('./pages/witchcraft/DecksPage')),
   ['witchcraft/herbs']: lazyPage(() => import('./pages/witchcraft/HerbsPage')),
 
   // ── Health Corner (Batch 4) ─────────────────────────────────────────────────
-  ['health/breathing']: lazyPage(() => import('./pages/health/GuidedBreathingPage')),
+  ['health/breathing']: lazyPage(
+    () => import('./pages/health/GuidedBreathingPage'),
+  ),
   ['health/plants']: lazyPage(() => import('./pages/health/MedPlantsPage')),
 
   ['admin']: lazyPage(() => import('./pages/admin/AdminRedirect')),
   ['admin/articles']: lazyPage(() => import('./pages/admin/ArticleListPage')),
-  ['admin/articles/new']: lazyPage(() => import('./pages/admin/ArticleEditorPage')),
-  ['admin/articles/:id']: lazyPage(() => import('./pages/admin/ArticleEditorPage')),
-  ['admin/comments']: lazyPage(() => import('./pages/admin/CommentModerationPage')),
+  ['admin/articles/new']: lazyPage(
+    () => import('./pages/admin/ArticleEditorPage'),
+  ),
+  ['admin/articles/:id']: lazyPage(
+    () => import('./pages/admin/ArticleEditorPage'),
+  ),
+  ['admin/comments']: lazyPage(
+    () => import('./pages/admin/CommentModerationPage'),
+  ),
   ['admin/media']: lazyPage(() => import('./pages/admin/MediaMusicPage')),
-  ['admin/entries/:corner']: lazyPage(() => import('./pages/admin/EntryManager')),
+  ['admin/entries/:corner']: lazyPage(
+    () => import('./pages/admin/EntryManager'),
+  ),
   ['admin/wheels']: lazyPage(() => import('./pages/admin/WheelManager')),
 
   ['auth-demo']: lazyPage(() => import('./pages/AuthDemoPage')),
@@ -61,7 +77,9 @@ export const allPages = {
   ['test/worker']: lazyPage(() => import('./pages/WorkerTestPage')),
   ['test/strings']: lazyPage(() => import('./pages/StringsTestPage')),
   ['test/safe-area']: lazyPage(() => import('./pages/SafeAreaTestPage')),
-  ['test/inspect-fixture']: lazyPage(() => import('./pages/InspectFixturePage')),
+  ['test/inspect-fixture']: lazyPage(
+    () => import('./pages/InspectFixturePage'),
+  ),
   ['test/inspect-fixture-other']: lazyPage(
     () => import('./pages/InspectFixtureOtherPage'),
   ),

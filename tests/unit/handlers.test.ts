@@ -10,8 +10,13 @@ interface CollectionDefLike {
 }
 function makeFakeDb(): TypedDB {
   // store keyed by collection identity → Map<id, doc>
-  const store = new Map<CollectionDefLike, Map<string, Record<string, unknown>>>();
-  const bucket = (c: CollectionDefLike): Map<string, Record<string, unknown>> => {
+  const store = new Map<
+    CollectionDefLike,
+    Map<string, Record<string, unknown>>
+  >();
+  const bucket = (
+    c: CollectionDefLike,
+  ): Map<string, Record<string, unknown>> => {
     let m = store.get(c);
     if (!m) {
       m = new Map();
@@ -19,8 +24,10 @@ function makeFakeDb(): TypedDB {
     }
     return m;
   };
-  const matches = (doc: Record<string, unknown>, filter: Record<string, unknown>): boolean =>
-    Object.entries(filter).every(([k, v]) => doc[k] === v);
+  const matches = (
+    doc: Record<string, unknown>,
+    filter: Record<string, unknown>,
+  ): boolean => Object.entries(filter).every(([k, v]) => doc[k] === v);
 
   const db = {
     async getDoc(c: CollectionDefLike, id: string) {
@@ -104,12 +111,16 @@ describe('makeHandlers', () => {
     expect(all).toHaveLength(1);
     expect(all[0]!.status).toBe('pending');
     // Pending comments are not returned by the public approved-comments read.
-    const { comments } = await h.listApprovedComments(null, { articleId: 'a1' });
+    const { comments } = await h.listApprovedComments(null, {
+      articleId: 'a1',
+    });
     expect(comments).toHaveLength(0);
   });
 
   it('admin-only handler throws for a non-admin userId', async () => {
-    await expect(h.adminListArticles('not-admin', {})).rejects.toThrow('forbidden');
+    await expect(h.adminListArticles('not-admin', {})).rejects.toThrow(
+      'forbidden',
+    );
   });
 
   it('whoAmI reports admin status', async () => {

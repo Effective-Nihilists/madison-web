@@ -1,4 +1,9 @@
-import { useEffect, useState, type ReactElement, type SyntheticEvent } from 'react';
+import {
+  useEffect,
+  useState,
+  type ReactElement,
+  type SyntheticEvent,
+} from 'react';
 import { apiPost } from '../api';
 import Win9xWindow from '../components/Win9xWindow';
 import Markdown from '../components/Markdown';
@@ -39,11 +44,17 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
     setSubmitted(false);
     const run = async () => {
       try {
-        const { article: a } = await apiPost<{ article: Article | null }>('getArticle', { slug });
+        const { article: a } = await apiPost<{ article: Article | null }>(
+          'getArticle',
+          { slug },
+        );
         if (!isLive()) return;
         setArticle(a);
         if (a) {
-          const { comments: cs } = await apiPost<{ comments: Comment[] }>('listApprovedComments', { articleId: a._id });
+          const { comments: cs } = await apiPost<{ comments: Comment[] }>(
+            'listApprovedComments',
+            { articleId: a._id },
+          );
           if (!isLive()) return;
           setComments(cs);
         }
@@ -83,7 +94,11 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
 
   if (loaded && !article) {
     return (
-      <Win9xWindow title={`${slug}.html — Reader`} className="article-win" bodyClassName="doc-body">
+      <Win9xWindow
+        title={`${slug}.html — Reader`}
+        className="article-win"
+        bodyClassName="doc-body"
+      >
         <div className="breadcrumb">
           <b>Article</b> › {slug}
         </div>
@@ -108,7 +123,11 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
         <>
           <div className="breadcrumb">
             <b>
-              <Link to="corner/:corner" params={{ corner: article.corner }} style={{ color: 'inherit' }}>
+              <Link
+                to="corner/:corner"
+                params={{ corner: article.corner }}
+                style={{ color: 'inherit' }}
+              >
                 {cornerLabel(article.corner)}
               </Link>
             </b>{' '}
@@ -124,21 +143,34 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
           <h1>{article.title}</h1>
           <div className="byline">
             in {cornerLabel(article.corner)}
-            {article.publishedAt ? ` · ${new Date(article.publishedAt).toLocaleDateString()}` : ''}
-            {' '}
-            <EditLink to="admin/articles/:id" params={{ id: article._id }} label="edit this article" />
+            {article.publishedAt
+              ? ` · ${new Date(article.publishedAt).toLocaleDateString()}`
+              : ''}{' '}
+            <EditLink
+              to="admin/articles/:id"
+              params={{ id: article._id }}
+              label="edit this article"
+            />
           </div>
 
           <Markdown source={article.bodyMarkdown} />
 
-          <hr style={{ margin: '24px 0', border: 0, borderTop: '3px double var(--panel-edge)' }} />
+          <hr
+            style={{
+              margin: '24px 0',
+              border: 0,
+              borderTop: '3px double var(--panel-edge)',
+            }}
+          />
 
           <section className="comments">
             <h2 style={{ fontFamily: 'var(--orn-font)' }}>
               Comments{' '}
               <EditLink to="admin/comments" params={{}} label="moderate" />
             </h2>
-            {comments.length === 0 && <p className="note">no comments yet — be the first.</p>}
+            {comments.length === 0 && (
+              <p className="note">no comments yet — be the first.</p>
+            )}
             {comments.map((c) => (
               <div key={c._id} className="cmt">
                 <div className="who">
@@ -148,11 +180,16 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
               </div>
             ))}
 
-            <form className="cform" onSubmit={(e) => void handleSubmit(e)} style={{ marginTop: 16 }}>
+            <form
+              className="cform"
+              onSubmit={(e) => void handleSubmit(e)}
+              style={{ marginTop: 16 }}
+            >
               <p className="note">Comments are reviewed before they appear.</p>
               {submitted && (
                 <p className="note" style={{ color: 'var(--accent)' }}>
-                  Thanks — your comment was submitted and will appear once reviewed.
+                  Thanks — your comment was submitted and will appear once
+                  reviewed.
                 </p>
               )}
               {error && (
@@ -165,16 +202,27 @@ export default function ArticlePage({ slug }: { slug: string }): ReactElement {
                 placeholder="your name"
                 value={name}
                 maxLength={60}
-                onChange={(e) => { setName(e.target.value); }} data-id="your-name"
+                onChange={(e) => {
+                  setName(e.target.value);
+                }}
+                data-id="your-name"
               />
               <textarea
                 placeholder="leave a comment…"
                 value={body}
                 rows={4}
                 maxLength={2000}
-                onChange={(e) => { setBody(e.target.value); }} data-id="leave-a-comment"
+                onChange={(e) => {
+                  setBody(e.target.value);
+                }}
+                data-id="leave-a-comment"
               />
-              <button className="tbtn" type="submit" disabled={submitting} data-id="submit">
+              <button
+                className="tbtn"
+                type="submit"
+                disabled={submitting}
+                data-id="submit"
+              >
                 {submitting ? 'submitting…' : 'submit comment'}
               </button>
             </form>

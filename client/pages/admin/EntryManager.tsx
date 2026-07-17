@@ -1,14 +1,27 @@
-import { useCallback, useEffect, useState, type ChangeEvent, type ReactElement } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type ReactElement,
+} from 'react';
 import { apiPost } from '../../api';
 import Win9xWindow from '../../components/Win9xWindow';
 import AdminGate from './AdminGate';
 import { Link } from '../../router';
 import { CORNERS } from '../../../shared/blog';
-import { CORNER_CONFIG, ENTRY_CORNER_LABELS, STATUS_OPTIONS, type Entry } from '../../../shared/entries';
+import {
+  CORNER_CONFIG,
+  ENTRY_CORNER_LABELS,
+  STATUS_OPTIONS,
+  type Entry,
+} from '../../../shared/entries';
 import { uploadMedia } from '../../admin/upload';
 
 function cornerLabel(key: string): string {
-  return CORNERS.find((c) => c.key === key)?.label ?? ENTRY_CORNER_LABELS[key] ?? key;
+  return (
+    CORNERS.find((c) => c.key === key)?.label ?? ENTRY_CORNER_LABELS[key] ?? key
+  );
 }
 
 const selectStyle = {
@@ -62,7 +75,10 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
   const statusOpts = STATUS_OPTIONS[corner] ?? [];
 
   const refresh = useCallback(async () => {
-    const { entries: list } = await apiPost<{ entries: Entry[] }>('adminListEntries', { corner });
+    const { entries: list } = await apiPost<{ entries: Entry[] }>(
+      'adminListEntries',
+      { corner },
+    );
     setEntries(list);
     setLoaded(true);
   }, [corner]);
@@ -94,7 +110,8 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
       order: String(e.order),
     });
     setError(null);
-    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (typeof window !== 'undefined')
+      window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function handleImage(ev: ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -128,8 +145,12 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
         title: form.title.trim(),
         imageUrl: form.imageUrl,
         body: form.body,
-        tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean),
-        rating: ratingNum !== null && Number.isFinite(ratingNum) ? ratingNum : null,
+        tags: form.tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean),
+        rating:
+          ratingNum !== null && Number.isFinite(ratingNum) ? ratingNum : null,
         status: form.status,
         link: form.link.trim(),
         funFact: form.funFact,
@@ -165,7 +186,14 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
 
   return (
     <Win9xWindow title={`entries.exe — ${corner}`} bodyClassName="doc-body">
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          flexWrap: 'wrap',
+        }}
+      >
         <h1 className="article" style={{ flex: 1, margin: 0 }}>
           {cornerLabel(corner)}
         </h1>
@@ -182,21 +210,60 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
 
       {/* ── Add / edit form ─────────────────────────────────────────────────── */}
       <div className="cform" style={{ marginTop: 16 }}>
-        <h2 style={{ fontFamily: 'var(--orn-font)' }}>{form.id ? 'Edit entry' : config.addLabel}</h2>
+        <h2 style={{ fontFamily: 'var(--orn-font)' }}>
+          {form.id ? 'Edit entry' : config.addLabel}
+        </h2>
 
         <label className="note">title</label>
-        <input type="text" value={form.title} onChange={(e) => { setForm((f) => ({ ...f, title: e.target.value })); }} placeholder="title" data-id="title" />
+        <input
+          type="text"
+          value={form.title}
+          onChange={(e) => {
+            setForm((f) => ({ ...f, title: e.target.value }));
+          }}
+          placeholder="title"
+          data-id="title"
+        />
 
         {has('image') && (
           <>
             <label className="note">image</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', margin: '6px 0' }}>
-              <input type="file" accept="image/*" onChange={(e) => void handleImage(e)} disabled={uploading} data-id="input" />
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                flexWrap: 'wrap',
+                margin: '6px 0',
+              }}
+            >
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => void handleImage(e)}
+                disabled={uploading}
+                data-id="input"
+              />
               {uploading && <span className="note">uploading…</span>}
               {form.imageUrl && (
                 <>
-                  <img src={form.imageUrl} alt="entry" style={{ maxWidth: 120, borderRadius: 8, border: '2px solid var(--panel-edge)' }} />
-                  <button className="tbtn" type="button" onClick={() => { setForm((f) => ({ ...f, imageUrl: null })); }} data-id="remove">
+                  <img
+                    src={form.imageUrl}
+                    alt="entry"
+                    style={{
+                      maxWidth: 120,
+                      borderRadius: 8,
+                      border: '2px solid var(--panel-edge)',
+                    }}
+                  />
+                  <button
+                    className="tbtn"
+                    type="button"
+                    onClick={() => {
+                      setForm((f) => ({ ...f, imageUrl: null }));
+                    }}
+                    data-id="remove"
+                  >
                     remove
                   </button>
                 </>
@@ -208,7 +275,14 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
         {has('status') && statusOpts.length > 0 && (
           <>
             <label className="note">status</label>
-            <select value={form.status} onChange={(e) => { setForm((f) => ({ ...f, status: e.target.value })); }} style={selectStyle} data-id="select">
+            <select
+              value={form.status}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, status: e.target.value }));
+              }}
+              style={selectStyle}
+              data-id="select"
+            >
               {statusOpts.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -227,8 +301,11 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
               max={5}
               step={0.5}
               value={form.rating}
-              onChange={(e) => { setForm((f) => ({ ...f, rating: e.target.value })); }}
-              placeholder="e.g. 4.5" data-id="e-g-4-5"
+              onChange={(e) => {
+                setForm((f) => ({ ...f, rating: e.target.value }));
+              }}
+              placeholder="e.g. 4.5"
+              data-id="e-g-4-5"
             />
           </>
         )}
@@ -236,21 +313,45 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
         {has('tags') && (
           <>
             <label className="note">tags (comma-separated)</label>
-            <input type="text" value={form.tags} onChange={(e) => { setForm((f) => ({ ...f, tags: e.target.value })); }} placeholder="funny, cat, classic" data-id="funny-cat-classic" />
+            <input
+              type="text"
+              value={form.tags}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, tags: e.target.value }));
+              }}
+              placeholder="funny, cat, classic"
+              data-id="funny-cat-classic"
+            />
           </>
         )}
 
         {has('link') && (
           <>
             <label className="note">link</label>
-            <input type="url" value={form.link} onChange={(e) => { setForm((f) => ({ ...f, link: e.target.value })); }} placeholder="https://…" data-id="https" />
+            <input
+              type="url"
+              value={form.link}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, link: e.target.value }));
+              }}
+              placeholder="https://…"
+              data-id="https"
+            />
           </>
         )}
 
         {has('funFact') && (
           <>
             <label className="note">fun fact</label>
-            <input type="text" value={form.funFact} onChange={(e) => { setForm((f) => ({ ...f, funFact: e.target.value })); }} placeholder="a fun fact" data-id="a-fun-fact" />
+            <input
+              type="text"
+              value={form.funFact}
+              onChange={(e) => {
+                setForm((f) => ({ ...f, funFact: e.target.value }));
+              }}
+              placeholder="a fun fact"
+              data-id="a-fun-fact"
+            />
           </>
         )}
 
@@ -260,50 +361,127 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
             <textarea
               value={form.body}
               rows={config.layout === 'list' ? 10 : 4}
-              onChange={(e) => { setForm((f) => ({ ...f, body: e.target.value })); }}
-              placeholder={config.layout === 'list' ? '## Ingredients\n- …\n\n## Steps\n1. …' : 'notes / recommendation…'}
-              style={{ fontFamily: 'var(--pixel-font, monospace)' }} data-id="textarea"
+              onChange={(e) => {
+                setForm((f) => ({ ...f, body: e.target.value }));
+              }}
+              placeholder={
+                config.layout === 'list'
+                  ? '## Ingredients\n- …\n\n## Steps\n1. …'
+                  : 'notes / recommendation…'
+              }
+              style={{ fontFamily: 'var(--pixel-font, monospace)' }}
+              data-id="textarea"
             />
           </>
         )}
 
         <label className="note">order (lower shows first)</label>
-        <input type="number" value={form.order} onChange={(e) => { setForm((f) => ({ ...f, order: e.target.value })); }} data-id="input-2" />
+        <input
+          type="number"
+          value={form.order}
+          onChange={(e) => {
+            setForm((f) => ({ ...f, order: e.target.value }));
+          }}
+          data-id="input-2"
+        />
 
         <div style={{ display: 'flex', gap: 12, marginTop: 8 }}>
-          <button className="tbtn" type="button" onClick={() => void handleSave()} disabled={saving} data-id="button">
+          <button
+            className="tbtn"
+            type="button"
+            onClick={() => void handleSave()}
+            disabled={saving}
+            data-id="button"
+          >
             {saving ? 'saving…' : form.id ? 'save changes' : config.addLabel}
           </button>
           {form.id && (
-            <button className="tbtn" type="button" onClick={resetForm} data-id="cancel-edit">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={resetForm}
+              data-id="cancel-edit"
+            >
               cancel edit
             </button>
           )}
         </div>
       </div>
 
-      <hr style={{ margin: '24px 0', border: 0, borderTop: '3px double var(--panel-edge)' }} />
+      <hr
+        style={{
+          margin: '24px 0',
+          border: 0,
+          borderTop: '3px double var(--panel-edge)',
+        }}
+      />
 
       {/* ── Existing entries ────────────────────────────────────────────────── */}
       <h2 style={{ fontFamily: 'var(--orn-font)' }}>Entries</h2>
       {!loaded && <p className="note">loading…</p>}
-      {loaded && entries.length === 0 && <p className="note">{config.emptyText}</p>}
-      <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {loaded && entries.length === 0 && (
+        <p className="note">{config.emptyText}</p>
+      )}
+      <div
+        style={{
+          marginTop: 12,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 10,
+        }}
+      >
         {entries.map((e) => (
-          <div key={e._id} className="cmt" style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <div
+            key={e._id}
+            className="cmt"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 12,
+              flexWrap: 'wrap',
+            }}
+          >
             {e.imageUrl && (
-              <img src={e.imageUrl} alt={e.title} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 6, border: '2px solid var(--panel-edge)' }} />
+              <img
+                src={e.imageUrl}
+                alt={e.title}
+                style={{
+                  width: 48,
+                  height: 48,
+                  objectFit: 'cover',
+                  borderRadius: 6,
+                  border: '2px solid var(--panel-edge)',
+                }}
+              />
             )}
             <div style={{ flex: 1, minWidth: 160 }}>
               <div style={{ fontWeight: 700 }}>{e.title}</div>
               <div className="note">
-                {[e.status, e.rating !== null ? `${e.rating}★` : '', e.tags.join(' ')].filter(Boolean).join(' · ')}
+                {[
+                  e.status,
+                  e.rating !== null ? `${e.rating}★` : '',
+                  e.tags.join(' '),
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
               </div>
             </div>
-            <button className="tbtn" type="button" onClick={() => { loadIntoForm(e); }} data-id="edit">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={() => {
+                loadIntoForm(e);
+              }}
+              data-id="edit"
+            >
               edit
             </button>
-            <button className="tbtn" type="button" onClick={() => void handleDelete(e._id)} data-id="delete">
+            <button
+              className="tbtn"
+              type="button"
+              onClick={() => void handleDelete(e._id)}
+              data-id="delete"
+            >
               delete
             </button>
           </div>
@@ -315,7 +493,11 @@ function EntryManagerInner({ corner }: { corner: string }): ReactElement {
 
 // EntryManager — generic admin CRUD for one entry corner, driven by
 // CORNER_CONFIG.fields. Keyed on corner so it remounts (and reloads) on switch.
-export default function EntryManager({ corner }: { corner: string }): ReactElement {
+export default function EntryManager({
+  corner,
+}: {
+  corner: string;
+}): ReactElement {
   return (
     <AdminGate>
       <EntryManagerInner key={corner} corner={corner} />

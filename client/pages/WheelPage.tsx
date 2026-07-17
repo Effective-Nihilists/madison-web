@@ -61,12 +61,16 @@ function landedSlice(rotation: number, n: number): number {
 // CENTRE of `targetIndex` under the pointer. Always rotates forward (clockwise)
 // past the current rotation so the CSS transition animates a satisfying multi-
 // rotation spin.
-function rotationForTarget(current: number, targetIndex: number, n: number): number {
+function rotationForTarget(
+  current: number,
+  targetIndex: number,
+  n: number,
+): number {
   const seg = 360 / n;
   const centre = targetIndex * seg + seg / 2;
   // We need final rotation R such that (360 - (R mod 360)) mod 360 === centre,
   // i.e. R mod 360 === (360 - centre) mod 360.
-  const desiredMod = ((360 - centre) % 360 + 360) % 360;
+  const desiredMod = (((360 - centre) % 360) + 360) % 360;
   const extraTurns = 4 + Math.floor(Math.random() * 3); // 4..6 full turns
   const base = current - (current % 360) + extraTurns * 360;
   let next = base + desiredMod;
@@ -76,7 +80,9 @@ function rotationForTarget(current: number, targetIndex: number, n: number): num
 
 export default function WheelPage(): ReactElement {
   const [customWheels, setCustomWheels] = useState<Wheel[]>([]);
-  const [selectedId, setSelectedId] = useState<string>(WHEEL_PRESETS[0]?.id ?? '');
+  const [selectedId, setSelectedId] = useState<string>(
+    WHEEL_PRESETS[0]?.id ?? '',
+  );
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState<string | null>(null);
@@ -156,7 +162,11 @@ export default function WheelPage(): ReactElement {
   }
 
   return (
-    <Win9xWindow title="wheel.exe — Wheel of Fortune" className="article-win" bodyClassName="doc-body">
+    <Win9xWindow
+      title="wheel.exe — Wheel of Fortune"
+      className="article-win"
+      bodyClassName="doc-body"
+    >
       <style>{`
         @keyframes wof-pop {
           0%   { opacity: 0; transform: scale(.8); }
@@ -185,7 +195,15 @@ export default function WheelPage(): ReactElement {
       </p>
 
       {/* Wheel picker */}
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', margin: '14px 0' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          margin: '14px 0',
+        }}
+      >
         {options.map((o) => (
           <button
             key={o.id}
@@ -193,8 +211,15 @@ export default function WheelPage(): ReactElement {
             className="tbtn"
             aria-pressed={o.id === selectedId}
             disabled={spinning}
-            onClick={() => { selectWheel(o.id); }}
-            style={o.id === selectedId ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined} data-id="name"
+            onClick={() => {
+              selectWheel(o.id);
+            }}
+            style={
+              o.id === selectedId
+                ? { borderColor: 'var(--text)', fontWeight: 700 }
+                : undefined
+            }
+            data-id="name"
           >
             {o.name}
             {!o.builtin && <span aria-hidden> ✦</span>}
@@ -203,7 +228,9 @@ export default function WheelPage(): ReactElement {
       </div>
 
       {n < 2 ? (
-        <p className="note" style={{ textAlign: 'center' }}>this wheel needs at least two slices.</p>
+        <p className="note" style={{ textAlign: 'center' }}>
+          this wheel needs at least two slices.
+        </p>
       ) : (
         <>
           {/* The wheel + pointer */}
@@ -241,7 +268,8 @@ export default function WheelPage(): ReactElement {
                 borderRadius: '50%',
                 background: conicBackground(n),
                 border: '8px solid var(--panel-edge)',
-                boxShadow: 'var(--shadow), inset 0 0 0 4px var(--surface-solid)',
+                boxShadow:
+                  'var(--shadow), inset 0 0 0 4px var(--surface-solid)',
                 transform: `rotate(${rotation}deg)`,
                 transition: spinning
                   ? 'transform 4s cubic-bezier(.17,.67,.12,1)'
@@ -304,27 +332,51 @@ export default function WheelPage(): ReactElement {
             />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', margin: '14px 0' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              margin: '14px 0',
+            }}
+          >
             <button
               type="button"
               className="tbtn"
               onClick={handleSpin}
               disabled={spinning}
-              style={{ fontSize: '1.1em', padding: '12px 28px' }} data-id="button"
+              style={{ fontSize: '1.1em', padding: '12px 28px' }}
+              data-id="button"
             >
-              {spinning ? 'spinning…' : result ? 'spin again ★' : 'spin the wheel ★'}
+              {spinning
+                ? 'spinning…'
+                : result
+                  ? 'spin again ★'
+                  : 'spin the wheel ★'}
             </button>
           </div>
 
           {result && !spinning && (
             <div
               className="card"
-              style={{ marginTop: 6, textAlign: 'center', animation: 'wof-pop .5s ease-out both' }}
+              style={{
+                marginTop: 6,
+                textAlign: 'center',
+                animation: 'wof-pop .5s ease-out both',
+              }}
             >
-              <div className="note" style={{ textTransform: 'uppercase', letterSpacing: '.08em' }}>
+              <div
+                className="note"
+                style={{ textTransform: 'uppercase', letterSpacing: '.08em' }}
+              >
                 the wheel says
               </div>
-              <h2 style={{ margin: '.15em 0', fontFamily: 'var(--orn-font)', fontSize: '1.6em' }}>
+              <h2
+                style={{
+                  margin: '.15em 0',
+                  fontFamily: 'var(--orn-font)',
+                  fontSize: '1.6em',
+                }}
+              >
                 {result}
               </h2>
             </div>

@@ -27,7 +27,11 @@ function drawCards(spread: Spread): DrawnCard[] {
     const idx = Math.floor(Math.random() * pool.length);
     const card = pool.splice(idx, 1)[0];
     if (!card) break;
-    drawn.push({ card, reversed: Math.random() < 0.5, position: positions[i] ?? '' });
+    drawn.push({
+      card,
+      reversed: Math.random() < 0.5,
+      position: positions[i] ?? '',
+    });
   }
   return drawn;
 }
@@ -35,9 +39,11 @@ function drawCards(spread: Spread): DrawnCard[] {
 // Compose a short narrative by stitching each drawn card's active meaning into
 // its spread position. Template-only — deterministic given the draw, no AI.
 function composeReading(drawn: DrawnCard[]): string {
-  const meaning = (d: DrawnCard): string => (d.reversed ? d.card.reversed : d.card.upright);
+  const meaning = (d: DrawnCard): string =>
+    d.reversed ? d.card.reversed : d.card.upright;
 
-  const orient = (d: DrawnCard): string => (d.reversed ? 'reversed' : 'upright');
+  const orient = (d: DrawnCard): string =>
+    d.reversed ? 'reversed' : 'upright';
 
   const [past, present, future] = drawn;
   if (drawn.length === 1 || !present || !future) {
@@ -61,7 +67,14 @@ function DrawnTile({ drawn }: { drawn: DrawnCard }): ReactElement {
   return (
     <div className="card" style={{ marginBottom: 0, textAlign: 'center' }}>
       {position && (
-        <div className="note" style={{ textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 6 }}>
+        <div
+          className="note"
+          style={{
+            textTransform: 'uppercase',
+            letterSpacing: '.08em',
+            marginBottom: 6,
+          }}
+        >
           {position}
         </div>
       )}
@@ -69,12 +82,22 @@ function DrawnTile({ drawn }: { drawn: DrawnCard }): ReactElement {
       <Link
         to="witchcraft/tarot/:cardId"
         params={{ cardId: card.id }}
-        style={{ display: 'block', fontWeight: 700, fontFamily: 'var(--orn-font)', marginTop: 8, textDecoration: 'none' }}
+        style={{
+          display: 'block',
+          fontWeight: 700,
+          fontFamily: 'var(--orn-font)',
+          marginTop: 8,
+          textDecoration: 'none',
+        }}
       >
         {card.name}
       </Link>
-      <div className="note" style={{ fontSize: '.85em' }}>{reversed ? 'reversed ☾' : 'upright ☼'}</div>
-      <p style={{ margin: '.5em 0 0', fontSize: '.92em' }}>{reversed ? card.reversed : card.upright}</p>
+      <div className="note" style={{ fontSize: '.85em' }}>
+        {reversed ? 'reversed ☾' : 'upright ☼'}
+      </div>
+      <p style={{ margin: '.5em 0 0', fontSize: '.92em' }}>
+        {reversed ? card.reversed : card.upright}
+      </p>
     </div>
   );
 }
@@ -100,7 +123,11 @@ export default function OraclePage(): ReactElement {
   }
 
   return (
-    <Win9xWindow title="oracle.exe — Digital Oracle" className="article-win" bodyClassName="doc-body">
+    <Win9xWindow
+      title="oracle.exe — Digital Oracle"
+      className="article-win"
+      bodyClassName="doc-body"
+    >
       <style>{`
         @keyframes oracle-reveal {
           0%   { opacity: 0; transform: translateY(14px) scale(.96) rotate(-2deg); }
@@ -120,7 +147,11 @@ export default function OraclePage(): ReactElement {
           </Link>
         </b>{' '}
         ›{' '}
-        <Link to="corner/:corner" params={{ corner: 'witchcraft' }} style={{ color: 'inherit' }}>
+        <Link
+          to="corner/:corner"
+          params={{ corner: 'witchcraft' }}
+          style={{ color: 'inherit' }}
+        >
           Witchcraft Corner
         </Link>{' '}
         › Digital Oracle
@@ -133,13 +164,28 @@ export default function OraclePage(): ReactElement {
         Still your mind, hold your question, and let the cards answer.
       </p>
 
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap', margin: '12px 0' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          margin: '12px 0',
+        }}
+      >
         <button
           type="button"
           className="tbtn"
           aria-pressed={spread === 1}
-          onClick={() => { setSpread(1); }}
-          style={spread === 1 ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined} data-id="single-card"
+          onClick={() => {
+            setSpread(1);
+          }}
+          style={
+            spread === 1
+              ? { borderColor: 'var(--text)', fontWeight: 700 }
+              : undefined
+          }
+          data-id="single-card"
         >
           single card
         </button>
@@ -147,15 +193,35 @@ export default function OraclePage(): ReactElement {
           type="button"
           className="tbtn"
           aria-pressed={spread === 3}
-          onClick={() => { setSpread(3); }}
-          style={spread === 3 ? { borderColor: 'var(--text)', fontWeight: 700 } : undefined} data-id="past-present-future"
+          onClick={() => {
+            setSpread(3);
+          }}
+          style={
+            spread === 3
+              ? { borderColor: 'var(--text)', fontWeight: 700 }
+              : undefined
+          }
+          data-id="past-present-future"
         >
           past · present · future
         </button>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 16px' }}>
-        <button type="button" className="tbtn" onClick={handleDraw} disabled={drawing} style={{ fontSize: '1.05em', padding: '10px 22px' }} data-id="button">
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          margin: '8px 0 16px',
+        }}
+      >
+        <button
+          type="button"
+          className="tbtn"
+          onClick={handleDraw}
+          disabled={drawing}
+          style={{ fontSize: '1.05em', padding: '10px 22px' }}
+          data-id="button"
+        >
           {drawing ? 'shuffling…' : drawn ? 'draw again ✦' : 'draw the cards ✦'}
         </button>
       </div>
@@ -171,7 +237,8 @@ export default function OraclePage(): ReactElement {
                 height: 135,
                 borderRadius: 10,
                 border: '3px solid var(--panel-edge)',
-                background: 'repeating-linear-gradient(45deg, var(--surface-solid), var(--surface-solid) 6px, color-mix(in srgb, var(--panel-edge) 30%, var(--surface-solid)) 6px, color-mix(in srgb, var(--panel-edge) 30%, var(--surface-solid)) 12px)',
+                background:
+                  'repeating-linear-gradient(45deg, var(--surface-solid), var(--surface-solid) 6px, color-mix(in srgb, var(--panel-edge) 30%, var(--surface-solid)) 6px, color-mix(in srgb, var(--panel-edge) 30%, var(--surface-solid)) 12px)',
                 animation: `oracle-shuffle .65s ease-in-out ${i * 0.08}s infinite`,
               }}
             />
@@ -185,7 +252,9 @@ export default function OraclePage(): ReactElement {
             className="highlight-grid"
             style={{
               gridTemplateColumns:
-                drawn.length === 1 ? 'minmax(220px, 320px)' : 'repeat(auto-fit, minmax(200px, 1fr))',
+                drawn.length === 1
+                  ? 'minmax(220px, 320px)'
+                  : 'repeat(auto-fit, minmax(200px, 1fr))',
               gap: 14,
               justifyContent: 'center',
               marginTop: 8,
@@ -194,7 +263,9 @@ export default function OraclePage(): ReactElement {
             {drawn.map((d, i) => (
               <div
                 key={`${d.card.id}-${i}`}
-                style={{ animation: `oracle-reveal .5s ease-out ${i * 0.12}s both` }}
+                style={{
+                  animation: `oracle-reveal .5s ease-out ${i * 0.12}s both`,
+                }}
               >
                 <DrawnTile drawn={d} />
               </div>
@@ -205,7 +276,9 @@ export default function OraclePage(): ReactElement {
             <h2 style={{ margin: '.1em 0', fontFamily: 'var(--orn-font)' }}>
               <span aria-hidden>✶</span> Your reading
             </h2>
-            <p style={{ margin: '.5em 0 0', lineHeight: 1.6 }}>{composeReading(drawn)}</p>
+            <p style={{ margin: '.5em 0 0', lineHeight: 1.6 }}>
+              {composeReading(drawn)}
+            </p>
             <p className="note" style={{ marginTop: 12, fontStyle: 'italic' }}>
               (AI-written readings coming soon)
             </p>

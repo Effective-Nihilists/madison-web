@@ -69,7 +69,12 @@ async function isLastItemVisible(page: Page, dataId: string, itemText: string) {
       const walker = document.createTreeWalker(
         container,
         NodeFilter.SHOW_TEXT,
-        { acceptNode: (node) => node.textContent === text ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP },
+        {
+          acceptNode: (node) =>
+            node.textContent === text
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_SKIP,
+        },
       );
       const textNode = walker.nextNode();
       if (!textNode?.parentElement) return false;
@@ -91,7 +96,10 @@ async function isLastItemVisible(page: Page, dataId: string, itemText: string) {
       const scrollRect = scrollEl.getBoundingClientRect();
       const itemRect = itemEl.getBoundingClientRect();
       // Item bottom should be within the scroll container's visible area
-      return itemRect.bottom <= scrollRect.bottom + 2 && itemRect.top >= scrollRect.top - 2;
+      return (
+        itemRect.bottom <= scrollRect.bottom + 2 &&
+        itemRect.top >= scrollRect.top - 2
+      );
     },
     { id: dataId, text: itemText },
   );
@@ -114,9 +122,13 @@ test.beforeEach(async ({ page }) => {
 // (no API/auth), so it's a reliable always-tall page.
 
 test.describe('Page document scroll', () => {
-  test('a tall page (Tarot Guide) scrolls the document past the fold', async ({ page }) => {
+  test('a tall page (Tarot Guide) scrolls the document past the fold', async ({
+    page,
+  }) => {
     await page.goto('/witchcraft/tarot');
-    await expect(page.getByRole('heading', { name: /Tarot Guide/i })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /Tarot Guide/i }),
+    ).toBeVisible();
     await page.waitForTimeout(400); // let the 78-card grid lay out
 
     const m = await page.evaluate(async () => {
@@ -166,12 +178,20 @@ test.describe('ScrollView', () => {
   test('large list: scrolling to bottom reveals last item', async ({
     page,
   }) => {
-    const visible = await isLastItemVisible(page, 'scrollview-large', 'Item 100');
+    const visible = await isLastItemVisible(
+      page,
+      'scrollview-large',
+      'Item 100',
+    );
     expect(visible).toBe(false);
 
     await setScrollTop(page, 'scrollview-large', 99999);
 
-    const visibleAfter = await isLastItemVisible(page, 'scrollview-large', 'Item 100');
+    const visibleAfter = await isLastItemVisible(
+      page,
+      'scrollview-large',
+      'Item 100',
+    );
     expect(visibleAfter).toBe(true);
   });
 
@@ -184,9 +204,7 @@ test.describe('ScrollView', () => {
 
   test('short list: content does not overflow', async ({ page }) => {
     const metrics = await getScrollMetrics(page, 'scrollview-short');
-    expect(metrics.scrollHeight).toBeLessThanOrEqual(
-      metrics.clientHeight + 1,
-    );
+    expect(metrics.scrollHeight).toBeLessThanOrEqual(metrics.clientHeight + 1);
   });
 
   test('scrollbar is hidden (no scrollbar gutter)', async ({ page }) => {
@@ -230,7 +248,11 @@ test.describe('SimpleScrollView', () => {
 
     await setScrollTop(page, 'simple-large', 99999);
 
-    const visibleAfter = await isLastItemVisible(page, 'simple-large', 'Item 100');
+    const visibleAfter = await isLastItemVisible(
+      page,
+      'simple-large',
+      'Item 100',
+    );
     expect(visibleAfter).toBe(true);
   });
 
@@ -244,9 +266,7 @@ test.describe('SimpleScrollView', () => {
 
   test('short list: content does not overflow', async ({ page }) => {
     const metrics = await getScrollMetrics(page, 'simple-short');
-    expect(metrics.scrollHeight).toBeLessThanOrEqual(
-      metrics.clientHeight + 1,
-    );
+    expect(metrics.scrollHeight).toBeLessThanOrEqual(metrics.clientHeight + 1);
   });
 
   test('scrollbar is hidden (no scrollbar gutter)', async ({ page }) => {
@@ -372,7 +392,11 @@ test.describe('FlatList', () => {
 
     await setScrollTop(page, 'flatlist-large', 99999);
 
-    const visibleAfter = await isLastItemVisible(page, 'flatlist-large', 'Item 100');
+    const visibleAfter = await isLastItemVisible(
+      page,
+      'flatlist-large',
+      'Item 100',
+    );
     expect(visibleAfter).toBe(true);
   });
 
@@ -386,9 +410,7 @@ test.describe('FlatList', () => {
 
   test('short list: content does not overflow', async ({ page }) => {
     const metrics = await getScrollMetrics(page, 'flatlist-short');
-    expect(metrics.scrollHeight).toBeLessThanOrEqual(
-      metrics.clientHeight + 1,
-    );
+    expect(metrics.scrollHeight).toBeLessThanOrEqual(metrics.clientHeight + 1);
   });
 
   test('scrollbar is hidden (no scrollbar gutter)', async ({ page }) => {

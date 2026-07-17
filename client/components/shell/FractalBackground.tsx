@@ -1,9 +1,4 @@
-import {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import * as THREE from 'three';
 
 // ─── FractalBackground ────────────────────────────────────────────────────────
@@ -114,110 +109,141 @@ const FRAG = `
 `;
 
 function prefersReducedMotion(): boolean {
-  return typeof window !== 'undefined'
-    && typeof window.matchMedia === 'function'
-    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return (
+    typeof window !== 'undefined' &&
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
 }
 
-const FractalBackground = forwardRef<FractalHandle, { cycleSeconds?: number; speed?: number }>(
-  function FractalBackground({ cycleSeconds = 16, speed = 1 }, ref) {
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const fallbackRef = useRef<HTMLDivElement | null>(null);
-    const uniformsRef = useRef<{
-      uRes: { value: THREE.Vector2 };
-      uTime: { value: number };
-      uType: { value: number };
-      uPalette: { value: number };
-      uSpeed: { value: number };
-    } | null>(null);
+const FractalBackground = forwardRef<
+  FractalHandle,
+  { cycleSeconds?: number; speed?: number }
+>(function FractalBackground({ cycleSeconds = 16, speed = 1 }, ref) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const fallbackRef = useRef<HTMLDivElement | null>(null);
+  const uniformsRef = useRef<{
+    uRes: { value: THREE.Vector2 };
+    uTime: { value: number };
+    uType: { value: number };
+    uPalette: { value: number };
+    uSpeed: { value: number };
+  } | null>(null);
 
-    function randomize(): void {
-      const u = uniformsRef.current;
-      if (!u) return;
-      u.uType.value = Math.floor(Math.random() * NUM_TYPES);
-      u.uPalette.value = Math.floor(Math.random() * NUM_PALETTES);
-    }
+  function randomize(): void {
+    const u = uniformsRef.current;
+    if (!u) return;
+    u.uType.value = Math.floor(Math.random() * NUM_TYPES);
+    u.uPalette.value = Math.floor(Math.random() * NUM_PALETTES);
+  }
 
-    useImperativeHandle(ref, (): FractalHandle => ({
+  useImperativeHandle(
+    ref,
+    (): FractalHandle => ({
       loadRandomPreset: randomize,
       setOpacity: (v: number) => {
         const c = canvasRef.current;
         if (c) c.style.opacity = String(v);
       },
-      resume: () => { /* no-op: fractal needs no audio context */ },
-      connectTrackAudio: () => { /* no-op: not audio-reactive */ },
-    }), []);
+      resume: () => {
+        /* no-op: fractal needs no audio context */
+      },
+      connectTrackAudio: () => {
+        /* no-op: not audio-reactive */
+      },
+    }),
+    [],
+  );
 
-    useEffect(() => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-      const reduced = prefersReducedMotion();
-      let renderer: THREE.WebGLRenderer;
-      try {
-        renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'low-power' });
-      } catch {
-        if (fallbackRef.current) fallbackRef.current.style.display = 'block';
-        canvas.style.display = 'none';
-        return;
-      }
-      renderer.setPixelRatio(1);
+    const reduced = prefersReducedMotion();
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: false,
+        alpha: false,
+        powerPreference: 'low-power',
+      });
+    } catch {
+      if (fallbackRef.current) fallbackRef.current.style.display = 'block';
+      canvas.style.display = 'none';
+      return;
+    }
+    renderer.setPixelRatio(1);
+    renderer.setSize(window.innerWidth, window.innerHeight, false);
+
+    const uniforms = {
+      uRes: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+      uTime: { value: 0 },
+      uType: { value: Math.floor(Math.random() * NUM_TYPES) },
+      uPalette: { value: Math.floor(Math.random() * NUM_PALETTES) },
+      uSpeed: { value: speed },
+    };
+    uniformsRef.current = uniforms;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.Camera();
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    const material = new THREE.ShaderMaterial({
+      vertexShader: VERT,
+      fragmentShader: FRAG,
+      uniforms,
+    });
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    function onResize(): void {
       renderer.setSize(window.innerWidth, window.innerHeight, false);
+      uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
+    }
+    window.addEventListener('resize', onResize);
 
-      const uniforms = {
-        uRes: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-        uTime: { value: 0 },
-        uType: { value: Math.floor(Math.random() * NUM_TYPES) },
-        uPalette: { value: Math.floor(Math.random() * NUM_PALETTES) },
-        uSpeed: { value: speed },
-      };
-      uniformsRef.current = uniforms;
+    // Cycle fractal type + palette periodically to "keep it crazy".
+    const cycleId = reduced
+      ? null
+      : window.setInterval(randomize, Math.max(4, cycleSeconds) * 1000);
 
-      const scene = new THREE.Scene();
-      const camera = new THREE.Camera();
-      const geometry = new THREE.PlaneGeometry(2, 2);
-      const material = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: FRAG, uniforms });
-      const mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-
-      function onResize(): void {
-        renderer.setSize(window.innerWidth, window.innerHeight, false);
-        uniforms.uRes.value.set(window.innerWidth, window.innerHeight);
+    let raf = 0;
+    const start = performance.now();
+    const loop = (): void => {
+      uniforms.uTime.value = reduced ? 8 : (performance.now() - start) / 1000;
+      try {
+        renderer.render(scene, camera);
+      } catch {
+        /* ignore */
       }
-      window.addEventListener('resize', onResize);
+      if (!reduced) raf = requestAnimationFrame(loop);
+    };
+    loop();
 
-      // Cycle fractal type + palette periodically to "keep it crazy".
-      const cycleId = reduced ? null : window.setInterval(randomize, Math.max(4, cycleSeconds) * 1000);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      if (cycleId !== null) window.clearInterval(cycleId);
+      if (raf) cancelAnimationFrame(raf);
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+      uniformsRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cycleSeconds, speed]);
 
-      let raf = 0;
-      const start = performance.now();
-      const loop = (): void => {
-        uniforms.uTime.value = reduced ? 8 : (performance.now() - start) / 1000;
-        try { renderer.render(scene, camera); } catch { /* ignore */ }
-        if (!reduced) raf = requestAnimationFrame(loop);
-      };
-      loop();
-
-      return () => {
-        window.removeEventListener('resize', onResize);
-        if (cycleId !== null) window.clearInterval(cycleId);
-        if (raf) cancelAnimationFrame(raf);
-        geometry.dispose();
-        material.dispose();
-        renderer.dispose();
-        uniformsRef.current = null;
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [cycleSeconds, speed]);
-
-    return (
-      <>
-        <canvas className="viz-canvas" ref={canvasRef} aria-hidden="true" />
-        <div className="viz-fallback" ref={fallbackRef} style={{ display: 'none' }} aria-hidden="true" />
-        <div className="viz-scrim" aria-hidden="true" />
-      </>
-    );
-  },
-);
+  return (
+    <>
+      <canvas className="viz-canvas" ref={canvasRef} aria-hidden="true" />
+      <div
+        className="viz-fallback"
+        ref={fallbackRef}
+        style={{ display: 'none' }}
+        aria-hidden="true"
+      />
+      <div className="viz-scrim" aria-hidden="true" />
+    </>
+  );
+});
 
 export default FractalBackground;

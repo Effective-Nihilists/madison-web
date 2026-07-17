@@ -26,9 +26,16 @@ export function useDragReorder(
         dragId.current = id;
         e.dataTransfer.effectAllowed = 'move';
         // Firefox requires data to be set for drag to start.
-        try { e.dataTransfer.setData('text/plain', id); } catch { /* ignore */ }
+        try {
+          e.dataTransfer.setData('text/plain', id);
+        } catch {
+          /* ignore */
+        }
       },
-      onDragOver: (e: DragEvent) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; },
+      onDragOver: (e: DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      },
       onDrop: (e: DragEvent) => {
         e.preventDefault();
         const from = dragId.current;
@@ -42,7 +49,9 @@ export function useDragReorder(
         next.splice(ti, 0, from);
         onReorder(next);
       },
-      onDragEnd: () => { dragId.current = null; },
+      onDragEnd: () => {
+        dragId.current = null;
+      },
     };
   }
 

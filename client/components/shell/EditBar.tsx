@@ -1,7 +1,10 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { useSiteConfig } from './siteConfigContext';
 import { useRouter } from '../../router';
-import { ENTRY_CORNER_KEYS, ENTRY_CORNER_LABELS } from '../../../shared/entries';
+import {
+  ENTRY_CORNER_KEYS,
+  ENTRY_CORNER_LABELS,
+} from '../../../shared/entries';
 
 // ─── Unified edit mode ──────────────────────────────────────────────────────
 // One editing concept for the owner: by default the site is fully public (even
@@ -79,14 +82,18 @@ function toHex(color: string): string {
       const h = (n: string): string => Number(n).toString(16).padStart(2, '0');
       return `#${h(m[1] ?? '0')}${h(m[2] ?? '0')}${h(m[3] ?? '0')}`;
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return '#888888';
 }
 
 function currentValue(cssVar: string, override: string | undefined): string {
   if (override) return override;
   if (typeof window === 'undefined') return '';
-  return getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(cssVar)
+    .trim();
 }
 
 // The colors & fonts customizer, opened from the EditBar. Behavior is unchanged
@@ -108,7 +115,11 @@ function CustomizePanel({ onClose }: { onClose: () => void }): ReactElement {
     <div className="edit-panel win">
       <div className="win-title">
         <span className="wt-label">customize.exe</span>
-        <span className="win-btns"><b role="button" aria-label="close" onClick={onClose} data-id="close">×</b></span>
+        <span className="win-btns">
+          <b role="button" aria-label="close" onClick={onClose} data-id="close">
+            ×
+          </b>
+        </span>
       </div>
       <div className="win-body">
         <h4>Fonts</h4>
@@ -117,11 +128,16 @@ function CustomizePanel({ onClose }: { onClose: () => void }): ReactElement {
             <span>{f.label}</span>
             <select
               value={config.fonts[f.var] ?? ''}
-              onChange={(e) => { setFont(f.var, e.target.value); }} data-id="select"
+              onChange={(e) => {
+                setFont(f.var, e.target.value);
+              }}
+              data-id="select"
             >
               <option value="">(default)</option>
               {FONT_CHOICES.map((c) => (
-                <option key={c.name} value={c.stack}>{c.name}</option>
+                <option key={c.name} value={c.stack}>
+                  {c.name}
+                </option>
               ))}
             </select>
           </label>
@@ -134,17 +150,27 @@ function CustomizePanel({ onClose }: { onClose: () => void }): ReactElement {
             <input
               type="color"
               value={toHex(currentValue(c.var, config.theme[c.var]))}
-              onChange={(e) => { setColor(c.var, e.target.value); }} data-id="input"
+              onChange={(e) => {
+                setColor(c.var, e.target.value);
+              }}
+              data-id="input"
             />
           </label>
         ))}
 
-        <button type="button" className="tbtn" style={{ marginTop: 12, width: '100%' }} onClick={resetAll} data-id="reset-colors-fonts">
+        <button
+          type="button"
+          className="tbtn"
+          style={{ marginTop: 12, width: '100%' }}
+          onClick={resetAll}
+          data-id="reset-colors-fonts"
+        >
           ↺ reset colors & fonts
         </button>
         <p className="note" style={{ marginTop: 8 }}>
-          changes save automatically and are visible to everyone. drag the sidebar
-          corners and widget boxes to reorder; drag a box’s bottom edge to resize.
+          changes save automatically and are visible to everyone. drag the
+          sidebar corners and widget boxes to reorder; drag a box’s bottom edge
+          to resize.
         </p>
       </div>
     </div>
@@ -162,7 +188,10 @@ export function EditEntryButton(): ReactElement | null {
       className="edit-entry-btn"
       title="edit site"
       aria-label="edit site"
-      onClick={() => { setEditMode(true); }} data-id="edit-site"
+      onClick={() => {
+        setEditMode(true);
+      }}
+      data-id="edit-site"
     >
       ✎ edit
     </button>
@@ -180,7 +209,9 @@ export function EditBar(): ReactElement | null {
   useEffect(() => {
     const on = admin && editMode;
     document.body.classList.toggle('is-editing', on);
-    return () => { document.body.classList.remove('is-editing'); };
+    return () => {
+      document.body.classList.remove('is-editing');
+    };
   }, [admin, editMode]);
 
   if (!admin || !editMode) return null;
@@ -190,16 +221,55 @@ export function EditBar(): ReactElement | null {
       <div className="edit-bar" role="toolbar" aria-label="site editing">
         <span className="eb-label">EDITING</span>
         <nav className="eb-links">
-          <button type="button" className="eb-link" onClick={() => { router.push('admin/articles', {}); }} data-id="articles">Articles</button>
-          <button type="button" className="eb-link" onClick={() => { router.push('admin/comments', {}); }} data-id="comments">Comments</button>
-          <button type="button" className="eb-link" onClick={() => { router.push('admin/media', {}); }} data-id="media-amp-music">Media &amp; Music</button>
-          <button type="button" className="eb-link" onClick={() => { router.push('admin/wheels', {}); }} data-id="wheels">Wheels</button>
+          <button
+            type="button"
+            className="eb-link"
+            onClick={() => {
+              router.push('admin/articles', {});
+            }}
+            data-id="articles"
+          >
+            Articles
+          </button>
+          <button
+            type="button"
+            className="eb-link"
+            onClick={() => {
+              router.push('admin/comments', {});
+            }}
+            data-id="comments"
+          >
+            Comments
+          </button>
+          <button
+            type="button"
+            className="eb-link"
+            onClick={() => {
+              router.push('admin/media', {});
+            }}
+            data-id="media-amp-music"
+          >
+            Media &amp; Music
+          </button>
+          <button
+            type="button"
+            className="eb-link"
+            onClick={() => {
+              router.push('admin/wheels', {});
+            }}
+            data-id="wheels"
+          >
+            Wheels
+          </button>
           <span className="eb-dropdown">
             <button
               type="button"
               className="eb-link"
               aria-expanded={galleriesOpen}
-              onClick={() => { setGalleriesOpen((o) => !o); }} data-id="galleries"
+              onClick={() => {
+                setGalleriesOpen((o) => !o);
+              }}
+              data-id="galleries"
             >
               Galleries ▾
             </button>
@@ -210,7 +280,11 @@ export function EditBar(): ReactElement | null {
                     key={k}
                     type="button"
                     className="eb-menu-item"
-                    onClick={() => { setGalleriesOpen(false); router.push('admin/entries/:corner', { corner: k }); }} data-id="button"
+                    onClick={() => {
+                      setGalleriesOpen(false);
+                      router.push('admin/entries/:corner', { corner: k });
+                    }}
+                    data-id="button"
                   >
                     {ENTRY_CORNER_LABELS[k] ?? k}
                   </button>
@@ -223,19 +297,33 @@ export function EditBar(): ReactElement | null {
         <button
           type="button"
           className={`eb-link${panelOpen ? ' on' : ''}`}
-          onClick={() => { setPanelOpen((o) => !o); }} data-id="colors-amp-fonts"
+          onClick={() => {
+            setPanelOpen((o) => !o);
+          }}
+          data-id="colors-amp-fonts"
         >
           ✦ colors &amp; fonts
         </button>
         <button
           type="button"
           className="eb-done"
-          onClick={() => { setEditMode(false); setPanelOpen(false); setGalleriesOpen(false); }} data-id="done"
+          onClick={() => {
+            setEditMode(false);
+            setPanelOpen(false);
+            setGalleriesOpen(false);
+          }}
+          data-id="done"
         >
           ✓ done
         </button>
       </div>
-      {panelOpen && <CustomizePanel onClose={() => { setPanelOpen(false); }} />}
+      {panelOpen && (
+        <CustomizePanel
+          onClose={() => {
+            setPanelOpen(false);
+          }}
+        />
+      )}
     </>
   );
 }

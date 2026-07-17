@@ -1,4 +1,12 @@
-import { authReq, defineMessages, defineRequests, frameworkMessages, frameworkRequests, req, z } from 'ugly-app/shared';
+import {
+  authReq,
+  defineMessages,
+  defineRequests,
+  frameworkMessages,
+  frameworkRequests,
+  req,
+  z,
+} from 'ugly-app/shared';
 import {
   ArticleSchema,
   CommentSchema,
@@ -224,11 +232,16 @@ export const requests = defineRequests({
     output: z.object({ ok: z.boolean() }),
   }),
   adminListComments: authReq({
-    input: z.object({ status: z.enum(['pending', 'approved', 'rejected']).optional() }),
+    input: z.object({
+      status: z.enum(['pending', 'approved', 'rejected']).optional(),
+    }),
     output: z.object({ comments: z.array(CommentDoc) }),
   }),
   moderateComment: authReq({
-    input: z.object({ id: z.string().min(1), action: z.enum(['approve', 'reject']) }),
+    input: z.object({
+      id: z.string().min(1),
+      action: z.enum(['approve', 'reject']),
+    }),
     output: z.object({ ok: z.boolean() }),
   }),
   uploadMedia: authReq({
@@ -280,7 +293,10 @@ export const requests = defineRequests({
   // ── Phase 2: generic entry/gallery system ───────────────────────────────────
   // Public read — list entries for one corner, optional text query.
   listEntries: req({
-    input: z.object({ corner: z.enum(ENTRY_CORNER_ENUM), q: z.string().optional() }),
+    input: z.object({
+      corner: z.enum(ENTRY_CORNER_ENUM),
+      q: z.string().optional(),
+    }),
     output: z.object({ entries: z.array(EntryDoc) }),
   }),
   // Admin write — upsert (nanoid when new), delete, and admin list (all corners

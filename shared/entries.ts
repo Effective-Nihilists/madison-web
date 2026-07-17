@@ -8,10 +8,12 @@ import { CORNER_KEYS } from './blog';
 // collection. `entry.corner` is typed against this wider enum so the extra keys
 // are accepted while the blog `corner` enum stays limited to the 15 navigable
 // corners.
-export const ENTRY_CORNER_ENUM = [...CORNER_KEYS, 'decks', 'herbs', 'medplants'] as [
-  string,
-  ...string[],
-];
+export const ENTRY_CORNER_ENUM = [
+  ...CORNER_KEYS,
+  'decks',
+  'herbs',
+  'medplants',
+] as [string, ...string[]];
 
 // ─── Entry schema ─────────────────────────────────────────────────────────────
 // A single generic "entry" used by the gallery/list/card corners (books,

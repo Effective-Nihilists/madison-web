@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactElement,
-} from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactElement } from 'react';
 import Win9xWindow from '../../components/Win9xWindow';
 import { Link } from '../../router';
 
@@ -150,7 +144,8 @@ export default function GuidedBreathingPage(): ReactElement {
       let s = 0;
       if (current.kind === 'inhale') s = ease(frac);
       else if (current.kind === 'exhale') s = 1 - ease(frac);
-      else if (current.kind === 'hold') s = 1; // hold after inhale → expanded
+      else if (current.kind === 'hold')
+        s = 1; // hold after inhale → expanded
       else s = 0; // hold2 after exhale → contracted
 
       setScale(s);
@@ -201,7 +196,11 @@ export default function GuidedBreathingPage(): ReactElement {
           </Link>
         </b>{' '}
         ›{' '}
-        <Link to="corner/:corner" params={{ corner: 'health' }} style={{ color: 'inherit' }}>
+        <Link
+          to="corner/:corner"
+          params={{ corner: 'health' }}
+          style={{ color: 'inherit' }}
+        >
           Health Corner
         </Link>{' '}
         › Guided Breathing
@@ -247,7 +246,8 @@ export default function GuidedBreathingPage(): ReactElement {
               style={{
                 fontWeight: selected ? 700 : 400,
                 outline: selected ? '2px solid var(--panel-edge)' : 'none',
-              }} data-id="name"
+              }}
+              data-id="name"
             >
               {p.name}
             </button>
@@ -327,8 +327,11 @@ export default function GuidedBreathingPage(): ReactElement {
         <button
           type="button"
           className="tbtn"
-          onClick={() => { setRunning((r) => !r); }}
-          style={{ fontSize: '1.05em', padding: '6px 22px' }} data-id="button"
+          onClick={() => {
+            setRunning((r) => !r);
+          }}
+          style={{ fontSize: '1.05em', padding: '6px 22px' }}
+          data-id="button"
         >
           {running ? 'Stop' : 'Start'}
         </button>

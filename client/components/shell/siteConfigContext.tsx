@@ -46,7 +46,11 @@ function ensureFontLoaded(family: string): void {
   document.head.appendChild(link);
 }
 
-export function SiteConfigProvider({ children }: { children: ReactNode }): ReactElement {
+export function SiteConfigProvider({
+  children,
+}: {
+  children: ReactNode;
+}): ReactElement {
   const [config, setConfig] = useState<SiteConfigData>(DEFAULT_CONFIG);
   const [admin, setAdmin] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -58,12 +62,22 @@ export function SiteConfigProvider({ children }: { children: ReactNode }): React
   useEffect(() => {
     let alive = true;
     void apiPost<{ config: SiteConfigData }>('getSiteConfig', {})
-      .then((res) => { if (alive) setConfig(SiteConfigSchema.parse(res.config)); })
-      .catch(() => { /* defaults */ });
+      .then((res) => {
+        if (alive) setConfig(SiteConfigSchema.parse(res.config));
+      })
+      .catch(() => {
+        /* defaults */
+      });
     void apiPost<{ admin: boolean }>('whoAmI', {})
-      .then((res) => { if (alive) setAdmin(res.admin); })
-      .catch(() => { /* logged out → not admin */ });
-    return () => { alive = false; };
+      .then((res) => {
+        if (alive) setAdmin(res.admin);
+      })
+      .catch(() => {
+        /* logged out → not admin */
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
 
   // Apply theme (CSS custom properties) + fonts to <html> whenever they change.
@@ -72,14 +86,18 @@ export function SiteConfigProvider({ children }: { children: ReactNode }): React
   useEffect(() => {
     const root = document.documentElement;
     const nextKeys = new Set<string>();
-    for (const [k, v] of Object.entries(config.theme)) { root.style.setProperty(k, v); nextKeys.add(k); }
+    for (const [k, v] of Object.entries(config.theme)) {
+      root.style.setProperty(k, v);
+      nextKeys.add(k);
+    }
     for (const [k, v] of Object.entries(config.fonts)) {
       const family = v.split(',')[0]?.trim().replace(/['"]/g, '') ?? '';
       ensureFontLoaded(family);
       root.style.setProperty(k, v);
       nextKeys.add(k);
     }
-    for (const k of appliedRef.current) if (!nextKeys.has(k)) root.style.removeProperty(k);
+    for (const k of appliedRef.current)
+      if (!nextKeys.has(k)) root.style.removeProperty(k);
     appliedRef.current = nextKeys;
   }, [config.theme, config.fonts]);
 
@@ -92,7 +110,9 @@ export function SiteConfigProvider({ children }: { children: ReactNode }): React
     saveTimer.current = window.setTimeout(() => {
       const patchToSend = pending.current;
       pending.current = {};
-      void apiPost('saveSiteConfig', { patch: patchToSend }).catch(() => { /* surfaced elsewhere */ });
+      void apiPost('saveSiteConfig', { patch: patchToSend }).catch(() => {
+        /* surfaced elsewhere */
+      });
     }, 500);
   }, []);
 
@@ -113,12 +133,17 @@ export function SiteConfigProvider({ children }: { children: ReactNode }): React
       }
       const merged = SiteConfigSchema.parse({ ...prev, textOverrides: next });
       // Persist the whole textOverrides map (server merges shallow by key).
-      pending.current = { ...pending.current, textOverrides: merged.textOverrides };
+      pending.current = {
+        ...pending.current,
+        textOverrides: merged.textOverrides,
+      };
       if (saveTimer.current !== null) window.clearTimeout(saveTimer.current);
       saveTimer.current = window.setTimeout(() => {
         const patchToSend = pending.current;
         pending.current = {};
-        void apiPost('saveSiteConfig', { patch: patchToSend }).catch(() => { /* ignore */ });
+        void apiPost('saveSiteConfig', { patch: patchToSend }).catch(() => {
+          /* ignore */
+        });
       }, 500);
       return merged;
     });
@@ -134,16 +159,23 @@ export function SiteConfigProvider({ children }: { children: ReactNode }): React
 
 export function useSiteConfig(): SiteConfigCtx {
   const ctx = useContext(Ctx);
-  if (!ctx) throw new Error('useSiteConfig must be used within SiteConfigProvider');
+  if (!ctx)
+    throw new Error('useSiteConfig must be used within SiteConfigProvider');
   return ctx;
 }
 
 // Apply a saved order to a base list, appending any items not in the order
 // (e.g. newly added corners) in their original position.
-export function applyOrder<T>(items: T[], order: string[], keyOf: (t: T) => string): T[] {
+export function applyOrder<T>(
+  items: T[],
+  order: string[],
+  keyOf: (t: T) => string,
+): T[] {
   if (order.length === 0) return items;
   const byKey = new Map(items.map((i) => [keyOf(i), i] as const));
-  const ordered = order.map((k) => byKey.get(k)).filter((x): x is T => x !== undefined);
+  const ordered = order
+    .map((k) => byKey.get(k))
+    .filter((x): x is T => x !== undefined);
   const remaining = items.filter((i) => !order.includes(keyOf(i)));
   return [...ordered, ...remaining];
 }
