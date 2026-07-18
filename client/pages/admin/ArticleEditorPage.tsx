@@ -81,9 +81,7 @@ function EditorInner({ id }: { id?: string }): ReactElement {
 
   // Upload an image dropped/pasted/picked inside the editor and return the node
   // descriptor the editor expects.
-  async function onImageUpload(
-    file: File,
-  ): Promise<{
+  async function onImageUpload(file: File): Promise<{
     src: string;
     widthPercent: number;
     aspectRatio: number;

@@ -5,13 +5,13 @@ import { collections, type AdminUser } from '../shared/collections';
 // Admin allowlist — emails that get CMS access on first magic-link login.
 // Override via the ADMIN_EMAILS worker var (comma-separated); defaults below.
 const ADMIN_EMAILS = // eslint-disable-next-line @typescript-eslint/dot-notation
-(
-  process.env.ADMIN_EMAILS ??
-  'justin.mann@gmail.com,madisonsomersmann@gmail.com'
-)
-  .split(',')
-  .map((e) => e.trim().toLowerCase())
-  .filter(Boolean);
+  (
+    process.env.ADMIN_EMAILS ??
+    'justin.mann@gmail.com,madisonsomersmann@gmail.com'
+  )
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
 
 /** True when `email` is on the admin allowlist. */
 export function isAdminEmail(email: string | undefined): boolean {
