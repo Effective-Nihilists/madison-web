@@ -141,6 +141,7 @@ export function makeHandlers(
       ? new Proxy({} as TypedDB, {
           get: (_t, prop) => {
             const real = dbOrGetter();
+            // eslint-disable-next-line @typescript-eslint/unbound-method -- method is .bind(real)'d on the next line before use
             const value = real[prop as keyof TypedDB];
             return typeof value === 'function'
               ? (value as (...a: unknown[]) => unknown).bind(real)
