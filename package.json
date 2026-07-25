@@ -1,7 +1,7 @@
 {
   "name": "madison-web",
   "packageManager": "pnpm@10.34.5",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "type": "module",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
