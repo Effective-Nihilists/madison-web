@@ -10,15 +10,36 @@ import { useDragReorder } from './useDragReorder';
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
 // The corners navigation, ported from the v3-01 mock. Each corner is an
 // image-backed button: the thumbnail uses a CMS-managed buttonImage (keyed by
-// corner key) when present, else a deterministic picsum fallback. Navigates via
+// corner key) when present, else a deterministic local gradient. Navigates via
 // the typed <Link> to `corner/:corner`. Under 768px it becomes a slide-in
 // drawer (open/close driven by AppShell's hamburger).
 //
 // In admin edit mode the corners become drag-to-reorder (persisted as
 // cornerOrder) and their labels become inline-editable.
 
-function picsumFor(key: string): string {
-  return `https://picsum.photos/seed/${key}/60/60`;
+// The thumbnail fallback used to be `https://picsum.photos/seed/<key>/60/60`.
+// All 15 corners render at once, so every page view fired 15 concurrent
+// requests at a free placeholder service — errorLog filled with
+// "[ugly.ux] image: failed to load ... the CSS background-image could not be
+// fetched" for a dozen seeds in the same second. A production page should not
+// depend on a placeholder host at all, so the fallback is now local: a
+// deterministic gradient derived from the key, which needs no network, cannot
+// rate-limit, and keeps the retro palette.
+
+/** Stable 32-bit hash so a corner always gets the same colours. */
+function hashKey(key: string): number {
+  let h = 0;
+  for (let i = 0; i < key.length; i++)
+    h = (Math.imul(31, h) + key.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+/** A CSS `background-image` value — a gradient, not a `url()`. */
+function fallbackThumb(key: string): string {
+  const h = hashKey(key);
+  const hue = h % 360;
+  const hue2 = (hue + 40 + (h % 60)) % 360;
+  return `linear-gradient(135deg, hsl(${hue} 62% 58%), hsl(${hue2} 58% 38%))`;
 }
 
 export default function Sidebar({
@@ -41,7 +62,7 @@ export default function Sidebar({
         setImages(map);
       })
       .catch(() => {
-        /* fall back to picsum */
+        /* fall back to the local gradient thumbs */
       });
     return () => {
       alive = false;
@@ -115,7 +136,9 @@ export default function Sidebar({
                 <span
                   className="thumb retrofx"
                   style={{
-                    backgroundImage: `url(${images[c.key] ?? picsumFor(c.key)})`,
+                    backgroundImage: images[c.key]
+                      ? `url(${images[c.key]})`
+                      : fallbackThumb(c.key),
                   }}
                 />
                 <Editable as="span" id={`corner.${c.key}`}>
