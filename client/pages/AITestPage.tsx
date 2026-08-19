@@ -61,9 +61,7 @@ export default function AITestPage(): React.ReactElement {
         const text =
           typeof content === 'string'
             ? content
-            : content
-                .map((b) => (b.type === 'text' ? b.text : ''))
-                .join('');
+            : content.map((b) => (b.type === 'text' ? b.text : '')).join('');
         const elapsed = Date.now() - started;
         addLog(`Done in ${fmt(elapsed)} — ${text.length} chars`, 'ok');
         setResult(text);
