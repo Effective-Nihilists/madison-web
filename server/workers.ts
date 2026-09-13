@@ -22,7 +22,7 @@ import {
   getAppContext,
 } from 'ugly-app/server/adapter/workers';
 import type { RequestHandlers } from 'ugly-app';
-import type { TypedDB, WorkerHandlers } from 'ugly-app/shared';
+import type { TypedDB } from 'ugly-app/shared';
 
 import { messages, requests } from '../shared/api';
 import { collections } from '../shared/collections';
@@ -63,7 +63,11 @@ const requestHandlers: Partial<RequestHandlers<typeof requests>> = makeHandlers(
 // Cron handlers run on Cloudflare Cron Triggers (matches the schedule
 // declared in `shared/cron.ts`).
 // No cron workers after the D1-only migration (dailyCleanup removed).
-const cronHandlers: WorkerHandlers<typeof cronTasks> = {};
+// Untyped on purpose: `cronTasks` is empty, so any `WorkerHandlers<typeof
+// cronTasks>` reference resolves to `{}` and trips
+// no-generated-empty-object-type. `setWorkers(cronTasks, cronHandlers)`
+// below still checks the pair, so nothing is lost.
+const cronHandlers = {};
 
 const app = createWorkersApp(
   { requests, messages },

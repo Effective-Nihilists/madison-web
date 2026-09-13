@@ -14,7 +14,7 @@ import { createStorageClient } from 'ugly-app/server';
 import { nanoid } from 'nanoid';
 import { enableConversations } from 'ugly-app/conversation/server';
 import { enableCollab } from 'ugly-app/collab/server';
-import type { TypedDB, WorkerHandlers } from 'ugly-app/shared';
+import type { TypedDB } from 'ugly-app/shared';
 import { dbDefaults } from 'ugly-app/shared';
 import { messages, requests } from '../shared/api';
 import type { Todo } from '../shared/collections';
@@ -29,7 +29,11 @@ import { pages } from '../shared/pages';
 import { stringsDef } from '../shared/strings';
 
 // No cron workers after the D1-only migration (dailyCleanup removed).
-const cronHandlers: WorkerHandlers<typeof cronTasks> = {};
+// Untyped on purpose: `cronTasks` is empty, so any `WorkerHandlers<typeof
+// cronTasks>` reference resolves to `{}` and trips
+// no-generated-empty-object-type. `setWorkers(cronTasks, cronHandlers)`
+// below still checks the pair, so nothing is lost.
+const cronHandlers = {};
 
 // S3-backed storage for the Node entry. The Workers entry injects the R2-backed
 // adapter storage instead (see server/workers.ts) so handlers.ts stays node-free.
