@@ -29,5 +29,6 @@
   "staticAssets": {
     "hostBundle": true,
     "baseUrl": "https://static.317010.xyz"
-  }
+  },
+  "retired": "RETIRED 2026-10-25: servers shut down on purpose. Do not deploy. See the RETIRED note at the top of AGENTS.md."
 }
